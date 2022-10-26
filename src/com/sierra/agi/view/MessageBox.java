@@ -49,9 +49,6 @@ public class MessageBox extends Box {
         int borderColor = viewScreen.translatePixel(Color.red.darker());
         int[] screen = viewScreen.getScreenData();
         int[] font = viewScreen.getFont();
-        String text;
-        int line, oy;
-        int textEnd, textLength, index, end;
 
         if (x < 0) {
             x = (ViewScreen.WIDTH - width) / 2;
@@ -61,16 +58,16 @@ public class MessageBox extends Box {
             y = (ViewScreen.HEIGHT - height) / 2;
         }
 
-        oy = y;
-        end = x + width - ViewScreen.CHAR_WIDTH;
+        int oy = y;
+        int end = x + width - ViewScreen.CHAR_WIDTH;
 
         viewScreen.drawTopLine(borderColor, backColor, x, y, width);
         y += ViewScreen.CHAR_HEIGHT;
 
-        for (line = 0; line < lines.length; line++) {
-            text = lines[line];
-            textLength = text.length();
-            textEnd = x + ((textLength + 1) * ViewScreen.CHAR_WIDTH);
+        for (int line = 0; line < lines.length; line++) {
+            String text = lines[line];
+            int textLength = text.length();
+            int textEnd = x + ((textLength + 1) * ViewScreen.CHAR_WIDTH);
 
             viewScreen.drawLeftLine(borderColor, backColor, x, y);
 
