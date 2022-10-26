@@ -51,11 +51,12 @@ public class ViewTable {
     protected byte[] priorityTable = new byte[HEIGHT];
     protected ViewScreen screen;
     protected int[] screenView;
-    protected Area screenUpdate;
     protected ViewList updateList = new ViewList();
     protected ViewList updateNotList = new ViewList();
     protected PictureContext pictureContext;
     protected int[] pixel = new int[1];
+
+    private Area screenUpdate;
 
     public ViewTable(LogicContext context) {
         int i;
