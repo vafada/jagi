@@ -51,6 +51,8 @@ public class LogicInterpreter extends Logic {
             while (true) {
                 instruction = instructions[in];
 
+                // System.out.println(logicNumber + ": instruction = " + in + " = " + instruction);
+
                 try {
                     result = instruction.execute(this, logicContext);
 
@@ -68,6 +70,7 @@ public class LogicInterpreter extends Logic {
                 }
             }
         } catch (LogicReturn lrex) {
+            //System.out.println("catch LogicReturn");
         } catch (LogicExitAll lea) {
             throw lea;
         } catch (LogicException lex) {

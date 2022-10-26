@@ -180,13 +180,11 @@ public class ViewScreen {
     }
 
     public void displayLine(int col, int line, String message) {
-        int i, x, y, c;
+        int x = col * CHAR_WIDTH;
+        int y = line * CHAR_HEIGHT;
+        int c = message.length();
 
-        x = col * CHAR_WIDTH;
-        y = line * CHAR_HEIGHT;
-        c = message.length();
-
-        for (i = 0; i < c; i++) {
+        for (int i = 0; i < c; i++) {
             EgaUtils.putCharacter(screen, font, message.charAt(i), x, y, WIDTH, foregroundColor, backgroundColor, true);
             x += CHAR_WIDTH;
         }

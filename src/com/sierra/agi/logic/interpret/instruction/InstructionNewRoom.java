@@ -71,8 +71,7 @@ public class InstructionNewRoom extends InstructionUni implements Compilable {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) throws Exception {
-        short p = p1;
-        logicContext.newRoom(p);
+        logicContext.newRoom(p1);
         return 2;
     }
 

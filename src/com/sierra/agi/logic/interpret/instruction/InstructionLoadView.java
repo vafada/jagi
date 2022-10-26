@@ -48,8 +48,7 @@ public class InstructionLoadView extends InstructionUni implements Compilable {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) throws Exception {
-        short p = p1;
-        logicContext.getCache().loadView(p);
+        logicContext.getCache().loadView(p1);
         return 2;
     }
 

@@ -54,9 +54,8 @@ public class InstructionCallV extends InstructionUni implements Compilable {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) throws LogicException, IOException, ResourceException {
-        Logic logicToCall;
         short p = logicContext.getVar(p1);
-        logicToCall = logicContext.getCache().getLogic(p);
+        Logic logicToCall = logicContext.getCache().getLogic(p);
         logicToCall.execute(logicContext);
         return 2;
     }

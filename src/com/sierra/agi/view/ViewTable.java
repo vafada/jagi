@@ -112,11 +112,8 @@ public class ViewTable {
     }
 
     public void resetNewRoom() {
-        int i;
-        ViewEntry v;
-
-        for (i = 0; i < MAX_VIEWENTRY; i++) {
-            v = viewEntries[i];
+        for (int i = 0; i < MAX_VIEWENTRY; i++) {
+            ViewEntry v = viewEntries[i];
 
             v.removeFlags(ViewEntry.FLAG_ANIMATE | ViewEntry.FLAG_DRAWN);
             v.addFlags(ViewEntry.FLAG_UPDATE);
@@ -307,13 +304,11 @@ public class ViewTable {
     }
 
     public void animateObject(short entry) {
-        ViewEntry v;
-
         if (entry >= MAX_VIEWENTRY) {
             logicContext.setError((short) 0xd);
         }
 
-        v = viewEntries[entry];
+        ViewEntry v = viewEntries[entry];
 
         if (!v.isSomeFlagsSet(ViewEntry.FLAG_ANIMATE)) {
             v.setFlags((short) (ViewEntry.FLAG_ANIMATE | ViewEntry.FLAG_CYCLING | ViewEntry.FLAG_UPDATE));

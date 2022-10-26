@@ -302,14 +302,12 @@ public class ResourceCache {
     }
 
     protected synchronized View obtainView(short resNumber, boolean inc) throws IOException, ResourceException, ViewException {
-        Object o;
-
         if (views == null) {
             views = new Object[256];
             viewsc = new int[256];
         }
 
-        o = obtainResource(views, viewsc, resNumber, inc);
+        Object o = obtainResource(views, viewsc, resNumber, inc);
 
         if (o == null) {
             o = getViewProvider().loadView(resProvider.open(ResourceProvider.TYPE_VIEW, resNumber), resProvider.getSize(ResourceProvider.TYPE_VIEW, resNumber));

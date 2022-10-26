@@ -423,7 +423,6 @@ public abstract class EgaUtils {
         int bufferOffset = (y * scanSize) + x;
         int bufferRemaining = scanSize - 8;
         int fontOffset = (int) c * 2;
-        int line, col;
         int bits, bit;
 
         // If Not Font is Specified, Use the default EGA Font
@@ -431,7 +430,7 @@ public abstract class EgaUtils {
             font = egaFont;
         }
 
-        for (line = 0; line < 8; line++) {
+        for (int line = 0; line < 8; line++) {
             switch (line) {
                 default:
                 case 4:
@@ -456,7 +455,7 @@ public abstract class EgaUtils {
                     break;
             }
 
-            for (col = 0; col < 8; col++) {
+            for (int col = 0; col < 8; col++) {
                 switch (col) {
                     default:
                     case 0:
