@@ -112,6 +112,7 @@ public class ViewTable {
     }
 
     public void resetNewRoom() {
+        screen.reset();
         for (int i = 0; i < MAX_VIEWENTRY; i++) {
             ViewEntry v = viewEntries[i];
 
