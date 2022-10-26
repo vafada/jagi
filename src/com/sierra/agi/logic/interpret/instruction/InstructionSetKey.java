@@ -47,6 +47,8 @@ public class InstructionSetKey extends InstructionTri {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
+        short keyCode = (short)(p1 + (p2 << 8));
+        logicContext.addKeyToController(keyCode, p3);
         return 4;
     }
 

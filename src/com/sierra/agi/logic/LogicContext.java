@@ -26,6 +26,8 @@ import com.sierra.agi.word.Words;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -139,6 +141,8 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     protected boolean acceptInput;
     protected Word[] words;
 
+    protected Map<Short, Short> keyToControllerMap = new HashMap<>();
+
     public LogicContext(LogicContext logicContext) {
         // Persistent Data
         System.arraycopy(flags, 0, logicContext.flags, 0, MAX_FLAGS);
@@ -225,11 +229,9 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     }
 
     public boolean haveKey() {
-        short key = getVar(VAR_KEY);
+        short key;
         EgaComponent component = getComponent();
-        EgaEvent event;
-
-        event = component.mapKeyEventToAGI(component.popCharEvent(0));
+        EgaEvent event = component.mapKeyEventToAGI(component.popCharEvent(0));
 
         if (event != null) {
             key = event.data;
@@ -257,6 +259,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
     public void reset() {
         Arrays.fill(controllers, false);
+        keyToControllerMap.clear();
         Arrays.fill(flags, false);
         Arrays.fill(vars, (short) 0);
         Arrays.fill(objects, (short) 0);
@@ -568,7 +571,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                     shouldShowMenu = false;
                 }
 
-                poolKeyboard();
+                pollKeyboard();
 
                 if (playerControl) {
                     setVar(VAR_EGO_DIRECTION, viewTable.getDirection((short) 0));
@@ -646,7 +649,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         return words;
     }
 
-    public void poolKeyboard() {
+    public void pollKeyboard() {
         boolean changed;
 
         setVar(VAR_KEY, (short) 0);
@@ -659,13 +662,18 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
             changed = false;
 
             while (true) {
-                KeyEvent ev = null;
                 short dir = (short) 0;
 
-                ev = getComponent().popCharEvent(0);
+                KeyEvent ev = getComponent().popCharEvent(0);
 
                 if (ev == null) {
                     break;
+                }
+
+                short keyCode = (short)ev.getKeyCode();
+                if (this.keyToControllerMap.containsKey(keyCode)) {
+                    short controllerNum = this.keyToControllerMap.get(keyCode);
+                    this.controllers[controllerNum] = true;
                 }
 
                 switch (ev.getKeyCode()) {
@@ -838,6 +846,10 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
             soundClip.stop();
         }
+    }
+
+    public void addKeyToController(short keyCode, short controllerNum) {
+        this.keyToControllerMap.put(keyCode, controllerNum);
     }
 
     // ** Execution ***************************
