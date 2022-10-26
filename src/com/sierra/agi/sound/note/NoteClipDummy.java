@@ -8,60 +8,70 @@
 
 package com.sierra.agi.sound.note;
 
-import com.sierra.agi.sound.*;
-import java.util.*;
+import com.sierra.agi.sound.SoundClip;
+import com.sierra.agi.sound.SoundListener;
 
-public class NoteClipDummy extends Object implements SoundClip, Runnable
-{
-    /** Sequencers */
+import java.util.Enumeration;
+import java.util.Vector;
+
+public class NoteClipDummy implements SoundClip, Runnable {
+    /**
+     * Sequencers
+     */
     protected NoteMixer mixer;
-    
-    /** Note Thread */
+
+    /**
+     * Note Thread
+     */
     protected Thread th;
-    
-    /** Volume */
+
+    /**
+     * Volume
+     */
     protected int volume = 0xf;
 
-    /** Listeners */
+    /**
+     * Listeners
+     */
     protected Vector listeners = new Vector();
 
-    /** Playing */
+    /**
+     * Playing
+     */
     protected volatile boolean playing;
-    
-    public NoteClipDummy(NoteMixer mixer)
-    {
+
+    public NoteClipDummy(NoteMixer mixer) {
         this.mixer = mixer;
     }
-    
-    /** Play sound in an isolated thread. */
-    public synchronized void play()
-    {
-        if (playing)
-        {
+
+    /**
+     * Play sound in an isolated thread.
+     */
+    public synchronized void play() {
+        if (playing) {
             return;
         }
-        
+
         th = new Thread(this, "AGI Note Player");
         th.start();
     }
-    
-    /** Play sound in the current thread. */
-    public void playSync()
-    {
+
+    /**
+     * Play sound in the current thread.
+     */
+    public void playSync() {
         run();
     }
-    
+
     /**
      * Stop sound.
      *
      * @return Returns <code>true</code> if the sound has
-     *         been stopped. Returns <code>false</code> if
-     *         the sound is already stopped.
+     * been stopped. Returns <code>false</code> if
+     * the sound is already stopped.
      */
-    public synchronized boolean stop()
-    {
-        if (!playing)
-        {
+    public synchronized boolean stop() {
+        if (!playing) {
             return false;
         }
 
@@ -69,15 +79,12 @@ public class NoteClipDummy extends Object implements SoundClip, Runnable
         return true;
     }
 
-    public synchronized boolean isPlaying()
-    {
+    public synchronized boolean isPlaying() {
         return playing;
     }
-    
-    public void setVolume(int volume)
-    {
-        if (this.volume != volume)
-        {
+
+    public void setVolume(int volume) {
+        if (this.volume != volume) {
             this.volume = volume;
             raiseVolumeEvent(volume);
         }
@@ -88,122 +95,99 @@ public class NoteClipDummy extends Object implements SoundClip, Runnable
      *
      * @param listener Listener to add.
      */
-    public synchronized void addSoundListener(SoundListener listener)
-    {
+    public synchronized void addSoundListener(SoundListener listener) {
         listeners.add(listener);
 
-        if (playing)
-        {
+        if (playing) {
             listener.soundStarted(this);
         }
     }
-    
+
     /**
      * Remove a sound listener.
      *
      * @param listener Listener to remove.
      */
-    public synchronized void removeSoundListener(SoundListener listener)
-    {
+    public synchronized void removeSoundListener(SoundListener listener) {
         listeners.remove(listener);
     }
 
-    protected synchronized void raiseStartEvent()
-    {
-        Enumeration   e = listeners.elements();
+    protected synchronized void raiseStartEvent() {
+        Enumeration e = listeners.elements();
         SoundListener l;
 
-        while (e.hasMoreElements())
-        {
-            l = (SoundListener)e.nextElement();
+        while (e.hasMoreElements()) {
+            l = (SoundListener) e.nextElement();
             l.soundStarted(this);
         }
     }
 
-    protected synchronized void raiseStopEvent(byte reason)
-    {
-        Enumeration   e = listeners.elements();
+    protected synchronized void raiseStopEvent(byte reason) {
+        Enumeration e = listeners.elements();
         SoundListener l;
 
-        while (e.hasMoreElements())
-        {
-            l = (SoundListener)e.nextElement();
+        while (e.hasMoreElements()) {
+            l = (SoundListener) e.nextElement();
             l.soundStopped(this, reason);
         }
     }
 
-    protected synchronized void raiseVolumeEvent(int volume)
-    {
-        Enumeration   e = listeners.elements();
+    protected synchronized void raiseVolumeEvent(int volume) {
+        Enumeration e = listeners.elements();
         SoundListener l;
 
-        while (e.hasMoreElements())
-        {
-            l = (SoundListener)e.nextElement();
+        while (e.hasMoreElements()) {
+            l = (SoundListener) e.nextElement();
             l.soundVolumeChanged(this, volume);
         }
     }
 
-    public long getPosition()
-    {
+    public long getPosition() {
         return mixer.getPosition();
     }
-    
-    public long getMaxPosition()
-    {
+
+    public synchronized void setPosition(long newPosition) {
+        mixer.setPosition((int) newPosition);
+    }
+
+    public long getMaxPosition() {
         return mixer.getDuration();
     }
 
-    public synchronized void setPosition(long newPosition)
-    {
-        mixer.setPosition((int)newPosition);
-    }
-    
-    public void run()
-    {
+    public void run() {
         byte r;
-        
+
         playing = true;
         raiseStartEvent();
-        
-        if (!mixer.nextMix())
-        {
+
+        if (!mixer.nextMix()) {
             raiseStopEvent(SoundListener.STOP_REASON_FINISHED);
             return;
         }
-        
-        try
-        {
-            while (playing)
-            {
+
+        try {
+            while (playing) {
                 Thread.sleep(22);
-            
-                if (!mixer.nextMix())
-                {
+
+                if (!mixer.nextMix()) {
                     break;
                 }
             }
-            
+
             Thread.sleep(22);
-            
-            synchronized (this)
-            {
-                if (playing)
-                {
-                    r       = SoundListener.STOP_REASON_FINISHED;
+
+            synchronized (this) {
+                if (playing) {
+                    r = SoundListener.STOP_REASON_FINISHED;
                     playing = false;
                     mixer.setPosition(0);
-                }
-                else
-                {
+                } else {
                     r = SoundListener.STOP_REASON_PROGRAMMATICALLY;
                 }
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
-            r       = SoundListener.STOP_REASON_EXCEPTION;
+            r = SoundListener.STOP_REASON_EXCEPTION;
             playing = false;
         }
 

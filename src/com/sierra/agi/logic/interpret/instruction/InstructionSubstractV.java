@@ -4,12 +4,14 @@
 
 package com.sierra.agi.logic.interpret.instruction;
 
-import com.sierra.agi.*;
-import com.sierra.agi.logic.*;
-import com.sierra.agi.logic.interpret.*;
-import com.sierra.agi.logic.interpret.jit.*;
-import com.sierra.jit.code.*;
-import java.io.*;
+import com.sierra.agi.logic.Logic;
+import com.sierra.agi.logic.LogicContext;
+import com.sierra.agi.logic.interpret.LogicReader;
+import com.sierra.agi.logic.interpret.jit.LogicCompileContext;
+import com.sierra.jit.code.Scope;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Substract Instruction.
@@ -23,45 +25,41 @@ import java.io.*;
  * The value of variable <CODE>v[p1]</CODE> is decremented by <CODE>v[p2]</CODE>,
  * i.e. <CODE>v[p1] -= v[p2]</CODE>.
  * </P>
- *
+ * <p>
  * If the value is lesser than <CODE>0</CODE> the result wraps (so <CODE>1 - 2 == 255</CODE>).
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public class InstructionSubstractV extends InstructionBi
-{
-    /** 
+public class InstructionSubstractV extends InstructionBi {
+    /**
      * Creates new Substract Instruction (V).
      *
-     * @param context   Game context where this instance of the instruction will be used. (ignored)
-     * @param stream    Logic Stream. Instruction must be written in uninterpreted format.
-     * @param reader    LogicReader used in the reading of this instruction. (ignored)
-     * @param bytecode  Bytecode of the current instruction.
+     * @param context  Game context where this instance of the instruction will be used. (ignored)
+     * @param stream   Logic Stream. Instruction must be written in uninterpreted format.
+     * @param reader   LogicReader used in the reading of this instruction. (ignored)
+     * @param bytecode Bytecode of the current instruction.
      * @throws IOException I/O Exception are throw when <CODE>stream.read()</CODE> fails.
      */
-    public InstructionSubstractV(InputStream stream, LogicReader reader, short bytecode, short engineEmulation) throws IOException
-    {
+    public InstructionSubstractV(InputStream stream, LogicReader reader, short bytecode, short engineEmulation) throws IOException {
         super(stream, bytecode);
     }
 
     /**
      * Execute the Instruction.
      *
-     * @param logic         Logic used to execute the instruction.
-     * @param logicContext  Logic Context used to execute the instruction.
+     * @param logic        Logic used to execute the instruction.
+     * @param logicContext Logic Context used to execute the instruction.
      * @return Returns the number of byte of the uninterpreted instruction.
      */
-    public int execute(Logic logic, LogicContext logicContext)
-    {
+    public int execute(Logic logic, LogicContext logicContext) {
         short v = logicContext.getVar(p2);
 
-        if (v != 0)
-        {
+        if (v != 0) {
             v -= logicContext.getVar(p1);
-            logicContext.setVar(p1, (short)(v & 0xff));
+            logicContext.setVar(p1, (short) (v & 0xff));
         }
-        
+
         return 3;
     }
 
@@ -70,10 +68,9 @@ public class InstructionSubstractV extends InstructionBi
      *
      * @param compileContext Logic Compile Context.
      */
-    public void compile(LogicCompileContext compileContext)
-    {
+    public void compile(LogicCompileContext compileContext) {
         Scope scope = compileContext.scope;
-       
+
         scope.addLoadVariable("logicContext");
         scope.addPushConstant(p1);
         scope.addDuplicateLong();
@@ -84,42 +81,40 @@ public class InstructionSubstractV extends InstructionBi
         scope.addIntegerSubstract();
         scope.addPushConstant(0xff);
         scope.addIntegerAnd();
-        
+
         scope.addInvokeSpecial("com.sierra.agi.logic.LogicContext", "setVar", "(SS)V");
     }
 
 //#ifdef DEBUG
+
     /**
      * Retreive the AGI Instruction name and parameters.
      * <B>For debugging purpose only. Will be removed in final releases.</B>
      *
      * @return Returns the textual names of the instruction.
      */
-    public String[] getNames()
-    {
+    public String[] getNames() {
         String[] names = new String[3];
-        
+
         names[0] = "sub";
         names[1] = "v" + p1;
         names[2] = "v" + p2;
 
         return names;
     }
-    
+
     /**
      * Returns a String representation of the expression.
      * <B>For debugging purpose only. Will be removed in final releases.</B>
      *
      * @return Returns a String representation.
      */
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer("v");
-        
-        buffer.append(p1);
-        buffer.append(" -= v");
-        buffer.append(p2);
-        return buffer.toString();
+    public String toString() {
+
+        String buffer = "v" + p1 +
+                " -= v" +
+                p2;
+        return buffer;
     }
 //#endif DEBUG
 }

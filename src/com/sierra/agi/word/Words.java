@@ -8,18 +8,16 @@
 
 package com.sierra.agi.word;
 
-import java.io.*;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-import java.util.Vector;
 import com.sierra.agi.io.ByteCasterStream;
 import com.sierra.agi.io.IOUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+
 /**
  * Stores Words of the game.
- * <P>
+ * <p>
  * <B>Word File Format</B><BR>
  * The words.tok file is used to store the games vocabulary, i.e. the dictionary
  * of words that the interpreter understands. These words are stored along with
@@ -95,229 +93,195 @@ import com.sierra.agi.io.IOUtils;
  * <TR><TD>9999</TD><TD>ROL (Rest Of Line) -- it does matter what the rest of the input list is</TD></TR>
  * </TBODY></TABLE>
  * </P>
+ *
  * @author Dr. Z, Lance Ewing (Documentation)
  * @version 0.00.00.01
  */
-public class Words extends Object implements WordsProvider
-{
+public class Words implements WordsProvider {
     protected Hashtable wordHash = new Hashtable(800);
-    
+
     protected HashMap<Integer, Word> wordNumToWordMap = new HashMap<Integer, Word>();
-    
-    /** Creates a new Word container. */
-    public Words()
-    {
+
+    /**
+     * Creates a new Word container.
+     */
+    public Words() {
     }
-    
-    public Words loadWords(InputStream stream) throws IOException
-    {
+
+    protected static String removeSpaces(String inputString) {
+        StringBuffer buff = new StringBuffer(inputString.length());
+        StringTokenizer token = new StringTokenizer(inputString.trim(), " ");
+        String str;
+
+        while (token.hasMoreTokens()) {
+            buff.append(token.nextToken());
+
+            if (token.hasMoreTokens()) {
+                buff.append(" ");
+            }
+        }
+
+        return buff.toString();
+    }
+
+    protected static int findChar(String str, int begin) {
+        int ch = str.indexOf(' ', begin);
+
+        if (ch < 0) {
+            ch = str.length();
+        }
+
+        return ch;
+    }
+
+    public Words loadWords(InputStream stream) throws IOException {
         loadWordTable(stream);
         return this;
     }
-    
+
     /**
      * Read a AGI word table.
      *
      * @param stream Stream from where to read the words.
      * @return Returns the number of words readed.
      */
-    protected int loadWordTable(InputStream stream) throws IOException
-    {
+    protected int loadWordTable(InputStream stream) throws IOException {
         ByteCasterStream bstream = new ByteCasterStream(stream);
-        String           prev    = null;
-        String           curr;
-        int              i, wordNum, wordCount;
-        
+        String prev = null;
+        String curr;
+        int i, wordNum, wordCount;
+
         IOUtils.skip(stream, 52);
         wordCount = 0;
-        
-        while (true)
-        {
+
+        while (true) {
             i = stream.read();
-            
-            if (i < 0)
-            {
+
+            if (i < 0) {
                 break;
-            }
-            else if (i > 0)
-            {
+            } else if (i > 0) {
                 curr = prev.substring(0, i);
+            } else {
+                curr = "";
             }
-            else
-            {
-                curr = new String();
-            }
-            
-            while (true)
-            {
+
+            while (true) {
                 i = stream.read();
-                
-                if (i <= 0)
-                {
+
+                if (i <= 0) {
                     break;
-                }
-                else
-                {
-                    curr += (char)((i ^ 0x7F) & 0x7F);
-                    
-                    if (i >= 0x7F)
-                    {
+                } else {
+                    curr += (char) ((i ^ 0x7F) & 0x7F);
+
+                    if (i >= 0x7F) {
                         break;
                     }
                 }
             }
-            
-            if (i <= 0)
-            {
+
+            if (i <= 0) {
                 break;
             }
-            
+
             wordNum = bstream.hiloReadUnsignedShort();
-            prev    = curr;
-            
+            prev = curr;
+
             addWord(wordNum, curr);
             wordCount++;
         }
-        
+
         return wordCount;
     }
-    
-    protected boolean addWord(int wordNum, String word)
-    {
-        Word w = (Word)wordHash.get(word);
 
-        if (w != null)
-        {
+    protected boolean addWord(int wordNum, String word) {
+        Word w = (Word) wordHash.get(word);
+
+        if (w != null) {
             return false;
         }
-        
-        w        = new Word();
+
+        w = new Word();
         w.number = wordNum;
-        w.text   = word;
-        
+        w.text = word;
+
         // Map of word text to the Word object.
         wordHash.put(word, w);
-        
+
         // Map of word number to the Word object.
         wordNumToWordMap.put(wordNum, w);
-        
+
         return true;
     }
-    
-    public Word getWordByNumber(int wordNum) 
-    {
+
+    public Word getWordByNumber(int wordNum) {
         return wordNumToWordMap.get(wordNum);
     }
-    
-    public Word findWord(String word)
-    {
-        return (Word)wordHash.get(word);
+
+    public Word findWord(String word) {
+        return (Word) wordHash.get(word);
     }
-    
-    public int getWordCount()
-    {
+
+    public int getWordCount() {
         return wordHash.size();
     }
 
-    public Enumeration words()
-    {
+    public Enumeration words() {
         return wordHash.elements();
     }
-    
-    protected static String removeSpaces(String inputString)
-    {
-        StringBuffer    buff  = new StringBuffer(inputString.length());
-        StringTokenizer token = new StringTokenizer(inputString.trim(), " ");
-        String          str;
-        
-        while (token.hasMoreTokens())
-        {
-            buff.append(token.nextToken());
-            
-            if (token.hasMoreTokens())
-            {
-                buff.append(" ");
-            }
-        }
-        
-        return buff.toString();
-    }
 
-    protected static int findChar(String str, int begin)
-    {
-        int ch = str.indexOf(' ', begin);
-
-        if (ch < 0)
-        {
-            ch = str.length();
-        }
-        
-        return ch;
-    }
-    
-    public Vector parse(String inputString)
-    {
+    public Vector parse(String inputString) {
         Vector vector = new Vector(5, 2);
-        int    begin, end;
-        Word   word;
-        
+        int begin, end;
+        Word word;
+
         inputString = inputString.toLowerCase();
         inputString = removeSpaces(inputString);
-        begin       = 0;
-        
-        while (inputString.length() > 0)
-        {
-            end  = findChar(inputString, begin);
+        begin = 0;
+
+        while (inputString.length() > 0) {
+            end = findChar(inputString, begin);
             word = findWord(inputString.substring(0, end));
-            
-            if (word != null)
-            {
+
+            if (word != null) {
                 begin = 0;
-                
-                try
-                {
+
+                try {
                     inputString = inputString.substring(end + 1);
-                }
-                catch (StringIndexOutOfBoundsException sioobex)
-                {
+                } catch (StringIndexOutOfBoundsException sioobex) {
                     inputString = "";
                 }
 
-                if (word.number == 9999)
-                {
+                if (word.number == 9999) {
                     return vector;
                 }
-                
-                if (word.number != 0)
-                {
+
+                if (word.number != 0) {
                     vector.add(word);
                 }
-                
+
                 continue;
             }
-            
-            if (end >= inputString.length())
-            {
-                begin       = 0;
-                end         = findChar(inputString, 0);
-                
-                word        = new Word();
+
+            if (end >= inputString.length()) {
+                begin = 0;
+                end = findChar(inputString, 0);
+
+                word = new Word();
                 word.number = -1;
-                word.text   = inputString.substring(0, end);
+                word.text = inputString.substring(0, end);
                 vector.add(word);
-                
-                if (end >= inputString.length())
-                {
+
+                if (end >= inputString.length()) {
                     break;
                 }
-                
+
                 inputString = inputString.substring(end + 1);
                 continue;
             }
 
             begin = end + 1;
         }
-        
+
         System.out.println(vector);
         return vector;
     }

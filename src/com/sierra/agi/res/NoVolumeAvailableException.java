@@ -1,9 +1,9 @@
 /**
- *  NoVolumeAvailableException.java
- *  Adventure Game Interpreter Resource Package
- *
- *  Created by Dr. Z
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * NoVolumeAvailableException.java
+ * Adventure Game Interpreter Resource Package
+ * <p>
+ * Created by Dr. Z
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.res;
@@ -12,16 +12,14 @@ package com.sierra.agi.res;
  * There is no volume available. Throwed when a ResourceProvider is created
  * with a folder that doesn't contain any resource directory.
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public final class NoVolumeAvailableException extends ResourceException
-{
+public final class NoVolumeAvailableException extends ResourceException {
     /**
      * Creates new <code>NoVolumeAvailableException</code> without detail message.
      */
-    public NoVolumeAvailableException()
-    {
+    public NoVolumeAvailableException() {
         super();
     }
 
@@ -30,8 +28,7 @@ public final class NoVolumeAvailableException extends ResourceException
      *
      * @param msg Detail message.
      */
-    public NoVolumeAvailableException(String msg)
-    {
+    public NoVolumeAvailableException(String msg) {
         super(msg);
     }
 }

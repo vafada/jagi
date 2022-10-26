@@ -11,24 +11,25 @@ package com.sierra.agi.word;
 /**
  * Represent a word.
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public class Word extends Object implements Comparable
-{
-    /** Word number. */
+public class Word implements Comparable {
+    /**
+     * Word number.
+     */
     public int number;
-    
-    /** Word textual representation. */
+
+    /**
+     * Word textual representation.
+     */
     public String text;
-    
-    public String toString()
-    {
+
+    public String toString() {
         return text + " (" + number + ")";
     }
 
-    public int compareTo(Object o)
-    {
-        return text.compareTo(((Word)o).text);
+    public int compareTo(Object o) {
+        return text.compareTo(((Word) o).text);
     }
 }

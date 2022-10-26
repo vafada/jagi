@@ -1,17 +1,16 @@
 /**
- *  InventoryProvider.java
- *  Adventure Game Interpreter Inventory Package
- *
- *  Created by Dr. Z
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * InventoryProvider.java
+ * Adventure Game Interpreter Inventory Package
+ * <p>
+ * Created by Dr. Z
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.inv;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
-public interface InventoryProvider
-{
-    public InventoryObjects loadInventory(InputStream in) throws IOException;
+public interface InventoryProvider {
+    InventoryObjects loadInventory(InputStream in) throws IOException;
 }

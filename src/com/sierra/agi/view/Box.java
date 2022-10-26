@@ -8,33 +8,32 @@
 
 package com.sierra.agi.view;
 
-import java.awt.event.KeyEvent;
-import java.util.*;
 import com.sierra.agi.logic.LogicContext;
 
-public abstract class Box extends Object
-{
+import java.awt.event.KeyEvent;
+
+public abstract class Box {
     protected int timeout;
 
-    public Box()
-    {
+    public Box() {
         timeout = -1;
     }
 
     public abstract KeyEvent show(LogicContext logicContext, ViewScreen viewScreen, boolean modal);
 
     public abstract int getLineCount();
+
     public abstract int getColumnCount();
+
     public abstract int getWidth();
+
     public abstract int getHeight();
-    
-    public int getTimeout()
-    {
+
+    public int getTimeout() {
         return timeout;
     }
-    
-    public void setTimeout(int timeout)
-    {
+
+    public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
 }

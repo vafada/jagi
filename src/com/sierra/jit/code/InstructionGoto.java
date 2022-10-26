@@ -1,77 +1,62 @@
 /**
- *  InstructionGoto.java
- *  Just-in-Time Package
- *
- *  Created by Dr. Z.
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * InstructionGoto.java
+ * Just-in-Time Package
+ * <p>
+ * Created by Dr. Z.
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.jit.code;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-public class InstructionGoto extends Instruction
-{
-    protected String  name;
-    protected Scope   scope;
+public class InstructionGoto extends Instruction {
+    protected String name;
+    protected Scope scope;
     protected boolean begin;
-    
-    public InstructionGoto(String name)
-    {
+
+    public InstructionGoto(String name) {
         this.name = name;
     }
-    
-    public InstructionGoto(Scope scope, boolean begin)
-    {
+
+    public InstructionGoto(Scope scope, boolean begin) {
         this.scope = scope;
         this.begin = begin;
     }
 
-    public void compile(CompileContext context, Scope scope, DataOutputStream outs, int pc) throws IOException
-    {
+    public void compile(CompileContext context, Scope scope, DataOutputStream outs, int pc) throws IOException {
         int target;
-        
-        if (name != null)
-        {
+
+        if (name != null) {
             target = context.getLabelAddress(name);
-        }
-        else
-        {
-            if (begin)
-            {
+        } else {
+            if (begin) {
                 target = context.getScopeBegin(scope);
-            }
-            else
-            {
+            } else {
                 target = context.getScopeEnd(scope);
             }
         }
-        
-        if (target >= pc)
-        {
+
+        if (target >= pc) {
             target -= pc;
-        }
-        else
-        {
+        } else {
             target = -(pc - target);
         }
-    
+
         outs.write(0xa7);
         outs.writeShort(target);
     }
-    
-    public int getSize(CompileContext context, Scope scope, int pc)
-    {
+
+    public int getSize(CompileContext context, Scope scope, int pc) {
         return 3;
     }
 
-    public int getPopCount()
-    {
+    public int getPopCount() {
         return 0;
     }
 
-    public int getPushCount()
-    {
+    public int getPushCount() {
         return 0;
     }
 }

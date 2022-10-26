@@ -1,9 +1,9 @@
 /**
- *  ResourceException.java
- *  Adventure Game Interpreter Resource Package
- *
- *  Created by Dr. Z
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * ResourceException.java
+ * Adventure Game Interpreter Resource Package
+ * <p>
+ * Created by Dr. Z
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.res;
@@ -11,16 +11,14 @@ package com.sierra.agi.res;
 /**
  * Base class for Resource Exceptions.
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public class ResourceException extends Exception
-{
+public class ResourceException extends Exception {
     /**
      * Creates new <code>ResourceException</code> without detail message.
      */
-    public ResourceException()
-    {
+    public ResourceException() {
         super();
     }
 
@@ -29,8 +27,7 @@ public class ResourceException extends Exception
      *
      * @param msg Detail message.
      */
-    public ResourceException(String msg)
-    {
+    public ResourceException(String msg) {
         super(msg);
     }
 }

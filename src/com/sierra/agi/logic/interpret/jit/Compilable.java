@@ -8,7 +8,6 @@
 
 package com.sierra.agi.logic.interpret.jit;
 
-public interface Compilable
-{
-    public void compile(LogicCompileContext compileContext);
+public interface Compilable {
+    void compile(LogicCompileContext compileContext);
 }

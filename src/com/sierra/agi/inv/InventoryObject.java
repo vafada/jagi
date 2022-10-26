@@ -5,29 +5,28 @@
 package com.sierra.agi.inv;
 
 /**
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public final class InventoryObject extends Object
-{
-    /** Location */
-    protected short location;
-    
-    /** Name */
+public final class InventoryObject {
+    /**
+     * Name
+     */
     public String name;
+    /**
+     * Location
+     */
+    private short location;
 
-    public InventoryObject(short location)
-    {
+    public InventoryObject(short location) {
         this.location = location;
     }
-    
-    public String getName()
-    {
+
+    public String getName() {
         return name;
     }
-    
-    public short getLocation()
-    {
+
+    public short getLocation() {
         return location;
     }
 }

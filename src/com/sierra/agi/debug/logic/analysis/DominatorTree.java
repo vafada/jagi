@@ -1,52 +1,43 @@
 package com.sierra.agi.debug.logic.analysis;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * An implementation of the O(n log n) Lengauer-Tarjan algorithm for building
  * the Dominator Tree for a flow graph.
  */
 public class DominatorTree {
-    
+
     /**
      * Semidominator numbers by block.
      */
-    private Map<BasicBlock, Integer> semi;
+    private final Map<BasicBlock, Integer> semi;
 
     /**
      * Parents by block.
      */
-    private Map<BasicBlock, BasicBlock> parent;
+    private final Map<BasicBlock, BasicBlock> parent;
 
     /**
      * Predecessors by block.
      */
-    private Multimap<BasicBlock> pred;
+    private final Multimap<BasicBlock> pred;
 
     /**
      * Blocks in DFS order; used to look up a block from its semidominator
      * numbering.
      */
-    private ArrayList<BasicBlock> vertex;
+    private final ArrayList<BasicBlock> vertex;
 
     /**
      * Blocks by semidominator block.
      */
-    private Multimap<BasicBlock> bucket;
+    private final Multimap<BasicBlock> bucket;
 
     /**
      * idominator map, built iteratively.
      */
-    private Map<BasicBlock, BasicBlock> idom;
+    private final Map<BasicBlock, BasicBlock> idom;
 
     /**
      * Dominance frontiers of this dominator tree, built on demand.
@@ -63,23 +54,23 @@ public class DominatorTree {
      * ancestor relationships in the forest (the processed tree as it's built
      * back up).
      */
-    private Map<BasicBlock, BasicBlock> ancestor;
+    private final Map<BasicBlock, BasicBlock> ancestor;
 
     /**
      * Auxiliary data structure used by the O(m log n) eval/link implementation:
      * node with least semidominator seen during traversal of a path from node
      * to subtree root in the forest.
      */
-    private Map<BasicBlock, BasicBlock> label;
+    private final Map<BasicBlock, BasicBlock> label;
 
     /**
      * A topological traversal of the dominator tree, built on demand.
      */
     private LinkedList<BasicBlock> topologicalTraversalImpl;
-    
+
     /**
      * Constructor for DominatorTree.
-     * 
+     *
      * @param controlFlowGraph The ControlFlowGraph to build the DominatorTree for.
      */
     public DominatorTree(ControlFlowGraph controlFlowGraph) {
@@ -91,14 +82,14 @@ public class DominatorTree {
         this.idom = new HashMap<BasicBlock, BasicBlock>();
         this.ancestor = new HashMap<BasicBlock, BasicBlock>();
         this.label = new HashMap<BasicBlock, BasicBlock>();
-        
+
         this.depthFirstSearch(controlFlowGraph);
         this.computeDominators();
     }
 
     /**
      * Create and/or fetch the map of immediate dominators.
-     * 
+     *
      * @return the map from each block to its immediate dominator (if it has one).
      */
     public Map<BasicBlock, BasicBlock> getIdoms() {
@@ -107,7 +98,7 @@ public class DominatorTree {
 
     /**
      * Compute and/or fetch the dominator tree as a Multimap.
-     * 
+     *
      * @return the dominator tree.
      */
     public Multimap<BasicBlock> getDominatorTree() {
@@ -124,9 +115,9 @@ public class DominatorTree {
 
     /**
      * Compute and/or fetch the dominance frontiers as a Multimap.
-     * 
+     *
      * @return a Multimap where the set of nodes mapped to each key node is the
-     *         set of nodes in the key node's dominance frontier.
+     * set of nodes in the key node's dominance frontier.
      */
     public Multimap<BasicBlock> getDominanceFrontiers() {
         if (this.dominanceFrontiers == null) {
@@ -161,7 +152,7 @@ public class DominatorTree {
     /**
      * Create and/or fetch a topological traversal of the dominator tree, such
      * that for every node, idom(node) appears before node.
-     * 
+     *
      * @return the topological traversal of the dominator tree, as an immutable List.
      */
     public List<BasicBlock> topologicalTraversal() {
@@ -171,9 +162,9 @@ public class DominatorTree {
     /**
      * Create and/or fetch a reverse topological traversal of the dominator
      * tree, such that for every node, node appears before idom(node).
-     * 
+     *
      * @return a reverse topological traversal of the dominator tree, as an
-     *         immutable List.
+     * immutable List.
      */
     public Iterable<BasicBlock> reverseTopologicalTraversal() {
         return new Iterable<BasicBlock>() {
@@ -186,7 +177,7 @@ public class DominatorTree {
 
     /**
      * Depth-first search the graph and initialize data structures.
-     * 
+     *
      * @param root The root of the graph.
      */
     private void depthFirstSearch(ControlFlowGraph controlFlowGraph) {
@@ -263,12 +254,11 @@ public class DominatorTree {
     /**
      * Extract the node with the least-numbered semidominator in the (processed)
      * ancestors of the given node.
-     * 
+     *
      * @param v The node of interest.
-     * 
      * @return "If v is the root of a tree in the forest, return v. Otherwise,
-     *         let r be the root of the tree which contains v. Return any vertex
-     *         u != r of miniumum semi(u) on the path r-*v."
+     * let r be the root of the tree which contains v. Return any vertex
+     * u != r of miniumum semi(u) on the path r-*v."
      */
     private BasicBlock eval(BasicBlock v) {
         // This version of Lengauer-Tarjan implements
@@ -322,34 +312,11 @@ public class DominatorTree {
     }
 
     /**
-     * Multimap maps a key to a set of values.
-     */
-    @SuppressWarnings("serial")
-    public static class Multimap<T> extends HashMap<T, Set<T>> {
-        
-        /**
-         * Fetch the set for a given key, creating it if necessary.
-         * 
-         * @param key
-         *            - the key.
-         * @return the set of values mapped to the key.
-         */
-        @SuppressWarnings("unchecked")
-        @Override
-        public Set<T> get(Object key) {
-            if (!this.containsKey(key)) {
-                this.put((T) key, new HashSet<T>());
-            }
-            return super.get(key);
-        }
-    }
-
-    /**
      * Create/fetch the topological traversal of the dominator tree.
-     * 
+     *
      * @return {@link this.topologicalTraversal}, the traversal of the dominator
-     *         tree such that for any node n with a dominator, n appears before
-     *         idom(n).
+     * tree such that for any node n with a dominator, n appears before
+     * idom(n).
      */
     private LinkedList<BasicBlock> getToplogicalTraversalImplementation() {
         if (this.topologicalTraversalImpl == null) {
@@ -367,5 +334,27 @@ public class DominatorTree {
         }
 
         return this.topologicalTraversalImpl;
+    }
+
+    /**
+     * Multimap maps a key to a set of values.
+     */
+    @SuppressWarnings("serial")
+    public static class Multimap<T> extends HashMap<T, Set<T>> {
+
+        /**
+         * Fetch the set for a given key, creating it if necessary.
+         *
+         * @param key - the key.
+         * @return the set of values mapped to the key.
+         */
+        @SuppressWarnings("unchecked")
+        @Override
+        public Set<T> get(Object key) {
+            if (!this.containsKey(key)) {
+                this.put((T) key, new HashSet<T>());
+            }
+            return super.get(key);
+        }
     }
 }

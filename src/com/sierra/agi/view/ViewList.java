@@ -8,8 +8,7 @@
 
 package com.sierra.agi.view;
 
-public class ViewList extends Object
-{
+public class ViewList {
     public ViewSprite prev;
     public ViewSprite next;
 }

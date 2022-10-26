@@ -8,13 +8,9 @@
 
 package com.sierra.agi.view;
 
-import java.awt.*;
-import java.io.*;
-import com.sierra.agi.io.*;
-
 /**
  * View object.
- * <P>
+ * <p>
  * View resources contain some of the graphics for the game. Unlike the picture
  * resources which are full-screen background images, view resources are smaller
  * 'sprites' used in the game, such as animations and objects. They are also
@@ -43,7 +39,7 @@ import com.sierra.agi.io.*;
  * <TR><TD>9-10</TD><TD>Position of third loop (if any) (ls,ms)</TD></TR>
  * <TR><TD COLSPAN=2>....</TD></TR>
  * </TABLE>
- * <P>
+ * <p>
  * Note: Two of these loop references CAN point to the same place. This is done
  * when you want to use mirroring (more on this later).
  * </P>
@@ -55,7 +51,7 @@ import com.sierra.agi.io.*;
  * <TR><TD>3-4</TD><TD>Position of second cell (if any), relative to start of loop (ls,ms)</TD></TR>
  * <TR><TD>5-6</TD><TD>Position of third cell (if any), relative to start of loop (ls,ms)</TD></TR>
  * </TABLE>
- * <P>
+ * <p>
  * <TABLE BORDER=1>
  * <TR><TD COLSPAN=2><B>Cell Header (3 bytes)</B></TD></TR>
  * <TR><TD>Byte</TD><TD>Meaning</TD></TR>
@@ -167,53 +163,52 @@ import com.sierra.agi.io.*;
  * @author Lance Ewing (Documentation)
  * @version 0.00.00.01
  */
-public class View extends Object
-{
-    /** Inventory objects have descriptions. */
+public class View {
+    /**
+     * Inventory objects have descriptions.
+     */
     protected String description;
-    
-    /** Loops */
-    protected Loop loops[];
-    
+
+    /**
+     * Loops
+     */
+    protected Loop[] loops;
+
     /**
      * Creates a new View representation.
      *
      * @param context Game's Context (facultative)
-     * @param stream View's Data
-     * @param size View's Size (facultative if the stream.available() returns
-     *             the size of the view.)
+     * @param stream  View's Data
+     * @param size    View's Size (facultative if the stream.available() returns
+     *                the size of the view.)
      * @throws ViewException If error occur when loading while loading,
      *                       ViewException is throwed.
      */
-    public View(Loop[] loops, String description) throws ViewException
-    {
-        this.loops       = loops;
+    public View(Loop[] loops, String description) throws ViewException {
+        this.loops = loops;
         this.description = description;
     }
-    
+
     /**
      * Obtain a specific loop.
      *
      * @param loopNumber Loop number.
      * @return returns the wanted loop object.
      */
-    public Loop getLoop(short loopNumber)
-    {
+    public Loop getLoop(short loopNumber) {
         return loops[loopNumber];
     }
-    
+
     /**
      * Obtain the loop count.
      *
      * @return Returns the loop count.
      */
-    public short getLoopCount()
-    {
-        return (short)loops.length;
+    public short getLoopCount() {
+        return (short) loops.length;
     }
-    
-    public String getDescription()
-    {
+
+    public String getDescription() {
         return description;
     }
 }

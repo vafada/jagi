@@ -1,24 +1,19 @@
-
 package com.sierra.jit;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-public class ConstantMethod extends Constant
-{
+public class ConstantMethod extends Constant {
     protected int classIndex;
     protected int typeIndex;
 
-    public ConstantMethod(int classIndex, int typeIndex)
-    {
+    public ConstantMethod(int classIndex, int typeIndex) {
         this.classIndex = classIndex;
-        this.typeIndex  = typeIndex;
+        this.typeIndex = typeIndex;
     }
 
-    public boolean equals(Object o)
-    {
-        if (o instanceof ConstantMethod)
-        {
-            ConstantMethod c = (ConstantMethod)o;
+    public boolean equals(Object o) {
+        if (o instanceof ConstantMethod c) {
 
             return (c.classIndex == classIndex) && (c.typeIndex == typeIndex);
         }
@@ -26,13 +21,11 @@ public class ConstantMethod extends Constant
         return false;
     }
 
-    public int hashCode()
-    {
+    public int hashCode() {
         return typeIndex;
     }
 
-    public void compile(DataOutputStream outs) throws IOException
-    {
+    public void compile(DataOutputStream outs) throws IOException {
         outs.write(10);
         outs.writeShort(classIndex);
         outs.writeShort(typeIndex);

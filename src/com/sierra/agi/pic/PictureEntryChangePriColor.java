@@ -8,17 +8,14 @@
 
 package com.sierra.agi.pic;
 
-public class PictureEntryChangePriColor extends PictureEntry
-{
+public class PictureEntryChangePriColor extends PictureEntry {
     protected byte priColor;
 
-    public PictureEntryChangePriColor(byte priColor)
-    {
+    public PictureEntryChangePriColor(byte priColor) {
         this.priColor = priColor;
     }
 
-    public void draw(PictureContext pictureContext)
-    {
+    public void draw(PictureContext pictureContext) {
         pictureContext.priColor = priColor;
     }
 }

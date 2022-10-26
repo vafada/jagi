@@ -8,8 +8,8 @@
 
 package com.sierra.agi.pic;
 
-import java.awt.Point;
-import java.util.*;
+import java.awt.*;
+import java.util.Enumeration;
 
 /**
  * <P><B><CODE>0xF5</CODE></B>: Draw an X corner</P>
@@ -26,41 +26,35 @@ import java.util.*;
  * Example: <CODE>F5 16 16 18 12 16 F?</CODE>
  * </P><PRE>
  * (0x16, 0x12)   (0x18, 0x12)
- *             EXX
- *               X            S = Start
- *               X            E = End
- *               X            X = normal piXel
- *             SXX
+ * EXX
+ * X            S = Start
+ * X            E = End
+ * X            X = normal piXel
+ * SXX
  * (0x16, 0x16)   (0x18, 0x16)</PRE>
  */
-public class PictureEntryDrawX extends PictureEntryMulti
-{
-    public void draw(PictureContext pictureContext)
-    {
+public class PictureEntryDrawX extends PictureEntryMulti {
+    public void draw(PictureContext pictureContext) {
         Enumeration en = points.elements();
-        int         x1, y1, x2, y2;
-        boolean     b = true;
-        Point       p;
-        
-        p = (Point)en.nextElement();
+        int x1, y1, x2, y2;
+        boolean b = true;
+        Point p;
+
+        p = (Point) en.nextElement();
         x1 = x2 = p.x;
         y1 = y2 = p.y;
-        
-        while (en.hasMoreElements())
-        {
-            if (b)
-            {
-                x2 = ((Integer)en.nextElement()).intValue();
+
+        while (en.hasMoreElements()) {
+            if (b) {
+                x2 = ((Integer) en.nextElement()).intValue();
+            } else {
+                y2 = ((Integer) en.nextElement()).intValue();
             }
-            else
-            {
-                y2 = ((Integer)en.nextElement()).intValue();
-            }
-            
+
             pictureContext.drawLine(x1, y1, x2, y2);
             x1 = x2;
             y1 = y2;
-            b  = !b;
+            b = !b;
         }
     }
 }

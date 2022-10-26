@@ -1,87 +1,69 @@
 package com.agifans.jagi.appleii.kq2;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import com.agifans.jagi.res.v1.LogicalFile;
 import com.agifans.jagi.res.v1.LogicalFileCache;
 import com.sierra.agi.io.ByteCaster;
 import com.sierra.agi.io.CryptedInputStream;
-import com.sierra.agi.res.ResourceConfiguration;
-import com.sierra.agi.res.ResourceException;
-import com.sierra.agi.res.ResourceNotExistingException;
-import com.sierra.agi.res.ResourceProvider;
-import com.sierra.agi.res.ResourceTypeInvalidException;
+import com.sierra.agi.res.*;
 import com.sierra.agi.res.dir.ResourceDirectory;
+
+import java.io.*;
+import java.util.Properties;
 
 /**
  * An implementation of ResourceProvider that knows how to fetch the resource
  * data from the Apple II disk images for KQ2. The version of the interpreter
  * will usually be either v1.08 or v1.10.
- * 
+ *
  * @author Lance Ewing
  */
 public class KQ2ResourceProvider implements ResourceProvider {
-
-    /** 
-     * CRC value calculated from the resources of the KQ2 game.
-     */
-    protected long crc;
-
-    /** 
-     * Array holding the parsed data for the four DIR files.
-     */
-    protected ResourceDirectory entries[] = new ResourceDirectory[4];
-
-    /** 
-     * The physical file system directory containing the game's files.
-     */
-    protected File gameFileDirectory;
-
-    /** 
-     * Configuration used by various parts of the Java AGI interpreter to alter 
-     * how it behaves. Different versions of the AGI interpreter, and on different 
-     * platforms, often do things a bit differently. 
-     */
-    protected ResourceConfiguration configuration = new ResourceConfiguration();
 
     /**
      * Sierra's Decryption Key. This key is used to decrypt original sierra games data.
      */
     public static final String SIERRA_KEY = "Avis Durgan";
-
     /**
-     * Holds all of the game data files in Map keyed by logical file name, e.g. VOL.1, 
+     * CRC value calculated from the resources of the KQ2 game.
+     */
+    protected long crc;
+    /**
+     * Array holding the parsed data for the four DIR files.
+     */
+    protected ResourceDirectory[] entries = new ResourceDirectory[4];
+    /**
+     * The physical file system directory containing the game's files.
+     */
+    protected File gameFileDirectory;
+    /**
+     * Configuration used by various parts of the Java AGI interpreter to alter
+     * how it behaves. Different versions of the AGI interpreter, and on different
+     * platforms, often do things a bit differently.
+     */
+    protected ResourceConfiguration configuration = new ResourceConfiguration();
+    /**
+     * Holds all of the game data files in Map keyed by logical file name, e.g. VOL.1,
      * LOGDIR, OBJECT, etc.
      */
-    private LogicalFileCache logicalFileCache;
-    
+    private final LogicalFileCache logicalFileCache;
+
     /**
      * Constructor of KQ2ResourceProvider.
-     * 
+     *
      * @param gameFileDirectory The physical file system directory containing the game's files.
-     * @param logicalFiles A LogicalFile array that defines where on what disk images to get the game data.
-     * 
-     * @throws IOException 
+     * @param logicalFiles      A LogicalFile array that defines where on what disk images to get the game data.
+     * @throws IOException
      */
-    public KQ2ResourceProvider(File gameFileDirectory, LogicalFile[] logicalFiles) throws IOException {        
+    public KQ2ResourceProvider(File gameFileDirectory, LogicalFile[] logicalFiles) throws IOException {
         this.logicalFileCache = new LogicalFileCache(logicalFiles);
         this.gameFileDirectory = gameFileDirectory;
-        
+
         readDirectories();
         calculateCRC();
         calculateConfiguration();
     }
-    
-    /** 
+
+    /**
      * Calculate CRC value from the resources of the KQ2 game.
      */
     protected void calculateCRC() throws IOException {
@@ -90,17 +72,17 @@ public class KQ2ResourceProvider implements ResourceProvider {
         try {
             /* Check if the CRC has been pre-calculated */
             DataInputStream meta = new DataInputStream(new FileInputStream(dirf));
-            
+
             crc = meta.readLong();
             meta.close();
-            
+
         } catch (IOException ex) {
             /* CRC need to be calculated from scratch */
             crc = calculateCRCFromScratch();
-        
+
             /* Write down the CRC for next times */
             DataOutputStream meta = new DataOutputStream(new FileOutputStream(dirf));
-                
+
             meta.writeLong(crc);
             meta.close();
         }
@@ -108,9 +90,8 @@ public class KQ2ResourceProvider implements ResourceProvider {
 
     /**
      * Calculates the CRC value for the AGI game that has been loaded from scratch.
-     * 
+     *
      * @return The calculated CRC value.
-     * 
      * @throws IOException
      */
     protected int calculateCRCFromScratch() throws IOException {
@@ -121,7 +102,7 @@ public class KQ2ResourceProvider implements ResourceProvider {
                 c += entries[i].getCRC();
             }
         }
-        
+
         c += logicalFileCache.getLogicalFileByName("OBJECT").getCRC();
         c += logicalFileCache.getLogicalFileByName("WORDS.TOK").getCRC();
 
@@ -162,11 +143,11 @@ public class KQ2ResourceProvider implements ResourceProvider {
 
         configuration.name = props.getProperty(scrc, "Unknown Game");
     }
-    
+
     /**
      * Read all directory files.
-     * 
-     * @throws IOException 
+     *
+     * @throws IOException
      */
     public void readDirectories() throws IOException {
         LogicalFile logicDirFile = logicalFileCache.getLogicalFileByName("LOGDIR");
@@ -178,12 +159,11 @@ public class KQ2ResourceProvider implements ResourceProvider {
         entries[2] = new ResourceDirectory(new ByteArrayInputStream(viewDirFile.getRawData()));
         entries[3] = new ResourceDirectory(new ByteArrayInputStream(soundDirFile.getRawData()));
     }
-    
+
     /**
      * Checks that the given resource type value is valid.
-     * 
+     *
      * @param resType The resource type value to validate.
-     * 
      * @throws ResourceTypeInvalidException
      */
     protected void validateType(byte resType) throws ResourceTypeInvalidException {
@@ -207,14 +187,12 @@ public class KQ2ResourceProvider implements ResourceProvider {
      * Retrieve the count of resources of the specified type. Only valid with
      * Logic, Picture, Sound and View resource types.
      *
+     * @param resType Resource type
+     * @return Resource count.
      * @see com.sierra.agi.res.ResourceProvider#TYPE_LOGIC
      * @see com.sierra.agi.res.ResourceProvider#TYPE_PICTURE
      * @see com.sierra.agi.res.ResourceProvider#TYPE_SOUND
      * @see com.sierra.agi.res.ResourceProvider#TYPE_VIEW
-     * 
-     * @param resType Resource type
-     * 
-     * @return Resource count.
      */
     @Override
     public int count(byte resType) throws ResourceException {
@@ -231,14 +209,12 @@ public class KQ2ResourceProvider implements ResourceProvider {
      * Enumerate the resource numbers of the specified type. Only valid with
      * Logic, Picture, Sound and View resource types.
      *
+     * @param resType Resource type.
+     * @return Array containing the resource numbers.
      * @see com.sierra.agi.res.ResourceProvider#TYPE_LOGIC
      * @see com.sierra.agi.res.ResourceProvider#TYPE_PICTURE
      * @see com.sierra.agi.res.ResourceProvider#TYPE_SOUND
      * @see com.sierra.agi.res.ResourceProvider#TYPE_VIEW
-     * 
-     * @param resType Resource type.
-     * 
-     * @return Array containing the resource numbers.
      */
     @Override
     public short[] enumerate(byte resType) throws ResourceException {
@@ -249,16 +225,14 @@ public class KQ2ResourceProvider implements ResourceProvider {
 
     /**
      * Gets the LogicalFile that represents the request VOL.
-     * 
+     *
      * @param vol The VOL number to get the corresponding LogicalFile for.
-     * 
      * @return The LogicalFile that represents the request VOL.
-     * 
      * @throws IOException
      */
     protected LogicalFile getVolumeFile(int vol) throws IOException {
-        String volFileName = "VOL." + Integer.toString(vol);
-        
+        String volFileName = "VOL." + vol;
+
         LogicalFile logicalFile = logicalFileCache.getLogicalFileByName(volFileName);
 
         if (logicalFile == null) {
@@ -267,36 +241,35 @@ public class KQ2ResourceProvider implements ResourceProvider {
 
         return logicalFile;
     }
-    
+
     /**
      * Retrieve the size in bytes of the specified resource.
      *
-     * @param resType Resource type
+     * @param resType   Resource type
      * @param resNumber Resource number
-     * 
      * @return Returns the size in bytes of the specified resource.
      */
     @Override
     public int getSize(byte resType, short resNumber) throws ResourceException, IOException {
         int size = 0;
-        
+
         switch (resType) {
             case ResourceProvider.TYPE_OBJECT:
                 size = logicalFileCache.getLogicalFileByName("OBJECT").getLogicalFileSize();
                 break;
-                
+
             case ResourceProvider.TYPE_WORD:
                 size = logicalFileCache.getLogicalFileByName("WORDS.TOK").getLogicalFileSize();
                 break;
-                
+
             default:
                 try {
                     if (entries[resType] != null) {
                         int vol, offset;
-        
+
                         vol = entries[resType].getVolume(resNumber);
                         offset = entries[resType].getOffset(resNumber);
-        
+
                         if ((vol != -1) && (offset != -1)) {
                             LogicalFile logicalFile = getVolumeFile(vol);
                             size = logicalFile.getSubFileSize(offset);
@@ -317,21 +290,20 @@ public class KQ2ResourceProvider implements ResourceProvider {
      * InputStream is decrypted/uncompressed, if necessary, by this function.
      * (So you don't have to care about them.)
      *
-     * @param resType Resource type
+     * @param resType   Resource type
      * @param resNumber Resource number
-     * 
      * @return InputStream linked to the specified resource.
      */
     @Override
     public InputStream open(byte resType, short resNumber) throws ResourceException, IOException {
         InputStream inputStream = null;
-        
+
         switch (resType) {
             case ResourceProvider.TYPE_OBJECT:
                 LogicalFile logicalFile = logicalFileCache.getLogicalFileByName("OBJECT");
                 inputStream = new ByteArrayInputStream(logicalFile.getRawData());
                 break;
-            
+
             case ResourceProvider.TYPE_WORD:
                 inputStream = new ByteArrayInputStream(logicalFileCache.getLogicalFileByName("WORDS.TOK").getRawData());
                 break;
@@ -342,35 +314,35 @@ public class KQ2ResourceProvider implements ResourceProvider {
                 if (entries[resType] != null) {
                     int vol = entries[resType].getVolume(resNumber);
                     int offset = entries[resType].getOffset(resNumber);
-                
+
                     if ((vol != -1) && (offset != -1)) {
                         LogicalFile logicalFile = getVolumeFile(vol);
                         byte[] data = logicalFile.getSubFileRawData(offset);
-                        
+
                         if (resType == TYPE_LOGIC) {
                             int messagesStartPos = ByteCaster.lohiUnsignedShort(data, 0) + 2;
                             int numMessages = ByteCaster.lohiUnsignedByte(data, messagesStartPos);
                             int offsetCrypted = messagesStartPos + 3 + (numMessages * 2);
                             inputStream = new CryptedInputStream(new ByteArrayInputStream(data), SIERRA_KEY, offsetCrypted);
-                            
+
                         } else {
                             inputStream = new ByteArrayInputStream(data);
                         }
                     }
                 }
-                
+
             } catch (IndexOutOfBoundsException e) {
                 throw new ResourceTypeInvalidException();
             }
         }
-        
+
         if (inputStream == null) {
             throw new ResourceNotExistingException();
         } else {
             return inputStream;
         }
     }
-    
+
     /**
      * Return the provider type. Used has a optimization hint by the resource
      * cache. (For example, PROVIDER_TYPE_SLOW would mean to never ask twice for

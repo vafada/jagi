@@ -8,7 +8,6 @@
 
 package com.sierra.agi.sound;
 
-public interface Sound
-{
-    public SoundClip createClip();
+public interface Sound {
+    SoundClip createClip();
 }

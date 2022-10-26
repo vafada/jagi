@@ -1,104 +1,103 @@
 /**
- *  ContextDebugger.java
- *  Adventure Game Interpreter Debug Package
- *
- *  Created by Dr. Z.
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * ContextDebugger.java
+ * Adventure Game Interpreter Debug Package
+ * <p>
+ * Created by Dr. Z.
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.debug;
 
-import com.sierra.agi.logic.*;
-import com.sierra.agi.logic.debug.*;
-import com.sierra.agi.debug.logic.*;
+import com.sierra.agi.debug.logic.LogicComponent;
+import com.sierra.agi.logic.debug.LogicContextDebug;
+import com.sierra.agi.logic.debug.LogicContextEvent;
+import com.sierra.agi.logic.debug.LogicContextListener;
+import com.sierra.agi.logic.debug.LogicStackEntry;
+
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import javax.swing.tree.*;
 
-public class ContextDebugger extends JFrame implements LogicContextListener, ActionListener, ItemListener, TreeSelectionListener
-{
-    protected JComboBox         stackCombo;
-    protected boolean           stackChanging;
-    protected JTable            watchTable;
-    
+public class ContextDebugger extends JFrame implements LogicContextListener, ActionListener, ItemListener, TreeSelectionListener {
+    protected JComboBox stackCombo;
+    protected boolean stackChanging;
+    protected JTable watchTable;
+
     protected LogicContextDebug logicContext;
-    protected LogicComponent    logicComponent;
-    
+    protected LogicComponent logicComponent;
+
     protected DefaultTableModel variableModel;
 
-    public ContextDebugger(LogicContextDebug logicContext)
-    {
+    public ContextDebugger(LogicContextDebug logicContext) {
         super("Adventure Game Debugger");
-        
+
         logicComponent = new LogicComponent(logicContext.getCache());
-        variableModel  = new DefaultTableModel(new Object[256][2], new String[] {"Variable","Value"});
-        
-        JSplitPane  bottomPane = new JSplitPane();
-        JSplitPane  pane       = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        JScrollPane scroll     = new JScrollPane(logicComponent);
-        
+        variableModel = new DefaultTableModel(new Object[256][2], new String[]{"Variable", "Value"});
+
+        JSplitPane bottomPane = new JSplitPane();
+        JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        JScrollPane scroll = new JScrollPane(logicComponent);
+
         scroll.setPreferredSize(new Dimension(600, 100));
-        
-        bottomPane.add(getStack(),   JSplitPane.LEFT);
+
+        bottomPane.add(getStack(), JSplitPane.LEFT);
         bottomPane.add(getWatches(), JSplitPane.RIGHT);
-        
-        pane.add(scroll,     JSplitPane.TOP);
+
+        pane.add(scroll, JSplitPane.TOP);
         pane.add(bottomPane, JSplitPane.BOTTOM);
-        
+
         getContentPane().add(pane);
-        
+
         setMenuBar(addMenu());
         pack();
-        
+
         this.logicContext = logicContext;
         this.logicContext.addLogicContextListener(this);
     }
-    
-    protected Component getStack()
-    {
-        JTree       tree      = generateTree();
-        Container   container = new JPanel();
-        JScrollPane pane      = new JScrollPane(tree);
-        
+
+    protected Component getStack() {
+        JTree tree = generateTree();
+        Container container = new JPanel();
+        JScrollPane pane = new JScrollPane(tree);
+
         stackCombo = new JComboBox();
         stackCombo.setEditable(false);
         stackCombo.addItemListener(this);
-        
+
         pane.setPreferredSize(new Dimension(300, 100));
-        
+
         container.setLayout(new BorderLayout());
-        container.add(stackCombo,  BorderLayout.NORTH);
-        container.add(pane,        BorderLayout.CENTER);
-        
+        container.add(stackCombo, BorderLayout.NORTH);
+        container.add(pane, BorderLayout.CENTER);
+
         stackChanging = true;
         stackCombo.removeAllItems();
         stackCombo.addItem("<Not Running>");
         stackChanging = false;
-        
-        tree.addTreeSelectionListener(this);        
+
+        tree.addTreeSelectionListener(this);
         return container;
     }
-    
-    protected Component getWatches()
-    {
+
+    protected Component getWatches() {
         JScrollPane pane;
-        
+
         watchTable = new JTable();
-        pane       = new JScrollPane(watchTable);
-        
+        pane = new JScrollPane(watchTable);
+
         pane.setPreferredSize(new Dimension(300, 100));
         return pane;
     }
 
-    protected MenuBar addMenu()
-    {
-        MenuBar  menubar = new MenuBar();
-        Menu     menu;
+    protected MenuBar addMenu() {
+        MenuBar menubar = new MenuBar();
+        Menu menu;
         MenuItem item;
-        
+
         menu = new Menu("Debug");
         item = new MenuItem("Continue");
         item.setActionCommand("run");
@@ -131,93 +130,74 @@ public class ContextDebugger extends JFrame implements LogicContextListener, Act
         item.setShortcut(new MenuShortcut(KeyEvent.VK_T, true));
         menu.add(item);
         menubar.add(menu);
-        
+
         return menubar;
     }
 
-    public void logicBreakpointReached(LogicContextEvent ev)
-    {
+    public void logicBreakpointReached(LogicContextEvent ev) {
         Object[] stack = logicContext.getLogicStack();
-        int      i;
-    
+        int i;
+
         stackChanging = true;
         stackCombo.removeAllItems();
-        for (i = 0; i < stack.length; i++)
-        {
+        for (i = 0; i < stack.length; i++) {
             stackCombo.addItem(stack[i]);
         }
-        
-        stackCombo.setSelectedItem(stack[i-1]);
-        
-        LogicStackEntry entry = (LogicStackEntry)stack[i-1];
-                
+
+        stackCombo.setSelectedItem(stack[i - 1]);
+
+        LogicStackEntry entry = (LogicStackEntry) stack[i - 1];
+
         logicComponent.setLogic(entry.logic);
         logicComponent.setInstructionNumber(entry.in);
         stackChanging = false;
     }
 
-    public void logicResumed(LogicContextEvent ev)
-    {
+    public void logicResumed(LogicContextEvent ev) {
         stackChanging = true;
         stackCombo.removeAllItems();
         stackCombo.addItem("<Running>");
         stackChanging = false;
     }
-    
-    public void itemStateChanged(ItemEvent ev)
-    {
-        if (!stackChanging)
-        {
-            if (ev.getStateChange() == ItemEvent.SELECTED)
-            {
+
+    public void itemStateChanged(ItemEvent ev) {
+        if (!stackChanging) {
+            if (ev.getStateChange() == ItemEvent.SELECTED) {
                 Object o = ev.getItem();
-            
-                if (o instanceof LogicStackEntry)
-                {
-                    LogicStackEntry entry = (LogicStackEntry)o;
-                
+
+                if (o instanceof LogicStackEntry entry) {
+
                     logicComponent.setLogic(entry.logic);
                     logicComponent.setInstructionNumber(entry.in);
                 }
             }
         }
     }
-    
-    public void actionPerformed(ActionEvent ev)
-    {
+
+    public void actionPerformed(ActionEvent ev) {
         String s = ev.getActionCommand();
-        
-        if (s.equals("run"))
-        {
+
+        if (s.equals("run")) {
             logicContext.resumeExecution();
-        }
-        else if (s.equals("pause"))
-        {
+        } else if (s.equals("pause")) {
             logicContext.breakExecution();
-        }
-        else if (s.equals("stepinto"))
-        {
+        } else if (s.equals("stepinto")) {
             logicContext.stepIntoExecution();
-        }
-        else if (s.equals("stepout"))
-        {
+        } else if (s.equals("stepout")) {
             logicContext.stepOutExecution();
-        }
-        else if (s.equals("stepover"))
-        {
+        } else if (s.equals("stepover")) {
             logicContext.stepOverExecution();
         }
     }
 
-    protected JTree generateTree()
-    {
+    protected JTree generateTree() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Environment", true);
         DefaultMutableTreeNode node;
-        JTree                  tree;
+        JTree tree;
 
         node = new DefaultMutableTreeNode("Variables", false);
         root.add(node);
-        
+
         node = new DefaultMutableTreeNode("Flags", false);
         root.add(node);
 
@@ -231,17 +211,15 @@ public class ContextDebugger extends JFrame implements LogicContextListener, Act
 
         tree = new JTree(root, true);
         //tree.addMouseListener(this);
-     
+
         return tree;
     }
 
-    public void valueChanged(TreeSelectionEvent ev)
-    {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)ev.getPath().getLastPathComponent();
-        String                 name = node.toString();
-        
-        if (name.equals("Variables"))
-        {
+    public void valueChanged(TreeSelectionEvent ev) {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) ev.getPath().getLastPathComponent();
+        String name = node.toString();
+
+        if (name.equals("Variables")) {
             watchTable.setModel(variableModel);
         }
     }

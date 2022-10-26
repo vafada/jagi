@@ -8,46 +8,38 @@
 
 package com.sierra.jit.code;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-public class InstructionJumpSubRoutine extends Instruction
-{
+public class InstructionJumpSubRoutine extends Instruction {
     protected Scope target;
 
-    public InstructionJumpSubRoutine(Scope target)
-    {
+    public InstructionJumpSubRoutine(Scope target) {
         this.target = target;
     }
 
-    public void compile(CompileContext context, Scope scope, DataOutputStream outs, int pc) throws IOException
-    {
+    public void compile(CompileContext context, Scope scope, DataOutputStream outs, int pc) throws IOException {
         int target = context.getScopeBegin(this.target);
-    
-        if (target >= pc)
-        {
+
+        if (target >= pc) {
             target -= pc;
-        }
-        else
-        {
+        } else {
             target = -(pc - target);
         }
-    
+
         outs.write(0xa8);
         outs.writeShort(target);
     }
-    
-    public int getSize(CompileContext context, Scope scope, int pc)
-    {
+
+    public int getSize(CompileContext context, Scope scope, int pc) {
         return 3;
     }
 
-    public int getPopCount()
-    {
+    public int getPopCount() {
         return 0;
     }
 
-    public int getPushCount()
-    {
+    public int getPushCount() {
         return 0;
     }
 }

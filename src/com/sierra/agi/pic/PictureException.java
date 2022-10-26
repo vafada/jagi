@@ -9,16 +9,14 @@
 package com.sierra.agi.pic;
 
 /**
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public class PictureException extends Exception
-{
+public class PictureException extends Exception {
     /**
      * Creates new <code>PictureException</code> without detail message.
      */
-    public PictureException()
-    {
+    public PictureException() {
     }
 
     /**
@@ -27,8 +25,7 @@ public class PictureException extends Exception
      *
      * @param msg the detail message.
      */
-    public PictureException(String msg)
-    {
+    public PictureException(String msg) {
         super(msg);
     }
 }

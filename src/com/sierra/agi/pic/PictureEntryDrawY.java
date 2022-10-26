@@ -8,12 +8,12 @@
 
 package com.sierra.agi.pic;
 
-import java.awt.Point;
-import java.util.*;
+import java.awt.*;
+import java.util.Enumeration;
 
 /**
  * <P><B><CODE>0xF4</CODE></B>: Draw a Y corner</P>
- * <P>
+ * <p>
  * Function: The first two arguments for this action are the coordinates of
  * the starting position on the screen in the order x and then y. The remaining
  * arguments are in the order y1, x1, y2, x2, ...
@@ -26,39 +26,33 @@ import java.util.*;
  * Example: <CODE>F4 16 16 18 12 16 F? </CODE>
  * <PRE>
  * (0x12, 0x16)     (0x16, 0x16)
- *            E   S                  S = Start
- *            X   X                  E = End
- *            XXXXX                  X = normal piXel
+ * E   S                  S = Start
+ * X   X                  E = End
+ * XXXXX                  X = normal piXel
  * (0x12, 0x18)     (0x16, 0x18)</PRE></P>
  */
-public class PictureEntryDrawY extends PictureEntryMulti
-{
-    public void draw(PictureContext pictureContext)
-    {
+public class PictureEntryDrawY extends PictureEntryMulti {
+    public void draw(PictureContext pictureContext) {
         Enumeration en = points.elements();
-        int         x1, y1, x2, y2;
-        boolean     b = true;
-        Point       p;
-        
-        p = (Point)en.nextElement();
+        int x1, y1, x2, y2;
+        boolean b = true;
+        Point p;
+
+        p = (Point) en.nextElement();
         x1 = x2 = p.x;
         y1 = y2 = p.y;
-        
-        while (en.hasMoreElements())
-        {
-            if (b)
-            {
-                y2 = ((Integer)en.nextElement()).intValue();
+
+        while (en.hasMoreElements()) {
+            if (b) {
+                y2 = ((Integer) en.nextElement()).intValue();
+            } else {
+                x2 = ((Integer) en.nextElement()).intValue();
             }
-            else
-            {
-                x2 = ((Integer)en.nextElement()).intValue();
-            }
-            
+
             pictureContext.drawLine(x1, y1, x2, y2);
             x1 = x2;
             y1 = y2;
-            b  = !b;
+            b = !b;
         }
     }
 }

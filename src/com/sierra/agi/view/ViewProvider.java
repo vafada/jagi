@@ -8,10 +8,9 @@
 
 package com.sierra.agi.view;
 
-import java.io.*;
-import com.sierra.agi.view.*;
+import java.io.IOException;
+import java.io.InputStream;
 
-public interface ViewProvider
-{
-    public View loadView(InputStream inputStream, int size) throws IOException, ViewException;
+public interface ViewProvider {
+    View loadView(InputStream inputStream, int size) throws IOException, ViewException;
 }

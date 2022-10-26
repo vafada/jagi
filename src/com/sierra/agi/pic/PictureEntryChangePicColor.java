@@ -8,19 +8,14 @@
 
 package com.sierra.agi.pic;
 
-import com.sierra.agi.awt.*;
-
-public class PictureEntryChangePicColor extends PictureEntry
-{
+public class PictureEntryChangePicColor extends PictureEntry {
     protected byte picColor;
 
-    public PictureEntryChangePicColor(byte picColor)
-    {
+    public PictureEntryChangePicColor(byte picColor) {
         this.picColor = picColor;
     }
 
-    public void draw(PictureContext pictureContext)
-    {
+    public void draw(PictureContext pictureContext) {
         pictureContext.picColor = pictureContext.translatePixel(picColor);
     }
 }

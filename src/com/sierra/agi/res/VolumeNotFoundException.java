@@ -1,9 +1,9 @@
 /**
- *  NoVolumeAvailableException.java
- *  Adventure Game Interpreter Resource Package
- *
- *  Created by Dr. Z
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * NoVolumeAvailableException.java
+ * Adventure Game Interpreter Resource Package
+ * <p>
+ * Created by Dr. Z
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.res;
@@ -11,16 +11,14 @@ package com.sierra.agi.res;
 /**
  * The volume is not found.
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public final class VolumeNotFoundException extends ResourceException
-{
+public final class VolumeNotFoundException extends ResourceException {
     /**
      * Creates new <code>VolumeNotFoundException</code> without detail message.
      */
-    public VolumeNotFoundException()
-    {
+    public VolumeNotFoundException() {
         super();
     }
 
@@ -29,8 +27,7 @@ public final class VolumeNotFoundException extends ResourceException
      *
      * @param msg Detail message.
      */
-    public VolumeNotFoundException(String msg)
-    {
+    public VolumeNotFoundException(String msg) {
         super(msg);
     }
 }

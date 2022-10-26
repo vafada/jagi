@@ -1,25 +1,23 @@
 /**
- *  UnknownInstructionException.java
- *  Adventure Game Interpreter Logic Package
- *
- *  Created by Dr. Z.
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * UnknownInstructionException.java
+ * Adventure Game Interpreter Logic Package
+ * <p>
+ * Created by Dr. Z.
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.logic;
 
 /**
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public class UnknownInstructionException extends LogicException
-{
+public class UnknownInstructionException extends LogicException {
     /**
      * Creates new <code>UnknownInstructionException</code> without detail
      * message.
      */
-    public UnknownInstructionException()
-    {
+    public UnknownInstructionException() {
         super(null);
     }
 
@@ -29,8 +27,7 @@ public class UnknownInstructionException extends LogicException
      *
      * @param msg the detail message.
      */
-    public UnknownInstructionException(String msg)
-    {
+    public UnknownInstructionException(String msg) {
         super(null, msg);
     }
 }

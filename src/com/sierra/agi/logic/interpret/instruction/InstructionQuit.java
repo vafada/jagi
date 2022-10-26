@@ -4,14 +4,14 @@
 
 package com.sierra.agi.logic.interpret.instruction;
 
-import com.sierra.agi.*;
-import com.sierra.agi.logic.*;
-import com.sierra.agi.logic.interpret.*;
-import com.sierra.agi.logic.interpret.jit.*;
-import com.sierra.agi.view.*;
-import com.sierra.jit.code.*;
+import com.sierra.agi.logic.Logic;
+import com.sierra.agi.logic.LogicContext;
+import com.sierra.agi.logic.interpret.LogicReader;
+import com.sierra.agi.view.MessageBox;
+
 import java.awt.event.KeyEvent;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Quit Instruction.
@@ -21,84 +21,77 @@ import java.io.*;
  * If <CODE>n = 0</CODE>, asks "Press ENTER to quit. Press ESC to continue."
  * </P>
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public class InstructionQuit extends Instruction
-{
-    /** Parameter #1 */
+public class InstructionQuit extends Instruction {
+    /**
+     * Parameter #1
+     */
     protected short p1;
-    
-    /** Instruction Size */
+
+    /**
+     * Instruction Size
+     */
     protected int size;
-    
-    /** 
+
+    /**
      * Creates new Instruction.
      *
-     * @param context   Game context where this instance of the instruction will be used. (ignored)
-     * @param stream    Logic Stream. Instruction must be written in uninterpreted format.
-     * @param reader    LogicReader used in the reading of this instruction. (ignored)
-     * @param bytecode  Bytecode of the current instruction.
+     * @param context  Game context where this instance of the instruction will be used. (ignored)
+     * @param stream   Logic Stream. Instruction must be written in uninterpreted format.
+     * @param reader   LogicReader used in the reading of this instruction. (ignored)
+     * @param bytecode Bytecode of the current instruction.
      * @throws IOException I/O Exception are throw when <CODE>stream.read()</CODE> fails.
      */
-    public InstructionQuit(InputStream stream, LogicReader reader, short bytecode, short engineEmulation) throws IOException
-    {
-        if (engineEmulation > 0x2089)
-        {
-            p1   = (short)stream.read();
+    public InstructionQuit(InputStream stream, LogicReader reader, short bytecode, short engineEmulation) throws IOException {
+        if (engineEmulation > 0x2089) {
+            p1 = (short) stream.read();
             size = 2;
-        }
-        else
-        {
-            p1   = (short)1;
+        } else {
+            p1 = (short) 1;
             size = 1;
         }
     }
-    
+
     /**
      * Execute the Instruction.
      *
-     * @param logic         Logic used to execute the instruction.
-     * @param logicContext  Logic Context used to execute the instruction.
+     * @param logic        Logic used to execute the instruction.
+     * @param logicContext Logic Context used to execute the instruction.
      * @return Returns the number of byte of the uninterpreted instruction.
      */
-    public int execute(Logic logic, LogicContext logicContext)
-    {
-        if (p1 == (short)1)
-        {
+    public int execute(Logic logic, LogicContext logicContext) {
+        if (p1 == (short) 1) {
             System.exit(0);
-        }
-        else
-        {
+        } else {
             MessageBox box = new MessageBox("Press ENTER to quit.\r\nPress ESC to keep playing.");
-            KeyEvent   ev;
-            
+            KeyEvent ev;
+
             ev = box.show(logicContext, logicContext.getViewScreen(), true);
-            
-            if (ev.getKeyCode() == KeyEvent.VK_ENTER)
-            {
+
+            if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
                 System.exit(0);
             }
         }
-        
+
         return size;
     }
-    
-    public int getSize()
-    {
+
+    public int getSize() {
         return size;
     }
 
 //#ifdef DEBUG
+
     /**
      * Retreive the AGI Instruction name and parameters.
      * <B>For debugging purpose only. Will be removed in final releases.</B>
      *
      * @return Returns the textual names of the instruction.
      */
-    public String[] getNames()
-    {
-        return new String[] {"quit", Integer.toString(p1)};
+    public String[] getNames() {
+        return new String[]{"quit", Integer.toString(p1)};
     }
 //#endif DEBUG
 }

@@ -1,32 +1,34 @@
 /**
- *  ExpressionNot.java
- *  Adventure Game Interpreter Logic Package
- *
- *  Created by Dr. Z.
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * ExpressionNot.java
+ * Adventure Game Interpreter Logic Package
+ * <p>
+ * Created by Dr. Z.
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.logic.interpret.expression;
 
-import com.sierra.agi.*;
-import com.sierra.agi.logic.*;
-import com.sierra.agi.logic.interpret.*;
-import com.sierra.agi.logic.interpret.jit.*;
-import com.sierra.jit.code.*;
-import java.io.*;
-import java.util.*;
+import com.sierra.agi.logic.Logic;
+import com.sierra.agi.logic.LogicContext;
+import com.sierra.agi.logic.LogicException;
+import com.sierra.agi.logic.interpret.LogicReader;
+import com.sierra.agi.logic.interpret.jit.CompilableExpression;
+import com.sierra.agi.logic.interpret.jit.LogicCompileContext;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
 
 /**
  * Not Expression.
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public final class ExpressionNot extends Expression implements CompilableExpression
-{
+public final class ExpressionNot extends Expression implements CompilableExpression {
     /** Contained Expression */
-    protected Expression contained;
-    
+    private Expression contained;
+
     /**
      * Creates a new Not Expression.
      *
@@ -35,11 +37,10 @@ public final class ExpressionNot extends Expression implements CompilableExpress
      * @param reader    LogicReader used in the reading of this expression.
      * @param bytecode  Bytecode of the current expression.
      */
-    public ExpressionNot(InputStream stream, LogicReader reader, short bytecode, short engineEmulation) throws IOException, LogicException
-    {
+    public ExpressionNot(InputStream stream, LogicReader reader, short bytecode, short engineEmulation) throws IOException, LogicException {
         contained = reader.readExpression(stream);
     }
-    
+
     /**
      * Evaluate Expression.
      *
@@ -47,8 +48,7 @@ public final class ExpressionNot extends Expression implements CompilableExpress
      * @param logicContext  Logic Context used to evaluate the expression.
      * @return Returns the result of the evaluation.
      */
-    public boolean evaluate(Logic logic, LogicContext logicContext) throws Exception
-    {
+    public boolean evaluate(Logic logic, LogicContext logicContext) throws Exception {
         return !contained.evaluate(logic, logicContext);
     }
 
@@ -57,45 +57,24 @@ public final class ExpressionNot extends Expression implements CompilableExpress
      *
      * @return Returns the expression size.
      */
-    public int getSize()
-    {
+    public int getSize() {
         return contained.getSize() + 1;
     }
 
-    public void compile(LogicCompileContext compileContext, boolean jumpOnTrue, String destination)
-    {
-        ((CompilableExpression)contained).compile(compileContext, !jumpOnTrue, destination);
+    public void compile(LogicCompileContext compileContext, boolean jumpOnTrue, String destination) {
+        ((CompilableExpression) contained).compile(compileContext, !jumpOnTrue, destination);
     }
 
 //#ifdef DEBUG
+
     /**
      * Retreive contained expressions.
      * <B>For debugging purpose only. Will be removed in final releases.</B>
      *
      * @return Returns a Enumeration of expression contained. May be <CODE>null</CODE>.
      */
-    public Enumeration getContainedExpressions()
-    {
+    public Enumeration getContainedExpressions() {
         return new NotEnumeration();
-    }
-    
-    /**
-     * Enumeration support for this Expression.
-     */
-    class NotEnumeration extends Object implements Enumeration
-    {
-        protected int count = 0;
-        
-        public boolean hasMoreElements()
-        {
-            return (count == 0)? true: false;
-        }
-        
-        public Object nextElement()
-        {
-            count++;
-            return (count == 1)? contained: null;
-        }
     }
 
     /**
@@ -104,8 +83,7 @@ public final class ExpressionNot extends Expression implements CompilableExpress
      *
      * @return Returns a String representation.
      */
-    public String toString()
-    {
+    public String toString() {
         return "!" + contained.toString();
     }
 
@@ -115,9 +93,24 @@ public final class ExpressionNot extends Expression implements CompilableExpress
      *
      * @return Always return <CODE>null</CODE> in this implentation.
      */
-    public String[] getNames()
-    {
+    public String[] getNames() {
         return null;
+    }
+
+    /**
+     * Enumeration support for this Expression.
+     */
+    class NotEnumeration implements Enumeration {
+        protected int count = 0;
+
+        public boolean hasMoreElements() {
+            return count == 0;
+        }
+
+        public Object nextElement() {
+            count++;
+            return (count == 1) ? contained : null;
+        }
     }
 //#endif DEBUG
 }

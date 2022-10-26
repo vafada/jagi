@@ -8,35 +8,33 @@
 
 package com.sierra.agi.logic.interpret;
 
-import com.sierra.agi.logic.*;
-import com.sierra.agi.logic.interpret.*;
-import com.sierra.agi.logic.interpret.instruction.*;
-import com.sierra.agi.res.*;
+import com.sierra.agi.logic.Logic;
+import com.sierra.agi.logic.LogicException;
+import com.sierra.agi.logic.LogicProvider;
+import com.sierra.agi.logic.interpret.instruction.InstructionReturn;
+import com.sierra.agi.res.ResourceConfiguration;
 
-import java.util.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Vector;
 
-public class InterpretedLogicProvider extends Object implements LogicProvider
-{
+public class InterpretedLogicProvider implements LogicProvider {
     protected LogicReader reader;
 
-    public InterpretedLogicProvider(ResourceConfiguration config)
-    {
+    public InterpretedLogicProvider(ResourceConfiguration config) {
         reader = new LogicReader(config.engineEmulation);
     }
 
-    public Logic loadLogic(short logicNumber, InputStream inputStream, int size) throws IOException, LogicException
-    {
-        Vector     instructions = new Vector();
-        String[]   messages;
+    public Logic loadLogic(short logicNumber, InputStream inputStream, int size) throws IOException, LogicException {
+        Vector instructions = new Vector();
+        String[] messages;
 
         messages = reader.loadLogic(inputStream, size, instructions);
-        
-        if (!(instructions.get(instructions.size() - 1) instanceof InstructionReturn))
-        {
+
+        if (!(instructions.get(instructions.size() - 1) instanceof InstructionReturn)) {
             instructions.add(new InstructionReturn());
         }
-        
+
         return new LogicInterpreter(logicNumber, instructions, messages);
     }
 }

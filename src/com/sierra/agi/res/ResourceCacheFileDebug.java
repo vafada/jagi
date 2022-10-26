@@ -8,14 +8,11 @@
 
 package com.sierra.agi.res;
 
-import com.sierra.agi.logic.LogicException;
-import com.sierra.agi.view.ViewException;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
-public class ResourceCacheFileDebug extends ResourceCacheFile
-{
-    public ResourceCacheFileDebug(File file) throws IOException, ResourceException
-    {
+public class ResourceCacheFileDebug extends ResourceCacheFile {
+    public ResourceCacheFileDebug(File file) throws IOException, ResourceException {
         super(file);
     }
 }

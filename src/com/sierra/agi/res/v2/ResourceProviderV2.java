@@ -1,19 +1,22 @@
 /**
- *  ResourceProviderV2.java
- *  Adventure Game Interpreter Resource Package
- *
- *  Created by Dr. Z
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * ResourceProviderV2.java
+ * Adventure Game Interpreter Resource Package
+ * <p>
+ * Created by Dr. Z
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.res.v2;
 
-import  java.io.*;
-import  java.util.*;
+import com.sierra.agi.io.ByteCaster;
+import com.sierra.agi.io.ByteCasterStream;
+import com.sierra.agi.io.CryptedInputStream;
+import com.sierra.agi.io.SegmentedInputStream;
+import com.sierra.agi.res.*;
+import com.sierra.agi.res.dir.ResourceDirectory;
 
-import  com.sierra.agi.io.*;
-import  com.sierra.agi.res.*;
-import  com.sierra.agi.res.dir.ResourceDirectory;
+import java.io.*;
+import java.util.Properties;
 
 /**
  * Provide access to resources via the standard storage methods.
@@ -35,35 +38,29 @@ import  com.sierra.agi.res.dir.ResourceDirectory;
  * the VOL file as sort of a virtual storage device in itself that holds many
  * files. Some documents call the files contains in VOL files "resources".
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public class ResourceProviderV2 extends Object implements ResourceProvider
-{
-    /** Resource's CRC. */
-    protected long crc;
-    
-    /** Resource's Entries Tables. */
-    protected ResourceDirectory entries[] = new ResourceDirectory[4];
-    
-    /** Path to resources files. */
-    protected File path;
-    
-    /** Resource Configuration */
-    protected ResourceConfiguration configuration = new ResourceConfiguration();
-
+public class ResourceProviderV2 implements ResourceProvider {
     /**
      * AGDS's Decryption Key. This key is used to decrypt
      * AGDS games.
      */
     public static final String AGDS_KEY = "Alex Simkin";
-    
     /**
      * Sierra's Decryption Key. This key used to decrypt
      * original sierra games.
      */
     public static final String SIERRA_KEY = "Avis Durgan";
-    
+    /** Resource's CRC. */
+    protected long crc;
+    /** Resource's Entries Tables. */
+    protected ResourceDirectory[] entries = new ResourceDirectory[4];
+    /** Path to resources files. */
+    protected File path;
+    /** Resource Configuration */
+    protected ResourceConfiguration configuration = new ResourceConfiguration();
+
     /**
      * Initialize the ResourceProvider implentation to access
      * resource on the file system.
@@ -71,32 +68,46 @@ public class ResourceProviderV2 extends Object implements ResourceProvider
      * @param folder Resource's folder or File inside the resource's
      *               folder.
      */
-    public ResourceProviderV2(File folder) throws IOException, ResourceException
-    {
-        if (!folder.exists())
-        {
+    public ResourceProviderV2(File folder) throws IOException, ResourceException {
+        if (!folder.exists()) {
             throw new FileNotFoundException();
         }
 
-        if (folder.isDirectory())
-        {
+        if (folder.isDirectory()) {
             path = folder.getAbsoluteFile();
-        }
-        else
-        {
+        } else {
             path = folder.getParentFile();
         }
-        
+
         readVolumes();
         readDirectories();
         calculateCRC();
         calculateConfiguration();
     }
 
-    protected void validateType(byte resType) throws ResourceTypeInvalidException
-    {
-        if ((resType > TYPE_WORD) || (resType < TYPE_LOGIC))
-        {
+    public static String getKey(boolean agds) {
+        return System.getProperty("com.sierra.agi.res.key", agds ? AGDS_KEY : SIERRA_KEY);
+    }
+
+    public static boolean isCrypted(File file) {
+        boolean b = false;
+
+        try {
+            ByteCasterStream bstream = new ByteCasterStream(new FileInputStream(file));
+
+            if (bstream.lohiReadUnsignedShort() > file.length()) {
+                b = true;
+            }
+
+            bstream.close();
+            return b;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    protected void validateType(byte resType) throws ResourceTypeInvalidException {
+        if ((resType > TYPE_WORD) || (resType < TYPE_LOGIC)) {
             throw new ResourceTypeInvalidException();
         }
     }
@@ -113,18 +124,16 @@ public class ResourceProviderV2 extends Object implements ResourceProvider
      * @param  resType Resource type
      * @return Resource count.
      */
-    public int count(byte resType) throws ResourceException
-    {
+    public int count(byte resType) throws ResourceException {
         validateType(resType);
-        
-        if (resType >= TYPE_OBJECT)
-        {
+
+        if (resType >= TYPE_OBJECT) {
             return 1;
         }
-        
+
         return entries[resType].getCount();
     }
-    
+
     /**
      * Enumerate the resource numbers of the specified type.
      * Only valid with Locic, Picture, Sound and View resource
@@ -137,13 +146,12 @@ public class ResourceProviderV2 extends Object implements ResourceProvider
      * @param  resType Resource type
      * @return Array containing the resource numbers.
      */
-    public short[] enumerate(byte resType) throws ResourceException
-    {
+    public short[] enumerate(byte resType) throws ResourceException {
         validateType(resType);
-        
+
         return entries[resType].getNumbers();
     }
-    
+
     /**
      * Open the specified resource and return a pointer
      * to the resource. The InputStream is decrypted/decompressed,
@@ -162,80 +170,68 @@ public class ResourceProviderV2 extends Object implements ResourceProvider
      *                   <CODE>TYPE_WORD</CODE>
      * @return InputStream linked to the specified resource.
      */
-    public InputStream open(byte resType, short resNumber) throws ResourceException, IOException
-    {
+    public InputStream open(byte resType, short resNumber) throws ResourceException, IOException {
         File volf;
-        
-        switch (resType)
-        {
-        case ResourceProvider.TYPE_OBJECT:
-            volf = getDirectoryFile(resType);
-            
-            if (isCrypted(volf))
-            {
-                return new CryptedInputStream(new FileInputStream(volf), getKey(false));
-            }
-            else
-            {
-                return new FileInputStream(volf);
-            }
-            
-        case ResourceProvider.TYPE_WORD:
-            return new FileInputStream(getDirectoryFile(resType));
+
+        switch (resType) {
+            case ResourceProvider.TYPE_OBJECT:
+                volf = getDirectoryFile(resType);
+
+                if (isCrypted(volf)) {
+                    return new CryptedInputStream(new FileInputStream(volf), getKey(false));
+                } else {
+                    return new FileInputStream(volf);
+                }
+
+            case ResourceProvider.TYPE_WORD:
+                return new FileInputStream(getDirectoryFile(resType));
         }
 
-        try
-        {
-            if (entries[resType] != null)
-            {
+        try {
+            if (entries[resType] != null) {
                 int vol, offset, length;
-                
-                vol    = entries[resType].getVolume(resNumber);
+
+                vol = entries[resType].getVolume(resNumber);
                 offset = entries[resType].getOffset(resNumber);
-            
-                if ((vol != -1) && (offset != -1))
-                {
-                    byte[]           b;
+
+                if ((vol != -1) && (offset != -1)) {
+                    byte[] b;
                     RandomAccessFile file;
-                    InputStream      in;
-                    
-                    b    = new byte[5];
+                    InputStream in;
+
+                    b = new byte[5];
                     file = new RandomAccessFile(getVolumeFile(vol), "r");
                     file.seek(offset);
                     file.read(b, 0, 5);
-                    
-                    if ((b[0] != 0x12) || (b[1] != 0x34))
-                    {
+
+                    if ((b[0] != 0x12) || (b[1] != 0x34)) {
                         throw new CorruptedResourceException();
                     }
-                    
+
                     length = ByteCaster.lohiUnsignedShort(b, 3);
-                    in     = new SegmentedInputStream(file, offset + 5, length);
-                    
-                    if (resType == TYPE_LOGIC)
-                    {
+                    in = new SegmentedInputStream(file, offset + 5, length);
+
+                    if (resType == TYPE_LOGIC) {
                         int startPos, numMessages, offsetCrypted;
-                    
+
                         // Calculate the Messages Offset
                         file.read(b, 0, 2);
                         startPos = ByteCaster.lohiUnsignedShort(b, 0) + 2;
                         file.seek(offset + startPos + 5);
                         file.read(b, 0, 3);
-                        numMessages   = ByteCaster.lohiUnsignedByte(b, 0);
+                        numMessages = ByteCaster.lohiUnsignedByte(b, 0);
                         offsetCrypted = startPos + 3 + (numMessages * 2);
                         file.seek(offset + 5);
-                        
+
                         in = new CryptedInputStream(in, getKey(false), offsetCrypted);
                     }
-                    
+
                     return in;
                 }
             }
-            
+
             throw new ResourceNotExistingException();
-        }
-        catch (IndexOutOfBoundsException e)
-        {
+        } catch (IndexOutOfBoundsException e) {
             throw new ResourceTypeInvalidException();
         }
     }
@@ -247,93 +243,77 @@ public class ResourceProviderV2 extends Object implements ResourceProvider
      *
      * @return CRC of the resources.
      */
-    public long getCRC()
-    {
+    public long getCRC() {
         return crc;
     }
-    
-    public byte getProviderType()
-    {
+
+    public byte getProviderType() {
         return PROVIDER_TYPE_FAST;
     }
 
-    public static String getKey(boolean agds)
-    {
-        return System.getProperty("com.sierra.agi.res.key", agds? AGDS_KEY: SIERRA_KEY);
-    }
-    
-    public ResourceConfiguration getConfiguration()
-    {
+    public ResourceConfiguration getConfiguration() {
         return configuration;
     }
-    
-    protected File getVolumeFile(int vol) throws IOException
-    {
-        File file = getGameFile(path, "vol." + Integer.toString(vol));
-        
-        if (!file.exists())
-        {
+
+    protected File getVolumeFile(int vol) throws IOException {
+        File file = getGameFile(path, "vol." + vol);
+
+        if (!file.exists()) {
             throw new FileNotFoundException("File " + file.getPath() + " can't be found.");
         }
 
         return file;
     }
-    
+
     /**
      * To account for different platforms, where there may or may not be a case
      * sensitive file system, and where the game files may or may not have been
      * copied from another platform, we attempt here to look for the requested
      * game file firstly as-is, then in uppercase form, and then in lowercase.
-     * 
+     *
      * @param path The File that represents the folder that contains the game files.
      * @param fileName The name of the file to get.
-     * 
+     *
      * @return A File representing the game file.
      */
-    protected File getGameFile(File path, String fileName) 
-    {
+    protected File getGameFile(File path, String fileName) {
         File file = new File(path, fileName);
-        if (!file.exists()) 
-        {
+        if (!file.exists()) {
             file = new File(path, fileName.toUpperCase());
-            if (!file.exists()) 
-            {
+            if (!file.exists()) {
                 file = new File(path, fileName.toLowerCase());
             }
         }
         return file;
     }
-    
-    protected File getDirectoryFile(byte resType) throws IOException
-    {
+
+    protected File getDirectoryFile(byte resType) throws IOException {
         File file;
-    
-        switch (resType)
-        {
-        case ResourceProvider.TYPE_OBJECT:
-            file = getGameFile(path, "object");
-            break;
-        case ResourceProvider.TYPE_WORD:
-            file = getGameFile(path, "words.tok");
-            break;
-        case ResourceProvider.TYPE_LOGIC:
-            file = getGameFile(path, "logdir");
-            break;
-        case ResourceProvider.TYPE_PICTURE:
-            file = getGameFile(path, "picdir");
-            break;
-        case ResourceProvider.TYPE_SOUND:
-            file = getGameFile(path, "snddir");
-            break;
-        case ResourceProvider.TYPE_VIEW:
-            file = getGameFile(path, "viewdir");
-            break;
-        default:
-            return null;
+
+        switch (resType) {
+            case ResourceProvider.TYPE_OBJECT:
+                file = getGameFile(path, "object");
+                break;
+            case ResourceProvider.TYPE_WORD:
+                file = getGameFile(path, "words.tok");
+                break;
+            case ResourceProvider.TYPE_LOGIC:
+                file = getGameFile(path, "logdir");
+                break;
+            case ResourceProvider.TYPE_PICTURE:
+                file = getGameFile(path, "picdir");
+                break;
+            case ResourceProvider.TYPE_SOUND:
+                file = getGameFile(path, "snddir");
+                break;
+            case ResourceProvider.TYPE_VIEW:
+                file = getGameFile(path, "viewdir");
+                break;
+            default:
+                return null;
         }
 
-        if (!file.exists())
-        {
+        if (!file.exists()) {
             throw new FileNotFoundException();
         }
 
@@ -355,160 +335,134 @@ public class ResourceProviderV2 extends Object implements ResourceProvider
      *                   <CODE>TYPE_WORD</CODE>
      * @return Size in bytes of the specified resource.
      */
-    public int getSize(byte resType, short resNumber) throws ResourceException, IOException
-    {
-        switch (resType)
-        {
-        case ResourceProvider.TYPE_OBJECT:
-        case ResourceProvider.TYPE_WORD:
-            return (int)getDirectoryFile(resType).length();
+    public int getSize(byte resType, short resNumber) throws ResourceException, IOException {
+        switch (resType) {
+            case ResourceProvider.TYPE_OBJECT:
+            case ResourceProvider.TYPE_WORD:
+                return (int) getDirectoryFile(resType).length();
         }
 
-        try
-        {
-            if (entries[resType] != null)
-            {
+        try {
+            if (entries[resType] != null) {
                 int vol, offset;
-                
-                vol    = entries[resType].getVolume(resNumber);
+
+                vol = entries[resType].getVolume(resNumber);
                 offset = entries[resType].getOffset(resNumber);
-            
-                if ((vol != -1) && (offset != -1))
-                {
-                    byte[]           b;
+
+                if ((vol != -1) && (offset != -1)) {
+                    byte[] b;
                     RandomAccessFile file;
-                    
-                    b    = new byte[5];
+
+                    b = new byte[5];
                     file = new RandomAccessFile(getVolumeFile(vol), "r");
                     file.seek(offset);
                     file.read(b);
                     file.close();
-                    
-                    if ((b[0] != 0x12) || (b[1] != 0x34))
-                    {
+
+                    if ((b[0] != 0x12) || (b[1] != 0x34)) {
                         throw new CorruptedResourceException();
                     }
-                    
+
                     return ByteCaster.lohiUnsignedShort(b, 3);
                 }
             }
-            
+
             throw new ResourceNotExistingException();
-        }
-        catch (IndexOutOfBoundsException e)
-        {
+        } catch (IndexOutOfBoundsException e) {
             throw new ResourceTypeInvalidException();
         }
     }
-    
+
     /** Find volumes files */
-    protected void readVolumes() throws NoVolumeAvailableException
-    {
+    protected void readVolumes() throws NoVolumeAvailableException {
         boolean founded = false;
-        int     i       = 0;
-        File    volf;
-        
-        while (true)
-        {
-            volf = getGameFile(path, "vol." + Integer.toString(i));
-            
-            if (volf.exists())
-            {
+        int i = 0;
+        File volf;
+
+        while (true) {
+            volf = getGameFile(path, "vol." + i);
+
+            if (volf.exists()) {
                 founded = true;
                 break;
             }
-            
-            if (i > 50)
-            {
+
+            if (i > 50) {
                 break;
             }
-            
+
             i++;
         }
 
-        if (!founded)
-        {
+        if (!founded) {
             throw new NoVolumeAvailableException();
         }
     }
-    
+
     /** Read all directory files */
-    protected void readDirectories() throws NoDirectoryAvailableException, IOException
-    {
-        byte        i;
-        int         j;
-        File        dir;
+    protected void readDirectories() throws NoDirectoryAvailableException, IOException {
+        byte i;
+        int j;
+        File dir;
         InputStream stream;
-        
-        for (i = 0, j = 0; i < 4; i++)
-        {
+
+        for (i = 0, j = 0; i < 4; i++) {
             dir = getDirectoryFile(i);
-        
-            if (dir != null)
-            {
-                stream     = new FileInputStream(dir);
+
+            if (dir != null) {
+                stream = new FileInputStream(dir);
                 entries[i] = new ResourceDirectory(stream);
                 stream.close();
                 j++;
             }
         }
-        
-        if (j == 0)
-        {
+
+        if (j == 0) {
             throw new NoDirectoryAvailableException();
         }
     }
-    
+
     /** Calculate the Resource's CRC */
-    protected void calculateCRC() throws IOException
-    {
+    protected void calculateCRC() throws IOException {
         File dirf = new File(path, "vol.crc");
 
-        try
-        {
+        try {
             /* Check if the CRC has been pre-calculated */
             DataInputStream meta = new DataInputStream(new FileInputStream(dirf));
-            
+
             crc = meta.readLong();
             meta.close();
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             /* CRC need to be calculated from scratch */
             crc = calculateCRCFromScratch();
-        
+
             /* Write down the CRC for next times */
             DataOutputStream meta = new DataOutputStream(new FileOutputStream(dirf));
-                
+
             meta.writeLong(crc);
             meta.close();
         }
     }
 
-    protected int calculateCRCFromScratch() throws IOException
-    {
-        File dir[];
-        int  i, j, c;
-        
-        c       = 0;
-        dir     = new File[2];
-        dir[0]  = getGameFile(path, "object");
-        dir[1]  = getGameFile(path, "words.tok");
+    protected int calculateCRCFromScratch() throws IOException {
+        File[] dir;
+        int i, j, c;
 
-        for (i = 0; i < entries.length; i++)
-        {
-            if (entries[i] != null)
-            {
+        c = 0;
+        dir = new File[2];
+        dir[0] = getGameFile(path, "object");
+        dir[1] = getGameFile(path, "words.tok");
+
+        for (i = 0; i < entries.length; i++) {
+            if (entries[i] != null) {
                 c += entries[i].getCRC();
             }
         }
-            
-        for (i = 0; i < dir.length; i++)
-        {
+
+        for (i = 0; i < dir.length; i++) {
             FileInputStream stream = new FileInputStream(dir[i]);
 
-            while (true)
-            {
+            while (true) {
                 j = stream.read();
 
                 if (j == -1)
@@ -516,72 +470,42 @@ public class ResourceProviderV2 extends Object implements ResourceProvider
 
                 c += j;
             }
-                    
+
             stream.close();
         }
-        
+
         return c;
     }
 
-    protected void calculateConfiguration()
-    {
+    protected void calculateConfiguration() {
         Properties props = new Properties();
-        String     scrc  = "0x" + Long.toString(crc, 16);
-        String     ver;
-        boolean    amiga, agds;
+        String scrc = "0x" + Long.toString(crc, 16);
+        String ver;
+        boolean amiga, agds;
 
-        try
-        {
+        try {
             props.load(getClass().getResourceAsStream("version.conf"));
+        } catch (IOException ioex) {
         }
-        catch (IOException ioex)
-        {
-        }
-        
-        ver   = props.getProperty(scrc, "0x2917");
-        configuration.amiga = ver.indexOf('a') != -1;
-        configuration.agds  = ver.indexOf('g') != -1;
-        ver   = ver.substring(2);
 
-        while (!Character.isDigit(ver.charAt(ver.length() - 1)))
-        {
+        ver = props.getProperty(scrc, "0x2917");
+        configuration.amiga = ver.indexOf('a') != -1;
+        configuration.agds = ver.indexOf('g') != -1;
+        ver = ver.substring(2);
+
+        while (!Character.isDigit(ver.charAt(ver.length() - 1))) {
             ver = ver.substring(0, ver.length() - 1);
         }
 
         configuration.engineEmulation = (Integer.valueOf(ver, 16).shortValue());
-        
+
         props = new Properties();
 
-        try
-        {
+        try {
             props.load(getClass().getResourceAsStream("name.conf"));
+        } catch (IOException ioex) {
         }
-        catch (IOException ioex)
-        {
-        }
-        
+
         configuration.name = props.getProperty(scrc, "Unknown Game");
-    }
-    
-    public static boolean isCrypted(File file)
-    {
-        boolean b = false;
-        
-        try
-        {
-            ByteCasterStream bstream = new ByteCasterStream(new FileInputStream(file));
-            
-            if (bstream.lohiReadUnsignedShort() > file.length())
-            {
-                b = true;
-            }
-            
-            bstream.close();
-            return b;
-        }
-        catch (Throwable t)
-        {
-            return false;
-        }
     }
 }

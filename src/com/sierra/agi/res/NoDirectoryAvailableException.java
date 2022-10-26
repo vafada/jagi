@@ -1,9 +1,9 @@
 /**
- *  NoDirectoryAvailableException.java
- *  Adventure Game Interpreter Resource Package
- *
- *  Created by Dr. Z
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * NoDirectoryAvailableException.java
+ * Adventure Game Interpreter Resource Package
+ * <p>
+ * Created by Dr. Z
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.res;
@@ -12,16 +12,14 @@ package com.sierra.agi.res;
  * There is no directory available. Throwed when a ResourceProvider is created
  * with a folder that doesn't contain any resource directory.
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public final class NoDirectoryAvailableException extends ResourceException
-{
+public final class NoDirectoryAvailableException extends ResourceException {
     /**
      * Creates new <code>NoDirectoryAvailableException</code> without detail message.
      */
-    public NoDirectoryAvailableException()
-    {
+    public NoDirectoryAvailableException() {
         super();
     }
 
@@ -30,8 +28,7 @@ public final class NoDirectoryAvailableException extends ResourceException
      *
      * @param msg Detail message.
      */
-    public NoDirectoryAvailableException(String msg)
-    {
+    public NoDirectoryAvailableException(String msg) {
         super(msg);
     }
 }

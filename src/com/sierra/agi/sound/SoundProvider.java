@@ -8,9 +8,9 @@
 
 package com.sierra.agi.sound;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
-public interface SoundProvider
-{
-    public Sound loadSound(InputStream inputStream) throws IOException;
+public interface SoundProvider {
+    Sound loadSound(InputStream inputStream) throws IOException;
 }

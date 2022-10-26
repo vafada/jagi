@@ -1,28 +1,31 @@
 /**
- *  ExpressionHas.java
- *  Adventure Game Interpreter Logic Package
- *
- *  Created by Dr. Z.
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * ExpressionHas.java
+ * Adventure Game Interpreter Logic Package
+ * <p>
+ * Created by Dr. Z.
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.logic.interpret.expression;
 
-import com.sierra.agi.*;
-import com.sierra.agi.logic.*;
-import com.sierra.agi.logic.interpret.*;
-import com.sierra.agi.logic.interpret.jit.*;
-import com.sierra.jit.code.*;
-import java.io.*;
+import com.sierra.agi.logic.Logic;
+import com.sierra.agi.logic.LogicContext;
+import com.sierra.agi.logic.interpret.LogicReader;
+import com.sierra.agi.logic.interpret.jit.CompilableExpression;
+import com.sierra.agi.logic.interpret.jit.LogicCompileContext;
+import com.sierra.jit.code.InstructionConditionalGoto;
+import com.sierra.jit.code.Scope;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Has Expression.
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public final class ExpressionHas extends ExpressionUni implements CompilableExpression
-{
+public final class ExpressionHas extends ExpressionUni implements CompilableExpression {
     /**
      * Creates a new Has Expression.
      *
@@ -31,8 +34,7 @@ public final class ExpressionHas extends ExpressionUni implements CompilableExpr
      * @param reader    LogicReader used in the reading of this expression.
      * @param bytecode  Bytecode of the current expression.
      */
-    public ExpressionHas(InputStream stream, LogicReader reader, short bytecode, short engineEmulation) throws IOException
-    {
+    public ExpressionHas(InputStream stream, LogicReader reader, short bytecode, short engineEmulation) throws IOException {
         super(stream, bytecode);
     }
 
@@ -43,35 +45,33 @@ public final class ExpressionHas extends ExpressionUni implements CompilableExpr
      * @param logicContext  Logic Context used to evaluate the expression.
      * @return Returns the result of the evaluation.
      */
-    public boolean evaluate(Logic logic, LogicContext logicContext)
-    {
+    public boolean evaluate(Logic logic, LogicContext logicContext) {
         return (logicContext.getObject(p1) == LogicContext.EGO_OWNED);
     }
-    
-    public void compile(LogicCompileContext compileContext, boolean jumpOnTrue, String destination)
-    {
+
+    public void compile(LogicCompileContext compileContext, boolean jumpOnTrue, String destination) {
         Scope scope = compileContext.scope;
-        
+
         scope.addLoadVariable("logicContext");
         scope.addPushConstant(p1);
         scope.addInvokeVirtual("com.sierra.agi.logic.LogicContext", "getObject", "(S)S");
         scope.addPushConstant(LogicContext.EGO_OWNED);
-        
+
         scope.addConditionalGoto(
-            jumpOnTrue? InstructionConditionalGoto.CONDITION_IFNE: InstructionConditionalGoto.CONDITION_IFEQ,
-            destination);
+                jumpOnTrue ? InstructionConditionalGoto.CONDITION_IFNE : InstructionConditionalGoto.CONDITION_IFEQ,
+                destination);
     }
 
 //#ifdef DEBUG
+
     /**
      * Retreive the AGI Expression name and parameters.
      * <B>For debugging purpose only. Will be removed in final releases.</B>
      *
      * @return Returns the textual name of the expression.
      */
-    public String[] getNames()
-    {
-        return new String[] {"has", "i" + p1};
+    public String[] getNames() {
+        return new String[]{"has", "i" + p1};
     }
 //#endif DEBUG
 }

@@ -11,7 +11,6 @@ package com.sierra.agi.pic;
 import java.io.IOException;
 import java.io.InputStream;
 
-public interface PictureProvider
-{
-    public Picture loadPicture(InputStream inputStream) throws IOException, PictureException;
+public interface PictureProvider {
+    Picture loadPicture(InputStream inputStream) throws IOException, PictureException;
 }

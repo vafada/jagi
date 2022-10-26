@@ -1,25 +1,23 @@
 /**
- *  UnknownExpressionException.java
- *  Adventure Game Interpreter Logic Package
- *
- *  Created by Dr. Z.
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * UnknownExpressionException.java
+ * Adventure Game Interpreter Logic Package
+ * <p>
+ * Created by Dr. Z.
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.logic;
 
 /**
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public class UnknownExpressionException extends LogicException
-{
+public class UnknownExpressionException extends LogicException {
     /**
      * Creates new <code>UnknownExpressionException</code> without detail
      * message.
      */
-    public UnknownExpressionException()
-    {
+    public UnknownExpressionException() {
         super(null);
     }
 
@@ -29,8 +27,7 @@ public class UnknownExpressionException extends LogicException
      *
      * @param msg the detail message.
      */
-    public UnknownExpressionException(String msg)
-    {
+    public UnknownExpressionException(String msg) {
         super(null, msg);
     }
 }

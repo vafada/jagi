@@ -8,7 +8,6 @@
 
 package com.sierra.agi.pic;
 
-public abstract class PictureEntry extends Object
-{
+public abstract class PictureEntry {
     public abstract void draw(PictureContext pictureContext);
 }

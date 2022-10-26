@@ -1,14 +1,16 @@
 /**
- *  PictureInputStream.java
- *  Adventure Game Interpreter I/O Package
- *
- *  Created by Dr. Z
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * PictureInputStream.java
+ * Adventure Game Interpreter I/O Package
+ * <p>
+ * Created by Dr. Z
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.io;
 
-import java.io.*;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Picture Input Stream.
@@ -26,110 +28,88 @@ import java.io.*;
  * Compressed picture code: <CODE>F0 6F 81 24 5F 07 F2 5F 81 46 7 ...</CODE>
  * </P>
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public class PictureInputStream extends FilterInputStream
-{
+public class PictureInputStream extends FilterInputStream {
     /** Previous Byte */
     protected int previous;
-    
+
     /** Current Byte */
     protected int current;
 
     protected int mode = 0;
-    
+
     /**
      * Creates new Picture Input Stream
      */
-    public PictureInputStream(InputStream in)
-    {
+    public PictureInputStream(InputStream in) {
         super(in);
     }
-    
-    public int read(byte[] b, int off, int len) throws IOException
-    {
+
+    public int read(byte[] b, int off, int len) throws IOException {
         int t = 0;
         int n;
-    
-        while (len > 0)
-        {
+
+        while (len > 0) {
             n = read();
-            
-            if (n < 0)
-            {
+
+            if (n < 0) {
                 break;
             }
         }
-        
+
         return t;
     }
-    
-    public int read() throws IOException
-    {
+
+    public int read() throws IOException {
         int x = 0, y;
 
-        if (in == null)
-        {
+        if (in == null) {
             return -1;
         }
-        
-        if (mode <= 1)
-        {
+
+        if (mode <= 1) {
             current = in.read();
 
-            if (mode == 0)
-            {
+            if (mode == 0) {
                 x = current;
-            }
-            else
-            {
-                x   = (current & 0xf0);
+            } else {
+                x = (current & 0xf0);
                 x >>= 4;
-                y   = (previous & 0x0f);
+                y = (previous & 0x0f);
                 y <<= 4;
-                x  |= y;
+                x |= y;
             }
-        
-            if (x == 0xff)
-            {
+
+            if (x == 0xff) {
                 close();
                 return -1;
             }
 
-            if (x == 0xf0 || x == 0xf2)
-            {
-                if (mode == 1)
-                {
+            if (x == 0xf0 || x == 0xf2) {
+                if (mode == 1) {
                     mode = 2;
-                }
-                else
-                {
+                } else {
                     mode = 3;
                 }
             }
-        }
-        else if (mode == 2)
-        {
+        } else if (mode == 2) {
             mode = 0;
             return current & 0x0f;
-        }
-        else if (mode == 3)
-        {
-            mode    = 1;
+        } else if (mode == 3) {
+            mode = 1;
             current = in.read();
-            x       = current & 0xf0;
-            x     >>= 4;
+            x = current & 0xf0;
+            x >>= 4;
         }
-        
+
         previous = current;
         return x;
     }
-    
-    public void close() throws IOException
-    {
-        if (in != null)
-        {
+
+    public void close() throws IOException {
+        if (in != null) {
             in.close();
             in = null;
         }

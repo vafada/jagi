@@ -8,10 +8,9 @@
 
 package com.sierra.agi.word;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
-public interface WordsProvider
-{
-    public Words loadWords(InputStream in) throws IOException;
+public interface WordsProvider {
+    Words loadWords(InputStream in) throws IOException;
 }

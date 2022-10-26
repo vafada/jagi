@@ -8,35 +8,29 @@
 
 package com.sierra.agi.menu;
 
-public class AgiMenuItem extends Object
-{
-    protected String  name;
-    protected short   controller;
+public class AgiMenuItem {
+    protected String name;
+    protected short controller;
     protected boolean enabled = true;
-    
-    public AgiMenuItem(String name, short controller)
-    {
-        this.name       = name;
+
+    public AgiMenuItem(String name, short controller) {
+        this.name = name;
         this.controller = controller;
     }
-    
-    public String toString()
-    {
+
+    public String toString() {
         return name;
     }
-    
-    public boolean isEnabled()
-    {
+
+    public boolean isEnabled() {
         return enabled;
     }
-    
-    public void setEnable(boolean enabled)
-    {
+
+    public void setEnable(boolean enabled) {
         this.enabled = enabled;
     }
-    
-    public short getController()
-    {
+
+    public short getController() {
         return controller;
     }
 }

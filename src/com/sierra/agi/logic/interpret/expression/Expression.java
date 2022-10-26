@@ -1,33 +1,32 @@
 /**
- *  Expression.java
- *  Adventure Game Interpreter Logic Package
- *
- *  Created by Dr. Z.
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * Expression.java
+ * Adventure Game Interpreter Logic Package
+ * <p>
+ * Created by Dr. Z.
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.logic.interpret.expression;
 
-import com.sierra.agi.*;
-import com.sierra.agi.logic.*;
-import com.sierra.agi.logic.interpret.*;
-import java.io.*;
-import java.util.*;
+import com.sierra.agi.logic.Logic;
+import com.sierra.agi.logic.LogicContext;
+import com.sierra.agi.logic.interpret.LogicReader;
+
+import java.io.InputStream;
+import java.util.Enumeration;
 
 /**
  * Base Class for all Logic's Boolean Expressions.
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public abstract class Expression extends Object
-{
+public abstract class Expression {
     /**
      * Creates a new Expression. Does absolutly nothing in this class, it is
      * included as a formal declaration.
      */
-    protected Expression()
-    {
+    protected Expression() {
     }
 
     /**
@@ -39,10 +38,9 @@ public abstract class Expression extends Object
      * @param reader       LogicReader used in the reading of this expression.
      * @param bytecode     Bytecode of the current expression.
      */
-    protected Expression(InputStream stream, LogicReader reader, short bytecode, short engineEmulation)
-    {
+    protected Expression(InputStream stream, LogicReader reader, short bytecode, short engineEmulation) {
     }
-    
+
     /**
      * Evaluate Expression.
      *
@@ -57,11 +55,10 @@ public abstract class Expression extends Object
      *
      * @return Returns the expression size.
      */
-    public int getSize()
-    {
+    public int getSize() {
         return 1;
     }
-    
+
     /**
      * Retreive the AGI Expression name and parameters.
      * <B>For debugging purpose only. Will be removed in final releases.</B>
@@ -76,35 +73,30 @@ public abstract class Expression extends Object
      *
      * @return Returns a Enumeration of expression contained. May be <CODE>null</CODE>.
      */
-    public Enumeration getContainedExpressions()
-    {
+    public Enumeration getContainedExpressions() {
         return null;
     }
-    
-    public String toString()
-    {
-        StringBuffer buff  = new StringBuffer(32);
-        String[]     names = getNames();
-        
+
+    public String toString() {
+        StringBuffer buff = new StringBuffer(32);
+        String[] names = getNames();
+
         buff.append(names[0]);
-        
-        if (names.length > 1)
-        {
+
+        if (names.length > 1) {
             int i;
-            
+
             buff.append("(");
-            for (i = 1; i < names.length; i++)
-            {
-                if (i != 1)
-                {
+            for (i = 1; i < names.length; i++) {
+                if (i != 1) {
                     buff.append(",");
                 }
-                
+
                 buff.append(names[i]);
             }
             buff.append(")");
         }
-        
+
         return buff.toString();
     }
 }

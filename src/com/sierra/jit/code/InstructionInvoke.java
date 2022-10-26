@@ -8,63 +8,50 @@
 
 package com.sierra.jit.code;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-public class InstructionInvoke extends Instruction
-{
-    protected int methodNumber;
-    protected int methodType;
-    
-    protected int pop;
-    protected int push;
-    
+public class InstructionInvoke extends Instruction {
     public static final int TYPE_VIRTUAL = 0;
     public static final int TYPE_SPECIAL = 1;
-    public static final int TYPE_STATIC  = 2;
-    
-    public InstructionInvoke(int methodNumber, int methodType, String signature)
-    {
+    public static final int TYPE_STATIC = 2;
+    protected int methodNumber;
+    protected int methodType;
+    protected int pop;
+    protected int push;
+
+    public InstructionInvoke(int methodNumber, int methodType, String signature) {
         this.methodNumber = methodNumber;
-        this.methodType   = methodType;
-        
+        this.methodType = methodType;
+
         DescriptorTokenizer tokenizer = new DescriptorTokenizer(signature);
-        
-        while (tokenizer.hasMoreElements())
-        {
-            pop += CompileContext.getTypeSize((String)tokenizer.nextElement());
+
+        while (tokenizer.hasMoreElements()) {
+            pop += CompileContext.getTypeSize((String) tokenizer.nextElement());
         }
-        
-        switch (methodType)
-        {
-        case TYPE_STATIC:
-            break;
-            
-        default:
+
+        if (methodType == TYPE_STATIC) {
+        } else {
             pop++;
-            break;
         }
-        
+
         push += CompileContext.getTypeSize(tokenizer.getReturnValue());
     }
 
-    public void compile(CompileContext context, Scope scope, DataOutputStream outs, int pc) throws IOException
-    {
+    public void compile(CompileContext context, Scope scope, DataOutputStream outs, int pc) throws IOException {
         outs.write(0xb6 + methodType);
         outs.writeShort(methodNumber);
     }
-    
-    public int getSize(CompileContext context, Scope scope, int pc)
-    {
+
+    public int getSize(CompileContext context, Scope scope, int pc) {
         return 3;
     }
 
-    public int getPopCount()
-    {
+    public int getPopCount() {
         return pop;
     }
 
-    public int getPushCount()
-    {
+    public int getPushCount() {
         return push;
     }
 }

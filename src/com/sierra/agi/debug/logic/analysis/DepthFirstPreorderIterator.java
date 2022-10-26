@@ -1,35 +1,31 @@
 package com.sierra.agi.debug.logic.analysis;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Implements a depth first pre-order Iterator implementation for the given ControlFlowGraph.
  */
 public class DepthFirstPreorderIterator implements Iterator<BasicBlock> {
-    
+
     /**
      * The Stack of BasicBlocks still to be visited.
      */
-    private Stack<BasicBlock> toBeVisited;
+    private final Stack<BasicBlock> toBeVisited;
 
     /**
      * The Set of edges already visited.
      */
-    private Set<Edge> visitedEdges;
-    
+    private final Set<Edge> visitedEdges;
+
     /**
      * Constructor for DepthFirstPreorderIterator.
-     * 
+     *
      * @param controlFlowGraph The ControlFlowGraph to create a depth first preorder Iterator for.
      */
     public DepthFirstPreorderIterator(ControlFlowGraph controlFlowGraph) {
         this.toBeVisited = new Stack<BasicBlock>();
         this.visitedEdges = new HashSet<Edge>();
-        
+
         // We start with the first BasicBlock in the ControlFlowGraph.
         this.toBeVisited.add(controlFlowGraph.getStartBlock());
     }
@@ -48,7 +44,6 @@ public class DepthFirstPreorderIterator implements Iterator<BasicBlock> {
      * Returns the next BasicBlock in the depth first preorder iteration.
      *
      * @return The next BasicBlock in the depth first preorder iteration.
-     * 
      * @throws NoSuchElementException if the iteration has no more elements
      */
     @Override
@@ -64,7 +59,7 @@ public class DepthFirstPreorderIterator implements Iterator<BasicBlock> {
     /**
      * Traverse any previously unvisited edges by adding the destination block
      * to the toBeVisited Stack.
-     * 
+     *
      * @param block The current block.
      */
     private void pushSuccessors(BasicBlock block) {
@@ -92,22 +87,22 @@ public class DepthFirstPreorderIterator implements Iterator<BasicBlock> {
      * HashSet.
      */
     private class Edge {
-        
+
         /**
          * The BasicBlock that the Edge is from.
          */
-        private BasicBlock from;
-        
+        private final BasicBlock from;
+
         /**
          * The BasicBlock that the Edge is to.
          */
-        private BasicBlock to;
+        private final BasicBlock to;
 
         /**
          * Constructor for Edge.
-         * 
+         *
          * @param from The BasicBlock that the Edge is from.
-         * @param to The BasicBlock that the Edge is to.
+         * @param to   The BasicBlock that the Edge is to.
          */
         Edge(BasicBlock from, BasicBlock to) {
             this.from = from;
@@ -117,7 +112,7 @@ public class DepthFirstPreorderIterator implements Iterator<BasicBlock> {
         /**
          * Generates a composite hash code using the two vertices so that an Edge can
          * be used in the visitedEdges HashSet.
-         * 
+         *
          * @return The composite hash code of the from/to vertices.
          */
         @Override
@@ -131,21 +126,19 @@ public class DepthFirstPreorderIterator implements Iterator<BasicBlock> {
         /**
          * Use the two vertices to determine equality of an Edge so it can be used
          * in the visitedEdges HashSet.
-         * 
+         *
          * @param other The other object to compare.
-         * 
          * @return true if other is an Edge, and both Edges' from/to vertices match.
          */
         @Override
         public boolean equals(Object other) {
             if (other == this) {
                 return true;
-                
-            } else if (other instanceof Edge) {
-                Edge otherEdge = (Edge) other;
+
+            } else if (other instanceof Edge otherEdge) {
                 return (from == otherEdge.from) && (to == otherEdge.to);
             }
-            
+
             return false;
         }
     }

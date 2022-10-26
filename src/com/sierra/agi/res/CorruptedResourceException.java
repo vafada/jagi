@@ -1,9 +1,9 @@
 /**
- *  CorruptedResourceException.java
- *  Adventure Game Interpreter Resource Package
- *
- *  Created by Dr. Z
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * CorruptedResourceException.java
+ * Adventure Game Interpreter Resource Package
+ * <p>
+ * Created by Dr. Z
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.res;
@@ -11,16 +11,14 @@ package com.sierra.agi.res;
 /**
  * The resource is currupted.
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public final class CorruptedResourceException extends ResourceException
-{
+public final class CorruptedResourceException extends ResourceException {
     /**
      * Creates new <code>CorruptedResourceException</code> without detail message.
      */
-    public CorruptedResourceException()
-    {
+    public CorruptedResourceException() {
         super();
     }
 
@@ -29,8 +27,7 @@ public final class CorruptedResourceException extends ResourceException
      *
      * @param msg Detail message.
      */
-    public CorruptedResourceException(String msg)
-    {
+    public CorruptedResourceException(String msg) {
         super(msg);
     }
 }

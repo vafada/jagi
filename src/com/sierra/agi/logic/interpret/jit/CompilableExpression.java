@@ -8,7 +8,6 @@
 
 package com.sierra.agi.logic.interpret.jit;
 
-public interface CompilableExpression
-{
-    public void compile(LogicCompileContext compileContext, boolean jumpOnTrue, String destination);
+public interface CompilableExpression {
+    void compile(LogicCompileContext compileContext, boolean jumpOnTrue, String destination);
 }

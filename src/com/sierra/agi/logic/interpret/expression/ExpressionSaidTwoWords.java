@@ -1,9 +1,9 @@
 package com.sierra.agi.logic.interpret.expression;
 
+import com.sierra.agi.logic.interpret.LogicReader;
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import com.sierra.agi.logic.interpret.LogicReader;
 
 public class ExpressionSaidTwoWords extends ExpressionSaid {
 
@@ -14,14 +14,13 @@ public class ExpressionSaidTwoWords extends ExpressionSaid {
     protected int getWordCount(InputStream stream) throws IOException {
         return 2;
     }
-    
+
     /**
      * Determine Expression Size.
      *
      * @return Returns the expression size.
      */
-    public int getSize()
-    {
+    public int getSize() {
         return 1 + (wordNumbers.length * 2);
     }
 }

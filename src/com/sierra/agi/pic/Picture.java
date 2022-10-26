@@ -8,42 +8,36 @@
 
 package com.sierra.agi.pic;
 
-import com.sierra.agi.awt.EgaUtils;
-import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public class Picture extends Object
-{
+public class Picture {
     protected Vector entries;
 
-    /** Creates new Picture */
-    public Picture(Vector entries)
-    {
+    /**
+     * Creates new Picture
+     */
+    public Picture(Vector entries) {
         this.entries = entries;
     }
-   
-    public PictureContext draw() throws PictureException
-    {
+
+    public PictureContext draw() throws PictureException {
         PictureContext pictureContext = new PictureContext();
-        
+
         draw(pictureContext);
         return pictureContext;
     }
-    
-    public void draw(PictureContext pictureContext) throws PictureException
-    {
-        Enumeration  en = entries.elements();
+
+    public void draw(PictureContext pictureContext) throws PictureException {
+        Enumeration en = entries.elements();
         PictureEntry entry;
-        
-        while (en.hasMoreElements())
-        {
-            entry = (PictureEntry)en.nextElement();
+
+        while (en.hasMoreElements()) {
+            entry = (PictureEntry) en.nextElement();
             entry.draw(pictureContext);
         }
     }

@@ -8,12 +8,12 @@
 
 package com.sierra.agi.pic;
 
-import java.awt.Point;
-import java.util.*;
+import java.awt.*;
+import java.util.Enumeration;
 
 /**
  * <P><B><CODE>0xF6</CODE></B>: Absolute line</P>
- * <P>
+ * <p>
  * Function: Draws lines between points. The first two arguments are the
  * starting coordinates. The remaining arguments are in groups of two which
  * give the coordinates of the next location to draw a line to. There can be
@@ -25,18 +25,15 @@ import java.util.*;
  * (52, 81) to (56, 83).
  * </P>
  */
-public class PictureEntryAbsLine extends PictureEntryMulti
-{
-    public void draw(PictureContext pictureContext)
-    {
+public class PictureEntryAbsLine extends PictureEntryMulti {
+    public void draw(PictureContext pictureContext) {
         Enumeration en = points.elements();
-        Point       p1, p2;
-        
-        p1 = (Point)en.nextElement();
-        
-        while (en.hasMoreElements())
-        {
-            p2 = (Point)en.nextElement();
+        Point p1, p2;
+
+        p1 = (Point) en.nextElement();
+
+        while (en.hasMoreElements()) {
+            p2 = (Point) en.nextElement();
             pictureContext.drawLine(p1.x, p1.y, p2.x, p2.y);
             p1 = p2;
         }

@@ -1,9 +1,9 @@
 /**
- *  ResourceNotExistingException.java
- *  Adventure Game Interpreter Resource Package
- *
- *  Created by Dr. Z
- *  Copyright (c) 2001 Dr. Z. All rights reserved.
+ * ResourceNotExistingException.java
+ * Adventure Game Interpreter Resource Package
+ * <p>
+ * Created by Dr. Z
+ * Copyright (c) 2001 Dr. Z. All rights reserved.
  */
 
 package com.sierra.agi.res;
@@ -11,16 +11,14 @@ package com.sierra.agi.res;
 /**
  * The resource doesn't exists.
  *
- * @author  Dr. Z
+ * @author Dr. Z
  * @version 0.00.00.01
  */
-public final class ResourceNotExistingException extends ResourceException
-{
+public final class ResourceNotExistingException extends ResourceException {
     /**
      * Creates new <code>ResourceNotExistingException</code> without detail message.
      */
-    public ResourceNotExistingException()
-    {
+    public ResourceNotExistingException() {
         super();
     }
 
@@ -29,8 +27,7 @@ public final class ResourceNotExistingException extends ResourceException
      *
      * @param msg Detail message.
      */
-    public ResourceNotExistingException(String msg)
-    {
+    public ResourceNotExistingException(String msg) {
         super(msg);
     }
 }

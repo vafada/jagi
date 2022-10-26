@@ -8,17 +8,14 @@
 
 package com.sierra.agi.pic;
 
-public class PictureEntryChangePen extends PictureEntry
-{
+public class PictureEntryChangePen extends PictureEntry {
     protected byte penStyle;
 
-    public PictureEntryChangePen(byte penStyle)
-    {
+    public PictureEntryChangePen(byte penStyle) {
         this.penStyle = penStyle;
     }
 
-    public void draw(PictureContext pictureContext)
-    {
+    public void draw(PictureContext pictureContext) {
         pictureContext.penStyle = penStyle;
     }
 }
