@@ -688,7 +688,6 @@ public class ViewTable {
                 byte priority = this.priority[pixelPos];
 
                 if (priority == 0) {
-                    water = false;
                     canBeHere = true;
                     break;
                 }
