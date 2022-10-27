@@ -688,7 +688,7 @@ public class ViewTable {
                 byte priority = this.priority[pixelPos];
 
                 if (priority == 0) {
-                    canBeHere = true;
+                    canBeHere = false;
                     break;
                 }
 
@@ -698,7 +698,6 @@ public class ViewTable {
                 }
 
                 if (priority == 1) {
-                    water = false;
                     /* Conditional blue */
                     if (v.isSomeFlagsSet(ViewEntry.FLAG_IGNORE_BLOCKS)) {
                         continue;
@@ -709,7 +708,6 @@ public class ViewTable {
                 }
 
                 if (priority == 2) {
-                    water = false;
                     /* Signal */
                     signal = true;
                 }
