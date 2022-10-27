@@ -421,16 +421,15 @@ public class ViewScreen {
     }
 
     public void drawBlanks(int color, int x, int y, int w) {
-        int i, offset;
         int[] screen = this.screen;
 
         if (w <= 0) {
             return;
         }
 
-        offset = (ViewScreen.WIDTH * y) + x;
+        int offset = (ViewScreen.WIDTH * y) + x;
 
-        for (i = 0; i < ViewScreen.CHAR_HEIGHT; i++) {
+        for (int i = 0; i < ViewScreen.CHAR_HEIGHT; i++) {
             Arrays.fill(screen, offset, offset + w, color);
             offset += ViewScreen.WIDTH;
         }
@@ -451,9 +450,7 @@ public class ViewScreen {
     }
 
     public void clearLines(int l1, int l2, short color) {
-        int l;
-
-        for (l = l1; l <= l2; l++) {
+        for (int l = l1; l <= l2; l++) {
             drawBlanks(
                     translatePixel((byte) color),
                     0,

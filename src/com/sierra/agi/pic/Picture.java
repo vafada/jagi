@@ -34,10 +34,9 @@ public class Picture {
 
     public void draw(PictureContext pictureContext) throws PictureException {
         Enumeration en = entries.elements();
-        PictureEntry entry;
 
         while (en.hasMoreElements()) {
-            entry = (PictureEntry) en.nextElement();
+            PictureEntry entry = (PictureEntry) en.nextElement();
             entry.draw(pictureContext);
         }
     }
