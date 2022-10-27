@@ -42,6 +42,7 @@ public class InstructionStatusLineOff extends Instruction {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
+        logicContext.hideStatusLine();
         return 1;
     }
 

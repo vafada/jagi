@@ -125,6 +125,8 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     protected boolean graphicMode;
     protected boolean shouldShowMenu;
 
+    protected boolean shouldShowStatusLine;
+
     protected volatile boolean clockActive;
     protected volatile int tickCount;
     protected volatile boolean running;
@@ -226,6 +228,20 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
     public void showMenu() {
         shouldShowMenu = true;
+    }
+
+    public void showStatusLine() {
+        shouldShowStatusLine = true;
+        ViewScreen viewScreen = getViewScreen();
+        // 15 = white
+        viewScreen.clearStatusLine((short) 15);
+    }
+
+    public void hideStatusLine() {
+        shouldShowStatusLine = false;
+        ViewScreen viewScreen = getViewScreen();
+        // 0 = black
+        viewScreen.clearStatusLine((short) 0);
     }
 
     public boolean haveKey() {

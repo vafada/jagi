@@ -449,8 +449,8 @@ public class ViewScreen {
         }
     }
 
-    public void clearLines(int l1, int l2, short color) {
-        for (int l = l1; l <= l2; l++) {
+    public void clearLines(int x, int y, short color) {
+        for (int l = x; l <= y; l++) {
             drawBlanks(
                     translatePixel((byte) color),
                     0,
@@ -463,5 +463,9 @@ public class ViewScreen {
                     ViewScreen.WIDTH,
                     ViewScreen.CHAR_HEIGHT);
         }
+    }
+
+    public void clearStatusLine(short color) {
+        this.clearLines(this.lineStatus, this.lineStatus, color);
     }
 }
