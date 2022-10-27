@@ -46,8 +46,7 @@ public class InstructionSetView extends InstructionBi {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
-        short p = p2;
-        logicContext.getViewTable().setView(p1, p);
+        logicContext.getViewTable().setView(p1, p2);
         return 3;
     }
 
