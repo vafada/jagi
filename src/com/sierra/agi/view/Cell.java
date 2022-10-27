@@ -46,16 +46,12 @@ public class Cell {
      * Creates new Cell
      */
     public Cell(byte[] b, int start, int loopNumber) {
-        short trans;
-        short mirrorInfo;
-        byte transColor;
-
         width = ByteCaster.lohiUnsignedByte(b, start);
         height = ByteCaster.lohiUnsignedByte(b, start + 1);
-        trans = ByteCaster.lohiUnsignedByte(b, start + 2);
+        short trans = ByteCaster.lohiUnsignedByte(b, start + 2);
 
-        transColor = (byte) (trans & 0x0F);
-        mirrorInfo = (short) ((trans & 0xF0) >> 4);
+        byte transColor = (byte) (trans & 0x0F);
+        short mirrorInfo = (short) ((trans & 0xF0) >> 4);
 
         loadData(b, start + 3, transColor);
 
@@ -67,20 +63,20 @@ public class Cell {
     }
 
     protected void loadData(byte[] b, int off, byte transColor) {
-        int i, j, x, y, color, count;
-        int[] pixel;
+        int x;
+
         IndexColorModel indexModel = EgaUtils.getIndexColorModel();
         ColorModel nativeModel = EgaUtils.getNativeColorModel();
 
-        pixel = new int[1];
+        int[] pixel = new int[1];
         data = new int[width * height];
 
-        for (j = 0, y = 0; y < height; y++) {
+        for (int j = 0, y = 0; y < height; y++) {
             for (x = 0; b[off] != 0; off++) {
-                color = (b[off] & 0xF0) >> 4;
-                count = (b[off] & 0x0F);
+                int color = (b[off] & 0xF0) >> 4;
+                int count = (b[off] & 0x0F);
 
-                for (i = 0; i < count; i++, j++, x++) {
+                for (int i = 0; i < count; i++, j++, x++) {
                     nativeModel.getDataElements(indexModel.getRGB(color), pixel);
                     data[j] = pixel[0];
                 }
@@ -100,15 +96,12 @@ public class Cell {
     }
 
     protected void mirror() {
-        int i1, i2, x1, x2, y;
-        int b;
+        for (int y = 0; y < height; y++) {
+            for (int x1 = width - 1, x2 = 0; x1 > x2; x1--, x2++) {
+                int i1 = (y * width) + x1;
+                int i2 = (y * width) + x2;
 
-        for (y = 0; y < height; y++) {
-            for (x1 = width - 1, x2 = 0; x1 > x2; x1--, x2++) {
-                i1 = (y * width) + x1;
-                i2 = (y * width) + x2;
-
-                b = data[i1];
+                int b = data[i1];
                 data[i1] = data[i2];
                 data[i2] = b;
             }
@@ -141,11 +134,10 @@ public class Cell {
         int[] data = this.data.clone();
         DirectColorModel colorModel = (DirectColorModel) ColorModel.getRGBdefault();
         DirectColorModel nativeModel = EgaUtils.getNativeColorModel();
-        int mask = colorModel.getAlphaMask();
+        // int mask = colorModel.getAlphaMask();
         int[] pixel = new int[1];
-        int i;
 
-        for (i = 0; i < (width * height); i++) {
+        for (int i = 0; i < (width * height); i++) {
             colorModel.getDataElements(nativeModel.getRGB(data[i]), pixel);
 
             if (data[i] != transparent) {
