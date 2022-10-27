@@ -27,9 +27,9 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.Vector;
 
 /**
  * Logic Context that Logic Instruction are run with. Contains all variables
@@ -809,7 +809,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     public void enterCommand(String command) {
         try {
             Words words = getCache().getWords();
-            Vector w = words.parse(command);
+            List w = words.parse(command);
 
             if ((w != null) && (w.size() != 0)) {
                 this.words = new Word[w.size()];

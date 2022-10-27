@@ -41,15 +41,14 @@ public class ExpressionSaid extends Expression implements CompilableExpression {
      * @param bytecode  Bytecode of the current expression.
      */
     public ExpressionSaid(InputStream stream, LogicReader reader, short bytecode, short engineEmulation) throws Exception {
-        int i, count;
         ByteCasterStream bstream = new ByteCasterStream(stream);
 
         // Read this via a template method so that the two sub-classes can override it.
-        count = getWordCount(stream);
+        int count = getWordCount(stream);
 
         wordNumbers = new int[count];
 
-        for (i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
             wordNumbers[i] = bstream.lohiReadUnsignedShort();
         }
     }

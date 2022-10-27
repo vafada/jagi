@@ -229,8 +229,8 @@ public class Words implements WordsProvider {
         return wordHash.elements();
     }
 
-    public Vector parse(String inputString) {
-        Vector vector = new Vector(5, 2);
+    public List parse(String inputString) {
+        List vector = new ArrayList(5);
         int begin, end;
         Word word;
 
