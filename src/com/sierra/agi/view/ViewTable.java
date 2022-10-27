@@ -47,7 +47,6 @@ public class ViewTable {
     protected short blockY1;
     protected short blockY2;
     protected Random randomSeed;
-    protected byte[] priority = new byte[WIDTH * HEIGHT];
     protected byte[] priorityTable = new byte[HEIGHT];
     protected ViewScreen screen;
     protected int[] screenView;
@@ -57,6 +56,8 @@ public class ViewTable {
     protected int[] pixel = new int[1];
 
     private Area screenUpdate;
+
+    private byte[] priority = new byte[WIDTH * HEIGHT];
 
     public ViewTable(LogicContext context) {
         int i;
@@ -669,63 +670,52 @@ public class ViewTable {
     }
 
     protected boolean checkPriority(ViewEntry v) {
-        int i, o, width;
-        byte b;
-        boolean pass;
-        boolean signal;
-        boolean water;
-
         if (!v.isSomeFlagsSet(ViewEntry.FLAG_FIX_PRIORITY)) {
             v.setPriority(priorityTable[v.getY()]);
         }
 
-        pass = true;
-        signal = false;
-        water = false;
+        boolean canBeHere = true;
+        boolean signal = false;
+        boolean water = false;
 
-        if (v.getPriority() != 0xf) {
+        // Priority 15 skips the whole base line testing. None of the control lines
+        // have any affect.
+        if (v.getPriority() != 15) {
             water = true;
-            width = v.getWidth();
-            o = (v.getY() * WIDTH) + v.getX();
+            int startPixelPos = (v.getY() * WIDTH) + v.getX();
+            int endPixelPos = startPixelPos + v.getWidth();
 
-            for (i = 0; i < width; i++, o++) {
-                b = priority[o];
+            for (int pixelPos = startPixelPos; pixelPos < endPixelPos; pixelPos++) {
+                byte priority = this.priority[pixelPos];
 
-                if (b == 0) {
-                    pass = true;
-                    break;
-                }
+                if (priority != 3) {
+                    // This pixel is not water (i.e. not 3), so it can't be entirely on water.
+                    water = false;
+                    if (priority == 0) {
+                        canBeHere = true;
+                        break;
+                    } else if (priority == 1) {
+                        /* Conditional blue */
+                        if (v.isSomeFlagsSet(ViewEntry.FLAG_IGNORE_BLOCKS)) {
+                            continue;
+                        }
 
-                if (b == 3) {
-                    /* Water surface */
-                    continue;
-                }
-
-                water = false;
-
-                if (b == 1) {
-                    /* Conditional blue */
-                    if (v.isSomeFlagsSet(ViewEntry.FLAG_IGNORE_BLOCKS)) {
-                        continue;
+                        canBeHere = false;
+                        break;
+                    } else if (priority == 2) {
+                        /* Signal */
+                        signal = true;
                     }
-
-                    pass = false;
-                    break;
-                }
-
-                if (b == 2) {
-                    /* Signal */
-                    signal = true;
                 }
             }
 
-            if (pass) {
+            if (canBeHere) {
                 if (!water && v.isSomeFlagsSet(ViewEntry.FLAG_ON_WATER)) {
-                    pass = false;
+                    canBeHere = false;
                 }
 
                 if (water && v.isSomeFlagsSet(ViewEntry.FLAG_ON_LAND)) {
-                    pass = false;
+                    canBeHere = false;
                 }
             }
         }
@@ -735,7 +725,7 @@ public class ViewTable {
             logicContext.setFlag(LogicContext.FLAG_EGO_WATER, water);
         }
 
-        return pass;
+        return canBeHere;
     }
 
     protected void fixPosition(ViewEntry v) {
