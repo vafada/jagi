@@ -681,31 +681,38 @@ public class ViewTable {
         // Priority 15 skips the whole base line testing. None of the control lines
         // have any affect.
         if (v.getPriority() != 15) {
-            water = true;
             int startPixelPos = (v.getY() * WIDTH) + v.getX();
             int endPixelPos = startPixelPos + v.getWidth();
 
             for (int pixelPos = startPixelPos; pixelPos < endPixelPos; pixelPos++) {
                 byte priority = this.priority[pixelPos];
 
-                if (priority != 3) {
-                    // This pixel is not water (i.e. not 3), so it can't be entirely on water.
+                if (priority == 0) {
                     water = false;
-                    if (priority == 0) {
-                        canBeHere = true;
-                        break;
-                    } else if (priority == 1) {
-                        /* Conditional blue */
-                        if (v.isSomeFlagsSet(ViewEntry.FLAG_IGNORE_BLOCKS)) {
-                            continue;
-                        }
+                    canBeHere = true;
+                    break;
+                }
 
-                        canBeHere = false;
-                        break;
-                    } else if (priority == 2) {
-                        /* Signal */
-                        signal = true;
+                if (priority == 3) {
+                    water = true;
+                    break;
+                }
+
+                if (priority == 1) {
+                    water = false;
+                    /* Conditional blue */
+                    if (v.isSomeFlagsSet(ViewEntry.FLAG_IGNORE_BLOCKS)) {
+                        continue;
                     }
+
+                    canBeHere = false;
+                    break;
+                }
+
+                if (priority == 2) {
+                    water = false;
+                    /* Signal */
+                    signal = true;
                 }
             }
 
