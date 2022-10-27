@@ -235,6 +235,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         ViewScreen viewScreen = getViewScreen();
         // 15 = white
         viewScreen.clearStatusLine((short) 15);
+        this.updateStatusLine();
     }
 
     public void hideStatusLine() {
@@ -338,7 +339,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         /* 3 */
         /* 4 */
         /* 5 */
-        ViewEntry ego = viewTable.getEntry((short)0);
+        ViewEntry ego = viewTable.getEntry((short) 0);
         switch (vars[LogicContext.VAR_EGO_EDGE]) {
             case LogicContext.TOP:
                 ego.setY(LogicContext.MAXY);
@@ -349,7 +350,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                 break;
 
             case LogicContext.BOTTOM:
-                ego.setY((short)(LogicContext.HORIZON + 1));
+                ego.setY((short) (LogicContext.HORIZON + 1));
                 break;
 
             case LogicContext.LEFT:
@@ -884,6 +885,28 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
     public void addKeyToController(short keyCode, short controllerNum) {
         this.keyToControllerMap.put(keyCode, controllerNum);
+    }
+
+    public void updateStatusLine() {
+        if (this.shouldShowStatusLine) {
+            ViewScreen viewScreen = getViewScreen();
+            // 15 = white
+            viewScreen.clearStatusLine((short) 15);
+
+            StringBuilder scoreStatus = new StringBuilder();
+            scoreStatus.append(" Score:");
+            scoreStatus.append(vars[VAR_SCORE]);
+            scoreStatus.append(" of ");
+            scoreStatus.append(vars[VAR_MAX_SCORE]);
+            String scoreString = String.format("%-30s", scoreStatus.toString());
+
+            StringBuilder soundStatus = new StringBuilder();
+            soundStatus.append("Sound:");
+            soundStatus.append(flags[FLAG_SOUND_ON] ? "on" : "off");
+            String soundString = String.format("%-10s", soundStatus.toString());
+
+            viewScreen.displayStatusLine( scoreString + soundString);
+        }
     }
 
     // ** Execution ***************************

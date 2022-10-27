@@ -12,7 +12,8 @@ import com.sierra.agi.awt.EgaComponent;
 import com.sierra.agi.awt.EgaUtils;
 import com.sierra.agi.menu.AgiMenuBar;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.image.MemoryImageSource;
 import java.util.Arrays;
@@ -467,5 +468,23 @@ public class ViewScreen {
 
     public void clearStatusLine(short color) {
         this.clearLines(this.lineStatus, this.lineStatus, color);
+    }
+
+    public void displayStatusLine(String message) {
+        int x = 0;
+        int y = this.lineStatus * CHAR_HEIGHT;
+
+        drawBlanks(
+                translatePixel((byte) 0),
+                x,
+                (this.lineStatus * ViewScreen.CHAR_HEIGHT),
+                ViewScreen.WIDTH);
+
+        for (int i = 0; i < message.length(); i++) {
+            EgaUtils.putCharacter(screen, font, message.charAt(i), x, y, WIDTH, translatePixel((byte) 0), translatePixel((byte) 15), true);
+            x += CHAR_WIDTH;
+        }
+
+        putBlock(0, y, WIDTH, CHAR_HEIGHT);
     }
 }

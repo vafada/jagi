@@ -27,6 +27,8 @@ public class LogicVariables {
     public static final short FLAG_STATUS_SELECTS_ITEMS = (short) 13;
     public static final short FLAG_MENUS_WORK = (short) 14;
     public static final short FLAG_OUTPUT_MODE = (short) 15;
+
+    /* ------------------------ System variables -------------------------- */
     public static final short VAR_CURRENT_ROOM = (short) 0;
     public static final short VAR_PREVIOUS_ROOM = (short) 1;
     public static final short VAR_EGO_EDGE = (short) 2;
