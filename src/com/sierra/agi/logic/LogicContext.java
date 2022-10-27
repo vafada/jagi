@@ -322,6 +322,24 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         /* 3 */
         /* 4 */
         /* 5 */
+        ViewEntry ego = viewTable.getEntry((short)0);
+        switch (vars[LogicContext.VAR_EGO_EDGE]) {
+            case LogicContext.TOP:
+                ego.setY(LogicContext.MAXY);
+                break;
+
+            case LogicContext.RIGHT:
+                ego.setX(LogicContext.MINX);
+                break;
+
+            case LogicContext.BOTTOM:
+                ego.setY((short)(LogicContext.HORIZON + 1));
+                break;
+
+            case LogicContext.LEFT:
+                ego.setX((short) (LogicContext.MAXX + 1 - ego.getWidth()));
+                break;
+        }
         setHorizon(LogicContext.DEFAULT_HORIZON);
 
         /* 6 */
@@ -334,7 +352,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         /* 8 */
 
         /* 9 */
-        setVar(LogicContext.VAR_EGO_TOUCHING, (short) 0);
+        setVar(LogicContext.VAR_EGO_EDGE, (short) 0);
 
         /* 10 */
         setFlag(LogicContext.FLAG_NEW_ROOM_EXEC, true);
@@ -670,7 +688,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                     break;
                 }
 
-                short keyCode = (short)ev.getKeyCode();
+                short keyCode = (short) ev.getKeyCode();
                 if (this.keyToControllerMap.containsKey(keyCode)) {
                     short controllerNum = this.keyToControllerMap.get(keyCode);
                     this.controllers[controllerNum] = true;

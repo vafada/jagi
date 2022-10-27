@@ -1293,7 +1293,7 @@ public class ViewTable {
         short n;
 
         logicContext.setVar(LogicContext.VAR_BORDER_CODE, (short) 0);
-        logicContext.setVar(LogicContext.VAR_EGO_TOUCHING, (short) 0);
+        logicContext.setVar(LogicContext.VAR_EGO_EDGE, (short) 0);
         logicContext.setVar(LogicContext.VAR_BORDER_TOUCHING, (short) 0);
 
         for (i = 0; i < MAX_VIEWENTRY; i++) {
@@ -1356,7 +1356,7 @@ public class ViewTable {
 
                 if (border != 0) {
                     if (i == 0) {
-                        logicContext.setVar(LogicContext.VAR_EGO_TOUCHING, (short) border);
+                        logicContext.setVar(LogicContext.VAR_EGO_EDGE, (short) border);
                     } else {
                         logicContext.setVar(LogicContext.VAR_BORDER_CODE, (short) i);
                         logicContext.setVar(LogicContext.VAR_BORDER_TOUCHING, (short) border);

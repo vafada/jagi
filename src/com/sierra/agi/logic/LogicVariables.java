@@ -29,7 +29,7 @@ public class LogicVariables {
     public static final short FLAG_OUTPUT_MODE = (short) 15;
     public static final short VAR_CURRENT_ROOM = (short) 0;
     public static final short VAR_PREVIOUS_ROOM = (short) 1;
-    public static final short VAR_EGO_TOUCHING = (short) 2;
+    public static final short VAR_EGO_EDGE = (short) 2;
     public static final short VAR_SCORE = (short) 3;
     public static final short VAR_BORDER_CODE = (short) 4;
     public static final short VAR_BORDER_TOUCHING = (short) 5;
@@ -60,6 +60,27 @@ public class LogicVariables {
     protected static final int MAX_LOGICS = 256;
     protected static final int MAX_OBJECTS = 256;
     protected static final int MAX_STRINGS = 24;
+
+    /* ------------------------ Screen edges ------------------------ */
+
+    protected static final int TOP = 1;
+
+    protected static final int RIGHT = 2;
+
+    protected static final int BOTTOM = 3;
+
+    protected static final int LEFT = 4;
+
+    protected static final short MINX = 0;
+
+    protected static final int MINY = 0;
+
+    protected static final int MAXX = 159;
+
+    protected static final short MAXY = 167;
+
+    protected static final short HORIZON = 36;
+
     protected boolean[] controllers = new boolean[MAX_CONTROLLERS];
     protected boolean[] flags = new boolean[MAX_FLAGS];
     protected short[] vars = new short[MAX_VARS];
