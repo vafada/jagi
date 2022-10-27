@@ -39,8 +39,7 @@ public class InstructionPosition extends InstructionTri {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
-        short p = p2, q = p3;
-        logicContext.getViewTable().setPosition(p1, p, q);
+        logicContext.getViewTable().setPosition(p1, p2, p3);
         return 4;
     }
 
