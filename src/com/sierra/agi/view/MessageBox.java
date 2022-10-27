@@ -18,6 +18,8 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 public class MessageBox extends Box {
+    private static final int MAX_COLUMN = 30;
+
     protected String[] lines;
     protected int x = -1;
     protected int y = -1;
@@ -136,23 +138,20 @@ public class MessageBox extends Box {
         return ev;
     }
 
-    protected void init(String content, int maxColumn) {
+    protected void init(String content, int maxColumnArg) {
         Vector lines = new Vector();
-        StringBuffer current;
-        String token;
-        StringTokenizer tokenizer;
-        String word;
-        StringTokenizer words;
 
-        tokenizer = new StringTokenizer(content, "\r\n", false);
+        int maxColumn = maxColumnArg == 0 ? MAX_COLUMN : maxColumnArg;
+
+        StringTokenizer tokenizer = new StringTokenizer(content, "\r\n", false);
 
         while (tokenizer.hasMoreTokens()) {
-            current = new StringBuffer();
-            token = tokenizer.nextToken();
-            words = new StringTokenizer(token, " ", true);
+            StringBuffer current = new StringBuffer();
+            String token = tokenizer.nextToken();
+            StringTokenizer words = new StringTokenizer(token, " ", true);
 
             while (words.hasMoreTokens()) {
-                word = words.nextToken();
+                String word = words.nextToken();
 
                 if ((current.length() + word.length()) > maxColumn) {
                     lines.add(current.toString());
