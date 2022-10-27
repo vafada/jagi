@@ -39,7 +39,7 @@ public class ViewTable {
     protected static final int[] directionTableX = new int[]{0, 0, 1, 1, 1, 0, -1, -1, -1};
     protected static final int[] directionTableY = new int[]{0, -1, -1, 0, 1, 1, 1, 0, -1};
     protected LogicContext logicContext;
-    protected ViewEntry[] viewEntries;
+    private ViewEntry[] viewEntries;
     protected boolean picShown;
     protected boolean blockSet;
     protected short blockX1;
