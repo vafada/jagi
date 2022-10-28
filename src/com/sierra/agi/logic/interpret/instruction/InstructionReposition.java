@@ -44,7 +44,11 @@ public class InstructionReposition extends InstructionTri {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
-        logicContext.getViewTable().reposition(p1, logicContext.getVar(p2), logicContext.getVar(p3));
+        byte b2 = (byte) logicContext.getVar(p2);
+        byte b3 = (byte) logicContext.getVar(p3);
+
+        logicContext.getViewTable().reposition(p1, b2, b3);
+
         return 4;
     }
 

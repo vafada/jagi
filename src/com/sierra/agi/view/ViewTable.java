@@ -573,13 +573,18 @@ public class ViewTable {
         v.savePosition();
     }
 
-    public void reposition(short entry, short x, short y) {
+    /**
+     *
+     * @param entry
+     * @param x Delta for the X position (signed, where negative is to the left)
+     * @param y Delta for the Y position (signed, where negative is to the top)
+     */
+    public void reposition(short entry, byte x, byte y) {
         ViewEntry v = viewEntries[entry];
-        short t;
 
         v.addFlags(ViewEntry.FLAG_UPDATE_POS);
 
-        t = v.getX();
+        short t = v.getX();
 
         if ((x < 0) && (t < -x)) {
             v.setX((short) 0);
