@@ -19,8 +19,6 @@ import java.io.InputStream;
  * @version 0.00.00.01
  */
 public class InstructionGetPosition extends InstructionTri {
-    protected Point p = new Point();
-
     /**
      * Creates new Get Position Instruction.
      *
@@ -42,7 +40,7 @@ public class InstructionGetPosition extends InstructionTri {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
-        logicContext.getViewTable().getPosition(p1, p);
+        Point p = logicContext.getViewTable().getPosition(p1);
         logicContext.setVar(p2, (short) p.x);
         logicContext.setVar(p3, (short) p.y);
         return 4;

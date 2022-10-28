@@ -68,7 +68,7 @@ public class ViewEntry {
     protected short cycleType;         // 23
     protected short priority;          // 24
     protected int flags;             // 25
-    protected short targetX;           // 27
+    private short targetX;           // 27
     protected short targetY;           // 28
     protected short oldStepSize;           // 29
     protected short endFlag;           // Flag to set when this AnimatedObject reaches the target position.
@@ -438,8 +438,8 @@ public class ViewEntry {
         return targetX;
     }
 
-    public void setTargetX(short entry27) {
-        this.targetX = entry27;
+    public void setTargetX(short targetX) {
+        this.targetX = targetX;
     }
 
     public short getTargetY() {

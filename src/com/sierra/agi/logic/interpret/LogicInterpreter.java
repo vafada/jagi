@@ -8,7 +8,11 @@
 
 package com.sierra.agi.logic.interpret;
 
-import com.sierra.agi.logic.*;
+import com.sierra.agi.logic.InternalLogicException;
+import com.sierra.agi.logic.Logic;
+import com.sierra.agi.logic.LogicContext;
+import com.sierra.agi.logic.LogicException;
+import com.sierra.agi.logic.LogicExitAll;
 import com.sierra.agi.logic.interpret.instruction.Instruction;
 import com.sierra.agi.logic.interpret.instruction.InstructionMoving;
 

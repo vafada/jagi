@@ -560,13 +560,9 @@ public class ViewTable {
         }
     }
 
-    public Point getPosition(short entry, Point p) {
+    public Point getPosition(short entry) {
         ViewEntry v = viewEntries[entry];
-
-        p.x = v.getX();
-        p.y = v.getY();
-
-        return p;
+        return new Point(v.getX(), v.getY());
     }
 
     public void setPosition(short entry, short x, short y) {
@@ -732,59 +728,59 @@ public class ViewTable {
     }
 
     protected void fixPosition(ViewEntry v) {
-        int dir, count, tries;
-
         if ((v.getY() <= logicContext.getHorizon()) && !v.isSomeFlagsSet(ViewEntry.FLAG_IGNORE_HORIZON)) {
             v.setY((short) (logicContext.getHorizon() + 1));
         }
 
-        dir = 0;
-        count = 1;
-        tries = 1;
+        if (checkPosition(v) && !checkClutter(v) && checkPriority(v)) {
+            return;
+        }
+
+        int dir = 0;
+        int count = 1;
+        int tries = 1;
 
         while (!checkPosition(v) || checkClutter(v) || !checkPriority(v)) {
             switch (dir) {
                 case 0:
                     v.setX((short) (v.getX() - 1));
 
-                    if ((--count) != 0) {
-                        continue;
+                    count -= 1;
+                    if (count == 0) {
+                        dir = 1;
+                        count = tries;
                     }
-
-                    dir = 1;
-                    count = tries;
                     break;
 
                 case 1:
                     v.setY((short) (v.getY() + 1));
 
-                    if ((--count) != 0) {
-                        continue;
+                    count -= 1;
+                    if (count == 0) {
+                        dir = 2;
+                        count = ++tries;
                     }
 
-                    count = ++tries;
                     break;
 
                 case 2:
                     v.setX((short) (v.getX() + 1));
 
-                    if ((--count) != 0) {
-                        continue;
+                    count -= 1;
+                    if (count == 0) {
+                        dir = 3;
+                        count = tries;
                     }
-
-                    dir = 3;
-                    count = tries;
                     break;
 
                 case 3:
                     v.setY((short) (v.getY() - 1));
 
-                    if ((--count) != 0) {
-                        continue;
+                    count -= 1;
+                    if (count == 0) {
+                        dir = 0;
+                        count = ++tries;
                     }
-
-                    dir = 0;
-                    count = ++tries;
                     break;
             }
         }

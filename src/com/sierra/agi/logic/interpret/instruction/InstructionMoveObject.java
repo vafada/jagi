@@ -53,10 +53,7 @@ public class InstructionMoveObject extends InstructionPent {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
-        com.sierra.agi.view.ViewTable viewTable = logicContext.getViewTable();
-
-        viewTable.moveObject(p1, p2, p3, p4, p5);
-
+        logicContext.getViewTable().moveObject(p1, p2, p3, p4, p5);
         return 6;
     }
 
