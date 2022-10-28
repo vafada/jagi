@@ -17,12 +17,11 @@ import java.util.List;
 
 public class AgiMenu {
     protected String name;
-    protected List items;
+    protected List<AgiMenuItem> items = new ArrayList<>();
     protected int maxLength = -1;
 
     public AgiMenu(String name) {
         this.name = name;
-        this.items = new ArrayList<AgiMenuItem>();
     }
 
     public void add(AgiMenuItem item) {
@@ -31,11 +30,8 @@ public class AgiMenu {
     }
 
     public void enableMenuItem(boolean enable, short controller) {
-        int item;
-        AgiMenuItem itemO;
-
-        for (item = 0; item < items.size(); item++) {
-            itemO = ((AgiMenuItem) items.get(item));
+        for (int item = 0; item < items.size(); item++) {
+            AgiMenuItem itemO = items.get(item);
 
             if (itemO.getController() == controller) {
                 itemO.setEnable(enable);

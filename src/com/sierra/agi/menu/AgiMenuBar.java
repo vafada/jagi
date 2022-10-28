@@ -17,11 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class AgiMenuBar {
-    private List<AgiMenu> menus;
-
-    public AgiMenuBar() {
-        menus = new ArrayList<>();
-    }
+    private List<AgiMenu> menus = new ArrayList<>();
 
     public void addMenu(String name) {
         menus.add(new AgiMenu(name));
@@ -34,6 +30,14 @@ public class AgiMenuBar {
     public void enableMenuItem(boolean enable, short controller) {
         for (int menu = 0; menu < menus.size(); menu++) {
             (menus.get(menu)).enableMenuItem(enable, controller);
+        }
+    }
+
+    public void enableAllMenuItem() {
+        for (AgiMenu menu : menus) {
+            for (AgiMenuItem menuItem : menu.items) {
+                menuItem.setEnable(true);
+            }
         }
     }
 

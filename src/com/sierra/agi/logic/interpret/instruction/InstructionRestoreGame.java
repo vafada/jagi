@@ -48,7 +48,7 @@ public class InstructionRestoreGame extends Instruction {
         RestoreGame restoreGame = new RestoreGame(logicContext);
         if (restoreGame.restore()) {
             // TODO: soundPlayer.Reset();
-            // TODO: menu.EnableAllMenus();
+            logicContext.getMenuBar().enableAllMenuItem();
             // TODO: ReplayScriptEvents();
             logicContext.getViewTable().showPic();
             logicContext.newRoom(logicContext.getVar(LogicVariables.VAR_CURRENT_ROOM));

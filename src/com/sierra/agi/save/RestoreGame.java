@@ -49,21 +49,16 @@ public class RestoreGame {
         int textEnd = 0;
         while (savedGameData[textEnd] != 0) textEnd++;
         String savedGameDescription = new String(rawData, 0, textEnd, "US-ASCII");
-        System.out.println("savedGameDescription = " + savedGameDescription);
 
         // FIRST PIECE: SAVE VARIABLES
         // [0] 31 - 32(2 bytes) Length of save variables piece. Length depends on AGI interpreter version. [e.g. (0xE1 0x05) for some games, (0xDB 0x03) for some]
         int saveVarsLength = savedGameData[31] + (savedGameData[32] << 8);
-        System.out.println("savedGameData[31] = " + savedGameData[31]);
-        System.out.println("savedGameData[32] = " + (savedGameData[32] << 8));
-        System.out.println("saveVarsLength = " + saveVarsLength);
         int aniObjsOffset = 33 + saveVarsLength;
 
         // [2] 33 - 39(7 bytes) Game ID("SQ2", "KQ3", "LLLLL", etc.), NUL padded.
         textEnd = 33;
         while ((savedGameData[textEnd] != 0) && ((textEnd - 33) < 7)) textEnd++;
         String gameId = new String(savedGameData, 33, textEnd - 33);
-        System.out.println("gameId = " + gameId);
         //TODO: if (!gameId.Equals(state.GameId)) return false;
 
         // If we're sure that this saved game file is for this game, then continue.
@@ -73,9 +68,6 @@ public class RestoreGame {
         // [9] 40 - 295(256 bytes) Variables, 1 variable per byte
         for (int i = 0; i < 256; i++) {
             int intVal = savedGameData[40 + i];
-            if (intVal != 0) {
-                System.out.println("var " + i + " = " + savedGameData[40 + i]);
-            }
             this.logicContext.setVar((short) i, (short) intVal);
         }
 
@@ -196,18 +188,11 @@ public class RestoreGame {
         // SECOND PIECE: ANIMATED OBJECT STATE
         // 17 aniobjs = 0x02DB length, 18 aniobjs = 0x0306, 20 aniobjs = 0x035C, 21 aniobjs = 0x0387, 91 = 0x0F49] 2B, 2B, 2B, 2B, 2B
         // 1538 - 1539(2 bytes) Length of piece (ANIOBJ should divide evenly in to this length)
-        System.out.println("aniObjsOffset = " + aniObjsOffset);
-        System.out.println("savedGameData[aniObjsOffset + 0] = " + savedGameData[aniObjsOffset + 0]);
-        System.out.println("savedGameData[aniObjsOffset + 1] = " + (savedGameData[aniObjsOffset + 1] << 8));
-
         int aniObjectsLength = (savedGameData[aniObjsOffset + 0] + (savedGameData[aniObjsOffset + 1] << 8));
 
-        System.out.println("aniObjectsLength = " + aniObjectsLength);
         // Each ANIOBJ entry is 0x2B in length, i.e. 43 bytes.
         // 17 aniobjs = 0x02DB length, 18 aniobjs = 0x0306, 20 aniobjs = 0x035C, 21 aniobjs = 0x0387, 91 = 0x0F49] 2B, 2B, 2B, 2B, 2B
         int numOfAniObjs = (aniObjectsLength / 0x2B);
-
-        System.out.println("numOfAniObjs = " + numOfAniObjs);
 
         for (int i = 0; i < numOfAniObjs; i++) {
             int aniObjOffset = aniObjsOffset + 2 + (i * 0x2B);
