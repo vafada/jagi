@@ -6,7 +6,9 @@ package com.sierra.agi.logic.interpret.instruction;
 
 import com.sierra.agi.logic.Logic;
 import com.sierra.agi.logic.LogicContext;
+import com.sierra.agi.logic.LogicVariables;
 import com.sierra.agi.logic.interpret.LogicReader;
+import com.sierra.agi.logic.interpret.LogicReturn;
 import com.sierra.agi.save.RestoreGame;
 
 import java.io.IOException;
@@ -42,22 +44,16 @@ public class InstructionRestoreGame extends Instruction {
      * @param logicContext Logic Context used to execute the instruction.
      * @return Returns the number of byte of the uninterpreted instruction.
      */
-    public int execute(Logic logic, LogicContext logicContext) {
-        System.out.println("TODO: implement restore.game");
+    public int execute(Logic logic, LogicContext logicContext) throws Exception {
         RestoreGame restoreGame = new RestoreGame(logicContext);
         if (restoreGame.restore()) {
-            System.out.println("restore success");
+            // TODO: soundPlayer.Reset();
+            // TODO: menu.EnableAllMenus();
+            // TODO: ReplayScriptEvents();
             logicContext.getViewTable().showPic();
-            /* TODO!!!
-            soundPlayer.Reset();
-            menu.EnableAllMenus();
-            ReplayScriptEvents();
-            ShowPicture(false);
-            newRoom = state.CurrentRoom = state.Vars[Defines.CURROOM];
-            textGraphics.UpdateStatusLine();
-            exit = true;
-
-             */
+            logicContext.newRoom(logicContext.getVar(LogicVariables.VAR_CURRENT_ROOM));
+            logicContext.updateStatusLine();
+            throw new LogicReturn();
         }
         return 1;
     }
