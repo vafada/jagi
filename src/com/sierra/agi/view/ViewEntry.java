@@ -68,10 +68,10 @@ public class ViewEntry {
     protected short cycleType;         // 23
     protected short priority;          // 24
     protected int flags;             // 25
-    protected short entry27;           // 27
-    protected short entry28;           // 28
-    protected short entry29;           // 29
-    protected short entry2a;           // 2a
+    protected short targetX;           // 27
+    protected short targetY;           // 28
+    protected short oldStepSize;           // 29
+    protected short endFlag;           // Flag to set when this AnimatedObject reaches the target position.
 
     public ViewEntry(int viewNumber) {
         this.viewNumber = viewNumber;
@@ -168,10 +168,10 @@ public class ViewEntry {
         cycleType = 0;
         priority = 0;
         flags = 0;
-        entry27 = 0;
-        entry28 = 0;
-        entry29 = 0;
-        entry2a = 0;
+        targetX = 0;
+        targetY = 0;
+        oldStepSize = 0;
+        endFlag = 0;
     }
 
     public ViewSprite getSprite() {
@@ -434,36 +434,36 @@ public class ViewEntry {
         this.cycleTimeCount = cycleTimeCount;
     }
 
-    public short getEntry27() {
-        return entry27;
+    public short getTargetX() {
+        return targetX;
     }
 
-    public void setEntry27(short entry27) {
-        this.entry27 = entry27;
+    public void setTargetX(short entry27) {
+        this.targetX = entry27;
     }
 
-    public short getEntry28() {
-        return entry28;
+    public short getTargetY() {
+        return targetY;
     }
 
-    public void setEntry28(short entry28) {
-        this.entry28 = entry28;
+    public void setTargetY(short entry28) {
+        this.targetY = entry28;
     }
 
-    public short getEntry29() {
-        return entry29;
+    public short getOldStepSize() {
+        return oldStepSize;
     }
 
-    public void setEntry29(short entry29) {
-        this.entry29 = entry29;
+    public void setOldStepSize(short entry29) {
+        this.oldStepSize = entry29;
     }
 
-    public short getEntry2a() {
-        return entry2a;
+    public short getEndFlag() {
+        return endFlag;
     }
 
-    public void setEntry2a(short entry2a) {
-        this.entry2a = entry2a;
+    public void setEndFlag(short flag) {
+        this.endFlag = flag;
     }
 
     public boolean inPos(int x1, int y1, int x2, int y2) {
@@ -518,7 +518,7 @@ public class ViewEntry {
                         break;
                     }
 
-                    logicContext.setFlag(entry27, true);
+                    logicContext.setFlag(targetX, true);
                     removeFlags(FLAG_CYCLING);
                     direction = DIRECTION_NONE;
                     cycleType = CYCLE_NORMAL;
@@ -527,7 +527,7 @@ public class ViewEntry {
 
             case CYCLE_REVERSELOOP:
                 if (cell == 0) {
-                    logicContext.setFlag(entry27, true);
+                    logicContext.setFlag(targetX, true);
                     removeFlags(FLAG_CYCLING);
                     direction = DIRECTION_NONE;
                     cycleType = CYCLE_NORMAL;

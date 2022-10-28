@@ -259,15 +259,15 @@ public class ViewTable {
         ViewEntry v = viewEntries[entry];
 
         v.setMotionType(ViewEntry.MOTION_MOVEOBJECT);
-        v.setEntry27(x);
-        v.setEntry28(y);
-        v.setEntry29(v.getStepSize());
+        v.setTargetX(x);
+        v.setTargetY(y);
+        v.setOldStepSize(v.getStepSize());
 
         if (stepSize != 0) {
             v.setStepSize(stepSize);
         }
 
-        v.setEntry2a(flag);
+        v.setEndFlag(flag);
         logicContext.setFlag(flag, false);
         v.addFlags(ViewEntry.FLAG_UPDATE);
 
@@ -295,14 +295,14 @@ public class ViewTable {
         v.setMotionType(ViewEntry.MOTION_FOLLOWEGO);
 
         if (stepSize <= v.getStepSize()) {
-            v.setEntry27(v.getStepSize());
+            v.setTargetX(v.getStepSize());
         } else {
-            v.setEntry27(stepSize);
+            v.setTargetX(stepSize);
         }
 
-        v.setEntry28(flag);
+        v.setTargetY(flag);
         logicContext.setFlag(flag, false);
-        v.setEntry29((short) 0xff);
+        v.setOldStepSize((short) 0xff);
         v.addFlags(ViewEntry.FLAG_UPDATE);
     }
 
@@ -386,7 +386,7 @@ public class ViewTable {
 
         v.setCycleType(ViewEntry.CYCLE_ENDOFLOOP);
         v.addFlags(ViewEntry.FLAG_DONT_UPDATE | ViewEntry.FLAG_UPDATE | ViewEntry.FLAG_CYCLING);
-        v.setEntry27(flag);
+        v.setTargetX(flag);
 
         logicContext.setFlag(flag, false);
     }
@@ -396,7 +396,7 @@ public class ViewTable {
 
         v.setCycleType(ViewEntry.CYCLE_REVERSELOOP);
         v.addFlags(ViewEntry.FLAG_DONT_UPDATE | ViewEntry.FLAG_UPDATE | ViewEntry.FLAG_CYCLING);
-        v.setEntry27(flag);
+        v.setTargetX(flag);
 
         logicContext.setFlag(flag, false);
     }
@@ -968,9 +968,7 @@ public class ViewTable {
     }
 
     protected void eraseAll(ViewList list) {
-        ViewSprite s;
-
-        for (s = list.prev; s != null; s = s.prev) {
+        for (ViewSprite s = list.prev; s != null; s = s.prev) {
             s.restore(screenUpdate, screenView, priority);
         }
     }
@@ -1048,8 +1046,8 @@ public class ViewTable {
         short entry27;
         int direction;
 
-        entry27 = v.getEntry27();
-        v.setEntry27((short) (entry27 - 1));
+        entry27 = v.getTargetX();
+        v.setTargetX((short) (entry27 - 1));
 
         if ((entry27 == 0) || v.isSomeFlagsSet(ViewEntry.FLAG_DIDNT_MOVE)) {
             direction = randomSeed.nextInt() % 9;
@@ -1064,8 +1062,8 @@ public class ViewTable {
                 logicContext.setVar(LogicContext.VAR_EGO_DIRECTION, (short) direction);
             }
 
-            if (v.getEntry27() < 6) {
-                v.setEntry27((short) (randomSeed.nextInt() % 0x33));
+            if (v.getTargetX() < 6) {
+                v.setTargetX((short) (randomSeed.nextInt() % 0x33));
             }
         }
     }
@@ -1083,39 +1081,39 @@ public class ViewTable {
         egoX = (short) ((ego.getWidth() / 2) + ego.getX());
         objX = (short) ((obj.getWidth() / 2) + obj.getX());
 
-        direction = getDirection(egoX, ego.getY(), objX, obj.getY(), obj.getEntry27());
+        direction = getDirection(egoX, ego.getY(), objX, obj.getY(), obj.getTargetX());
 
         if (direction == ViewEntry.DIRECTION_NONE) {
             obj.setDirection(ViewEntry.DIRECTION_NONE);
             obj.setMotionType(ViewEntry.MOTION_NORMAL);
-            logicContext.setFlag(obj.getEntry28(), true);
+            logicContext.setFlag(obj.getTargetY(), true);
             return;
         }
 
-        if (obj.getEntry29() == (short) 0xff) {
-            obj.setEntry29((short) 0);
+        if (obj.getOldStepSize() == (short) 0xff) {
+            obj.setOldStepSize((short) 0);
         } else if (obj.isSomeFlagsSet(ViewEntry.FLAG_DIDNT_MOVE)) {
             obj.setDirection((short) ((randomSeed.nextInt() % 8) + 1));
 
             n = (short) (((absolute(obj.getY() - ego.getY()) + absolute(obj.getX() - ego.getX())) / 2) + 1);
 
             if (n <= obj.getStepSize()) {
-                obj.setEntry29(obj.getStepSize());
+                obj.setOldStepSize(obj.getStepSize());
                 return;
             } else {
                 do {
-                    obj.setEntry29((short) (randomSeed.nextInt() % n));
-                } while (obj.getEntry29() < obj.getStepSize());
+                    obj.setOldStepSize((short) (randomSeed.nextInt() % n));
+                } while (obj.getOldStepSize() < obj.getStepSize());
 
                 return;
             }
         }
 
-        if (obj.getEntry29() != (short) 0) {
-            obj.setEntry29((short) (obj.getEntry29() - obj.getStepSize()));
+        if (obj.getOldStepSize() != (short) 0) {
+            obj.setOldStepSize((short) (obj.getOldStepSize() - obj.getStepSize()));
 
-            if (obj.getEntry29() < (short) 0) {
-                obj.setEntry29((short) 0);
+            if (obj.getOldStepSize() < (short) 0) {
+                obj.setOldStepSize((short) 0);
             }
         } else {
             obj.setDirection(direction);
@@ -1123,7 +1121,7 @@ public class ViewTable {
     }
 
     protected void checkMotionMoveObject(ViewEntry v) {
-        v.setDirection(getDirection(v.getX(), v.getY(), v.getEntry27(), v.getEntry28(), v.getStepSize()));
+        v.setDirection(getDirection(v.getX(), v.getY(), v.getTargetX(), v.getTargetY(), v.getStepSize()));
 
         if (v == viewEntries[0]) {
             logicContext.setVar(LogicContext.VAR_EGO_DIRECTION, v.getDirection());
@@ -1135,8 +1133,8 @@ public class ViewTable {
     }
 
     protected void inDestination(ViewEntry v) {
-        v.setStepSize(v.getEntry29());
-        logicContext.setFlag(v.getEntry2a(), true);
+        v.setStepSize(v.getOldStepSize());
+        logicContext.setFlag(v.getEndFlag(), true);
         v.setMotionType(ViewEntry.MOTION_NORMAL);
 
         if (v == viewEntries[0]) {
