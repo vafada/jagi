@@ -42,6 +42,7 @@ public class InstructionSaveGame extends Instruction {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
+        System.out.println("TODO: implement save.game");
         return 1;
     }
 

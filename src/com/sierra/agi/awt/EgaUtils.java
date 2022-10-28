@@ -297,7 +297,7 @@ public abstract class EgaUtils {
     /**
      * Keyboard Handling
      */
-    protected static final int[] keys =
+    private static final int[] keys =
             {
                     /* Function Keys */
                     KeyEvent.VK_F1, 0x3b00,
@@ -336,7 +336,7 @@ public abstract class EgaUtils {
                     KeyEvent.VK_PAGE_UP, 0x4900,
                     KeyEvent.VK_PAGE_DOWN, 0x5100,
                     KeyEvent.VK_HOME, 0x4700,
-                    KeyEvent.VK_END, 0x4f00
+                    KeyEvent.VK_END, 0x4f00,
             };
     /**
      * EGA Color Model Cache
@@ -497,15 +497,7 @@ public abstract class EgaUtils {
         }
     }
 
-    protected static short convertKey(KeyEvent ev) {
-        if (ev.getKeyChar() == KeyEvent.CHAR_UNDEFINED) {
-            return convertKey(ev.getKeyCode());
-        }
-
-        return (short) ev.getKeyChar();
-    }
-
-    protected static short convertKey(int keyCode) {
+    public static short convertKey(int keyCode) {
         int index;
 
         for (index = 0; index < keys.length; index += 2) {

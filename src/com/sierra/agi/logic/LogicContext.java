@@ -10,6 +10,7 @@ package com.sierra.agi.logic;
 
 import com.sierra.agi.awt.EgaComponent;
 import com.sierra.agi.awt.EgaEvent;
+import com.sierra.agi.awt.EgaUtils;
 import com.sierra.agi.debug.ExceptionDialog;
 import com.sierra.agi.inv.InventoryObjects;
 import com.sierra.agi.menu.AgiMenuBar;
@@ -378,7 +379,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
         /* The New Room Instruction is a ideal place to force a garbage collection! */
         System.gc();
-        System.runFinalization();
 
         throw new LogicExitAll();
     }
@@ -567,7 +567,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
         /* Do Clean up ! */
         System.gc();
-        System.runFinalization();
         Thread.yield();
 
         running = true;
@@ -586,6 +585,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         try {
             logic0 = prepareRun();
 
+            // game loop
             while (true) {
                 doDelay();
 
@@ -705,11 +705,20 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                     break;
                 }
 
+
+                // works for now... needs clean up later.. store everything in a map
                 short keyCode = (short) ev.getKeyCode();
+                short convertedKeyCode = EgaUtils.convertKey(keyCode);
+
                 if (this.keyToControllerMap.containsKey(keyCode)) {
                     short controllerNum = this.keyToControllerMap.get(keyCode);
                     this.controllers[controllerNum] = true;
+                } else if (this.keyToControllerMap.containsKey(convertedKeyCode)) {
+                    short controllerNum = this.keyToControllerMap.get(convertedKeyCode);
+                    this.controllers[controllerNum] = true;
                 }
+
+                // -----------------------------------------
 
                 switch (ev.getKeyCode()) {
                     case 8:
@@ -784,13 +793,11 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                 }
 
                 if ((dir != 0) && playerControl) {
-                    ViewEntry entry;
-
                     if (dir < 0) {
                         dir = 0;
                     }
 
-                    entry = getViewTable().getEntry(ViewTable.EGO_ENTRY);
+                    ViewEntry entry = getViewTable().getEntry(ViewTable.EGO_ENTRY);
                     entry.setDirection(entry.getDirection() == dir ? (short) 0 : dir);
                 }
             }
