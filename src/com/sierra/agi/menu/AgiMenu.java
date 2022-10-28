@@ -11,17 +11,18 @@ package com.sierra.agi.menu;
 import com.sierra.agi.awt.EgaUtils;
 import com.sierra.agi.view.ViewScreen;
 
-import java.awt.*;
-import java.util.Vector;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AgiMenu {
     protected String name;
-    protected Vector items;
+    protected List items;
     protected int maxLength = -1;
 
     public AgiMenu(String name) {
         this.name = name;
-        this.items = new Vector();
+        this.items = new ArrayList<AgiMenuItem>();
     }
 
     public void add(AgiMenuItem item) {
@@ -59,11 +60,11 @@ public class AgiMenu {
     }
 
     protected int getMaxLength() {
-        int i, l, m = 1;
+        int m = 1;
 
         if (maxLength < 0) {
-            for (i = 0; i < items.size(); i++) {
-                l = items.get(i).toString().length();
+            for (int i = 0; i < items.size(); i++) {
+                int l = items.get(i).toString().length();
 
                 if (m < l) {
                     m = l;
@@ -77,17 +78,12 @@ public class AgiMenu {
     }
 
     public void drawMenu(ViewScreen viewScreen, int textColor, int disabledColor, int backgroundColor, int selectedItem, int x, Rectangle changedRectangle) {
-        int i, j, y, c;
-        int offset;
-        int[] screen;
         int maxLength = getMaxLength();
         int maxWidth = (maxLength + 2) * ViewScreen.CHAR_WIDTH;
-        String text;
-        boolean enabled;
 
-        c = items.size();
-        screen = viewScreen.getScreenData();
-        y = ViewScreen.CHAR_HEIGHT;
+        int c = items.size();
+        int[] screen = viewScreen.getScreenData();
+        int y = ViewScreen.CHAR_HEIGHT;
 
         if ((x + maxWidth) > ViewScreen.WIDTH) {
             x = ViewScreen.WIDTH - maxWidth;
@@ -99,9 +95,9 @@ public class AgiMenu {
 
         viewScreen.drawTopLine(textColor, backgroundColor, x, y, maxWidth);
 
-        for (i = 0; i < c; i++) {
-            enabled = isEnabled(i);
-            text = items.get(i).toString();
+        for (int i = 0; i < c; i++) {
+            boolean enabled = isEnabled(i);
+            String text = items.get(i).toString();
             y += ViewScreen.CHAR_HEIGHT;
 
             viewScreen.drawLeftLine(textColor, backgroundColor, x, y);

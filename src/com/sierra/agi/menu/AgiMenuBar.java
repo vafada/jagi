@@ -11,15 +11,16 @@ package com.sierra.agi.menu;
 import com.sierra.agi.awt.EgaUtils;
 import com.sierra.agi.view.ViewScreen;
 
-import java.awt.*;
+import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 public class AgiMenuBar {
-    protected Vector menus;
+    private List<AgiMenu> menus;
 
     public AgiMenuBar() {
-        menus = new Vector();
+        menus = new ArrayList<>();
     }
 
     public void addMenu(String name) {
@@ -27,20 +28,18 @@ public class AgiMenuBar {
     }
 
     public void addMenuItem(String name, short controller) {
-        ((AgiMenu) menus.lastElement()).add(new AgiMenuItem(name, controller));
+        (menus.get(menus.size() - 1)).add(new AgiMenuItem(name, controller));
     }
 
     public void enableMenuItem(boolean enable, short controller) {
-        int menu;
-
-        for (menu = 0; menu < menus.size(); menu++) {
-            ((AgiMenu) menus.get(menu)).enableMenuItem(enable, controller);
+        for (int menu = 0; menu < menus.size(); menu++) {
+            (menus.get(menu)).enableMenuItem(enable, controller);
         }
     }
 
     public boolean isEnabled(int menu, int item) {
         try {
-            return ((AgiMenu) menus.get(menu)).isEnabled(item);
+            return (menus.get(menu)).isEnabled(item);
         } catch (Exception ex) {
             return false;
         }
@@ -48,7 +47,7 @@ public class AgiMenuBar {
 
     public int getController(int menu, int item) {
         try {
-            return ((AgiMenu) menus.get(menu)).getController(item);
+            return (menus.get(menu)).getController(item);
         } catch (Exception ex) {
             return -1;
         }
@@ -59,7 +58,7 @@ public class AgiMenuBar {
     }
 
     public int getItemCount(int menu) {
-        return ((AgiMenu) menus.get(menu)).getItemCount();
+        return (menus.get(menu)).getItemCount();
     }
 
     public void drawMenuBar(ViewScreen viewScreen, int textColor, int backgroundColor, int selectedMenu) {
@@ -99,7 +98,6 @@ public class AgiMenuBar {
     }
 
     public void drawMenu(ViewScreen viewScreen, int textColor, int disabledColor, int backgroundColor, int selectedMenu, int selectedItem, Rectangle changedRectangle) {
-        AgiMenu menu;
         int i, c, x;
 
         if (selectedMenu < 0) {
@@ -126,6 +124,6 @@ public class AgiMenuBar {
             }
         }
 
-        ((AgiMenu) menus.get(selectedMenu)).drawMenu(viewScreen, textColor, disabledColor, backgroundColor, selectedItem, x, changedRectangle);
+        (menus.get(selectedMenu)).drawMenu(viewScreen, textColor, disabledColor, backgroundColor, selectedItem, x, changedRectangle);
     }
 }
