@@ -118,7 +118,7 @@ import java.util.Stack;
  */
 public class LogicContext extends LogicVariables implements Cloneable, Runnable {
     protected ResourceCache cache;
-    protected AgiMenuBar menuBar;
+    protected AgiMenuBar menuBar = new AgiMenuBar();
     protected ViewTable viewTable;
 
     protected boolean playerControl;
@@ -303,7 +303,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         pictureNumber = 0;
         horizon = DEFAULT_HORIZON;
         graphicMode = true;
-        menuBar = new AgiMenuBar();
+        // menuBar = new AgiMenuBar();
 
         viewTable.reset();
     }

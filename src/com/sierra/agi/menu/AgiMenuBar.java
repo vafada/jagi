@@ -66,32 +66,31 @@ public class AgiMenuBar {
     }
 
     public void drawMenuBar(ViewScreen viewScreen, int textColor, int backgroundColor, int selectedMenu) {
-        int i, j, c, l, x;
         String name;
         int[] screen = viewScreen.getScreenData();
         int[] font = viewScreen.getFont();
 
         Arrays.fill(screen, 0, ViewScreen.WIDTH * ViewScreen.CHAR_HEIGHT, backgroundColor);
 
-        x = 0;
-        c = menus.size();
+        int x = 0;
+        int c = menus.size();
 
         if (selectedMenu >= c) {
             selectedMenu %= c;
         }
 
-        for (i = 0; i < c; i++) {
+        for (int i = 0; i < c; i++) {
             name = menus.get(i).toString();
-            l = name.length();
+            int l = name.length();
             x += ViewScreen.CHAR_WIDTH;
 
             if (selectedMenu == i) {
-                for (j = 0; j < l; j++) {
+                for (int j = 0; j < l; j++) {
                     EgaUtils.putCharacter(screen, font, name.charAt(j), x, 0, ViewScreen.WIDTH, backgroundColor, textColor, true);
                     x += ViewScreen.CHAR_WIDTH;
                 }
             } else {
-                for (j = 0; j < l; j++) {
+                for (int j = 0; j < l; j++) {
                     EgaUtils.putCharacter(screen, font, name.charAt(j), x, 0, ViewScreen.WIDTH, textColor, 0, false);
                     x += ViewScreen.CHAR_WIDTH;
                 }
