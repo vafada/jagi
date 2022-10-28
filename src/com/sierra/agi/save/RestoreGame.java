@@ -4,7 +4,7 @@ import com.sierra.agi.awt.EgaUtils;
 import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.res.ResourceCache;
 import com.sierra.agi.res.ResourceCacheFile;
-import com.sierra.agi.view.ViewEntry;
+import com.sierra.agi.view.AnimatedObject;
 import com.sierra.agi.view.ViewScreen;
 import com.sierra.agi.view.ViewTable;
 
@@ -211,8 +211,8 @@ public class RestoreGame {
 
         for (int i = 0; i < numOfAniObjs; i++) {
             int aniObjOffset = aniObjsOffset + 2 + (i * 0x2B);
-            ViewEntry viewEntry = viewTable.getEntry((short) i);
-            viewEntry.reset();
+            AnimatedObject animatedObject = viewTable.getEntry((short) i);
+            animatedObject.reset();
 
             // Each ANIOBJ entry is 0x2B in length, i.e. 43 bytes.
             // Example: KQ1 - ego - starting position in room 1
@@ -221,163 +221,163 @@ public class RestoreGame {
             // 01 00 00 00 09 53 40 00 00 00 00
 
             //UBYTE num;          /* object number                              */    e.g.   00
-            viewEntry.setViewNumber(savedGameData[aniObjOffset + 2]);
-            viewEntry.setView(this.logicContext, (short) savedGameData[aniObjOffset + 2]);
+            animatedObject.setViewNumber(savedGameData[aniObjOffset + 2]);
+            animatedObject.setView(this.logicContext, (short) savedGameData[aniObjOffset + 2]);
             //UBYTE movefreq;     /* number of animation cycles between motion  */    e.g.   01
-            viewEntry.setStepTime((short) savedGameData[aniObjOffset + 0]);
+            animatedObject.setStepTime((short) savedGameData[aniObjOffset + 0]);
             //UBYTE moveclk;      /* number of cycles between moves of object   */    e.g.   01
-            viewEntry.setStepTimeCount((short) savedGameData[aniObjOffset + 1]);
+            animatedObject.setStepTimeCount((short) savedGameData[aniObjOffset + 1]);
 
             //COORD x;            /* current x coordinate                       */    e.g.   6e 00 (0x006e = )
-            viewEntry.setX((short) (savedGameData[aniObjOffset + 3] + (savedGameData[aniObjOffset + 4] << 8)));
+            animatedObject.setX((short) (savedGameData[aniObjOffset + 3] + (savedGameData[aniObjOffset + 4] << 8)));
             //COORD y;            /* current y coordinate                       */    e.g.   64 00 (0x0064 = )
-            viewEntry.setY((short) (savedGameData[aniObjOffset + 5] + (savedGameData[aniObjOffset + 6] << 8)));
+            animatedObject.setY((short) (savedGameData[aniObjOffset + 5] + (savedGameData[aniObjOffset + 6] << 8)));
             //UBYTE view;         /* current view number                        */    e.g.   00
-            viewEntry.setCurrentView((short) savedGameData[aniObjOffset + 7]);
+            animatedObject.setCurrentView((short) savedGameData[aniObjOffset + 7]);
             //VIEW* viewptr;      /* pointer to current view                    */    e.g.   17 6b (0x6b17 = ) IGNORE.
             //UBYTE loop;         /* current loop in view                       */    e.g.   00
-            viewEntry.setCurrentLoop((short) savedGameData[aniObjOffset + 10]);
+            animatedObject.setCurrentLoop((short) savedGameData[aniObjOffset + 10]);
             //UBYTE loopcnt;      /* number of loops in view                    */    e.g.   04                IGNORE
             //LOOP* loopptr;      /* pointer to current loop                    */    e.g.   24 6b (0x6b24 = ) IGNORE
             //UBYTE cel;          /* current cell in loop                       */    e.g.   00
-            viewEntry.setCurrentCell((short) savedGameData[aniObjOffset + 14]);
+            animatedObject.setCurrentCell((short) savedGameData[aniObjOffset + 14]);
             //UBYTE celcnt;       /* number of cells in current loop            */    e.g.   06                IGNORE
             //CEL* celptr;        /* pointer to current cell                    */    e.g.   31 6b (0x6b31 = ) IGNORE
             //CEL* prevcel;       /* pointer to previous cell                   */    e.g.   31 6b (0x6b31 = )
-            if (viewEntry.getCurrentViewData() != null) {
-                viewEntry.setPreviousCellData(viewEntry.getCurrentCellData());
+            if (animatedObject.getCurrentViewData() != null) {
+                animatedObject.setPreviousCellData(animatedObject.getCurrentCellData());
             }
 
             //STRPTR save;        /* pointer to background save area            */    e.g.   2f 9c (0x9c2f = ) IGNORE
             //COORD prevx;        /* previous x coordinate                      */    e.g.   6e 00 (0x006e = )
-            viewEntry.setxCopy((byte) (savedGameData[aniObjOffset + 22] + (savedGameData[aniObjOffset + 23] << 8)));
+            animatedObject.setxCopy((byte) (savedGameData[aniObjOffset + 22] + (savedGameData[aniObjOffset + 23] << 8)));
             //COORD prevy;        /* previous y coordinate                      */    e.g.   64 00 (0x0064 = )
-            viewEntry.setyCopy((byte) (savedGameData[aniObjOffset + 24] + (savedGameData[aniObjOffset + 25] << 8)));
+            animatedObject.setyCopy((byte) (savedGameData[aniObjOffset + 24] + (savedGameData[aniObjOffset + 25] << 8)));
             //COORD xsize;        /* x dimension of current cell                */    e.g.   06 00 (0x0006 = ) IGNORE
             //COORD ysize;        /* y dimension of current cell                */    e.g.   20 00 (0x0020 = ) IGNORE
             //UBYTE stepsize;     /* distance object can move                   */    e.g.   01
-            viewEntry.setStepSize((short) savedGameData[aniObjOffset + 30]);
+            animatedObject.setStepSize((short) savedGameData[aniObjOffset + 30]);
             //UBYTE cyclfreq;     /* time interval between cells of object      */    e.g.   01
-            viewEntry.setCycleTime((short) savedGameData[aniObjOffset + 31]);
+            animatedObject.setCycleTime((short) savedGameData[aniObjOffset + 31]);
             //UBYTE cycleclk;     /* counter for determining when object cycles */    e.g.   01
-            viewEntry.setCycleTimeCount((short) savedGameData[aniObjOffset + 32]);
+            animatedObject.setCycleTimeCount((short) savedGameData[aniObjOffset + 32]);
             //UBYTE dir;          /* object direction                           */    e.g.   00
-            viewEntry.setDirection((short) savedGameData[aniObjOffset + 33]);
+            animatedObject.setDirection((short) savedGameData[aniObjOffset + 33]);
             //UBYTE motion;       /* object motion type                         */    e.g.   00
             // #define	WANDER	1		/* random movement */
             // #define	FOLLOW	2		/* follow an object */
             // #define	MOVETO	3		/* move to a given coordinate */
-            viewEntry.setMotionType((short) savedGameData[aniObjOffset + 34]);
+            animatedObject.setMotionType((short) savedGameData[aniObjOffset + 34]);
             //UBYTE cycle;        /* cell cycling type                          */    e.g.   00
             // #define NORMAL	0		/* normal repetative cycling of object */
             // #define ENDLOOP	1		/* animate to end of loop and stop */
             // #define RVRSLOOP	2		/* reverse of ENDLOOP */
             // #define REVERSE	3		/* cycle continually in reverse */
-            viewEntry.setCycleType((short) savedGameData[aniObjOffset + 35]);
+            animatedObject.setCycleType((short) savedGameData[aniObjOffset + 35]);
             //UBYTE pri;          /* priority of object                         */    e.g.   09
-            viewEntry.setPriority((short) savedGameData[aniObjOffset + 36]);
+            animatedObject.setPriority((short) savedGameData[aniObjOffset + 36]);
             //UWORD control;      /* object control flag (bit mapped)           */    e.g.   53 40 (0x4053 = )
             int controlBits = (savedGameData[aniObjOffset + 37] + (savedGameData[aniObjOffset + 38] << 8));
             /* object control bits */
             // DRAWN     0x0001  /* 1 -> object is drawn on screen */
             if ((controlBits & 0x0001) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_DRAWN);
+                animatedObject.addFlags(AnimatedObject.FLAG_DRAWN);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_DRAWN);
+                animatedObject.removeFlags(AnimatedObject.FLAG_DRAWN);
             }
 
             // IGNRBLK   0x0002  /* 1 -> object ignores blocks */
             if ((controlBits & 0x0002) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_IGNORE_BLOCKS);
+                animatedObject.addFlags(AnimatedObject.FLAG_IGNORE_BLOCKS);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_IGNORE_BLOCKS);
+                animatedObject.removeFlags(AnimatedObject.FLAG_IGNORE_BLOCKS);
             }
             // FIXEDPRI  0x0004  /* 1 -> object has fixed priority */
             if ((controlBits & 0x0004) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_FIX_PRIORITY);
+                animatedObject.addFlags(AnimatedObject.FLAG_FIX_PRIORITY);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_FIX_PRIORITY);
+                animatedObject.removeFlags(AnimatedObject.FLAG_FIX_PRIORITY);
             }
             // IGNRHRZ   0x0008  /* 1 -> object ignores the horizon */
             if ((controlBits & 0x0008) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_IGNORE_HORIZON);
+                animatedObject.addFlags(AnimatedObject.FLAG_IGNORE_HORIZON);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_IGNORE_HORIZON);
+                animatedObject.removeFlags(AnimatedObject.FLAG_IGNORE_HORIZON);
             }
             // UPDATE    0x0010  /* 1 -> update the object */
             if ((controlBits & 0x0010) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_UPDATE);
+                animatedObject.addFlags(AnimatedObject.FLAG_UPDATE);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_UPDATE);
+                animatedObject.removeFlags(AnimatedObject.FLAG_UPDATE);
             }
             // CYCLE     0x0020  /* 1 -> cycle the object */
             if ((controlBits & 0x0020) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_CYCLING);
+                animatedObject.addFlags(AnimatedObject.FLAG_CYCLING);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_CYCLING);
+                animatedObject.removeFlags(AnimatedObject.FLAG_CYCLING);
             }
             // ANIMATED  0x0040  /* 1 -> object can move */
             if ((controlBits & 0x0040) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_ANIMATE);
+                animatedObject.addFlags(AnimatedObject.FLAG_ANIMATE);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_ANIMATE);
+                animatedObject.removeFlags(AnimatedObject.FLAG_ANIMATE);
             }
             // BLOCKED   0x0080  /* 1 -> object is blocked */
             if ((controlBits & 0x0080) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_MOTION);
+                animatedObject.addFlags(AnimatedObject.FLAG_MOTION);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_MOTION);
+                animatedObject.removeFlags(AnimatedObject.FLAG_MOTION);
             }
             // PRICTRL1  0x0100  /* 1 -> object must be on 'water' priority */
             if ((controlBits & 0x0100) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_ON_WATER);
+                animatedObject.addFlags(AnimatedObject.FLAG_ON_WATER);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_ON_WATER);
+                animatedObject.removeFlags(AnimatedObject.FLAG_ON_WATER);
             }
             // IGNROBJ   0x0200  /* 1 -> object won't collide with objects */
             if ((controlBits & 0x0200) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_IGNORE_OBJECTS);
+                animatedObject.addFlags(AnimatedObject.FLAG_IGNORE_OBJECTS);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_IGNORE_OBJECTS);
+                animatedObject.removeFlags(AnimatedObject.FLAG_IGNORE_OBJECTS);
             }
             // REPOS     0x0400  /* 1 -> object being reposn'd in this cycle */
             if ((controlBits & 0x0400) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_UPDATE_POS);
+                animatedObject.addFlags(AnimatedObject.FLAG_UPDATE_POS);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_UPDATE_POS);
+                animatedObject.removeFlags(AnimatedObject.FLAG_UPDATE_POS);
             }
             // PRICTRL2  0x0800  /* 1 -> object must not be entirely on water */
             if ((controlBits & 0x0800) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_ON_LAND);
+                animatedObject.addFlags(AnimatedObject.FLAG_ON_LAND);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_ON_LAND);
+                animatedObject.removeFlags(AnimatedObject.FLAG_ON_LAND);
             }
             // NOADVANC  0x1000  /* 1 -> don't advance object's cel in this loop */
             if ((controlBits & 0x1000) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_DONT_UPDATE);
+                animatedObject.addFlags(AnimatedObject.FLAG_DONT_UPDATE);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_DONT_UPDATE);
+                animatedObject.removeFlags(AnimatedObject.FLAG_DONT_UPDATE);
             }
             // FIXEDLOOP 0x2000  /* 1 -> object's loop is fixed */
             if ((controlBits & 0x2000) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_FIX_LOOP);
+                animatedObject.addFlags(AnimatedObject.FLAG_FIX_LOOP);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_FIX_LOOP);
+                animatedObject.removeFlags(AnimatedObject.FLAG_FIX_LOOP);
             }
             // STOPPED   0x4000  /* 1 -> object did not move during last animation cycle */
             if ((controlBits & 0x4000) > 0) {
-                viewEntry.addFlags(ViewEntry.FLAG_DIDNT_MOVE);
+                animatedObject.addFlags(AnimatedObject.FLAG_DIDNT_MOVE);
             } else {
-                viewEntry.removeFlags(ViewEntry.FLAG_DIDNT_MOVE);
+                animatedObject.removeFlags(AnimatedObject.FLAG_DIDNT_MOVE);
             }
             //UBYTE parms[4];     /* space for various motion parameters        */    e.g.   00 00 00 00
-            viewEntry.setTargetX((short) savedGameData[aniObjOffset + 39]);
-            viewEntry.setTargetY((short) savedGameData[aniObjOffset + 40]);
-            viewEntry.setOldStepSize((short) savedGameData[aniObjOffset + 41]);
-            viewEntry.setEndFlag((short) savedGameData[aniObjOffset + 42]);
+            animatedObject.setTargetX((short) savedGameData[aniObjOffset + 39]);
+            animatedObject.setTargetY((short) savedGameData[aniObjOffset + 40]);
+            animatedObject.setOldStepSize((short) savedGameData[aniObjOffset + 41]);
+            animatedObject.setEndFlag((short) savedGameData[aniObjOffset + 42]);
             // If motion type is follow, then force a re-initialisation of the follow path.
-            if (viewEntry.getMotionType() == ViewEntry.MOTION_FOLLOWEGO) {
-                viewEntry.setOldStepSize((short) -1);
+            if (animatedObject.getMotionType() == AnimatedObject.MOTION_FOLLOWEGO) {
+                animatedObject.setOldStepSize((short) -1);
             }
         }
 

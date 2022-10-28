@@ -18,7 +18,7 @@ import com.sierra.agi.res.ResourceCache;
 import com.sierra.agi.res.ResourceException;
 import com.sierra.agi.sound.SoundClip;
 import com.sierra.agi.sound.SoundListener;
-import com.sierra.agi.view.ViewEntry;
+import com.sierra.agi.view.AnimatedObject;
 import com.sierra.agi.view.ViewScreen;
 import com.sierra.agi.view.ViewTable;
 import com.sierra.agi.word.Word;
@@ -340,7 +340,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         /* 3 */
         /* 4 */
         /* 5 */
-        ViewEntry ego = viewTable.getEntry((short) 0);
+        AnimatedObject ego = viewTable.getEntry((short) 0);
         switch (vars[LogicContext.VAR_EGO_EDGE]) {
             case LogicContext.TOP:
                 ego.setY(LogicContext.MAXY);
@@ -790,7 +790,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                         dir = 0;
                     }
 
-                    ViewEntry entry = getViewTable().getEntry(ViewTable.EGO_ENTRY);
+                    AnimatedObject entry = getViewTable().getEntry(ViewTable.EGO_ENTRY);
                     entry.setDirection(entry.getDirection() == dir ? (short) 0 : dir);
                 }
             }

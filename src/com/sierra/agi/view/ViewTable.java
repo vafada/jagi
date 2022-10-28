@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class ViewTable {
-    public static final int MAX_VIEWENTRY = 32;
+    public static final int MAX_ANIMATED_OBJECTS = 32;
     public static final short EGO_ENTRY = (short) 0;
     public static final int WIDTH = 160;
     public static final int HEIGHT = 168;
@@ -39,7 +39,7 @@ public class ViewTable {
     protected static final int[] directionTableX = new int[]{0, 0, 1, 1, 1, 0, -1, -1, -1};
     protected static final int[] directionTableY = new int[]{0, -1, -1, 0, 1, 1, 1, 0, -1};
     protected LogicContext logicContext;
-    private ViewEntry[] viewEntries;
+    private AnimatedObject[] animatedObjects;
     protected boolean picShown;
     protected boolean blockSet;
     protected short blockUpperLeftX;
@@ -63,10 +63,10 @@ public class ViewTable {
         int i;
 
         logicContext = context;
-        viewEntries = new ViewEntry[MAX_VIEWENTRY];
+        animatedObjects = new AnimatedObject[MAX_ANIMATED_OBJECTS];
 
-        for (i = 0; i < viewEntries.length; i++) {
-            viewEntries[i] = new ViewEntry(i);
+        for (i = 0; i < animatedObjects.length; i++) {
+            animatedObjects[i] = new AnimatedObject(i);
         }
 
         randomSeed = new Random();
@@ -89,8 +89,8 @@ public class ViewTable {
         blockSet = false;
         picShown = false;
 
-        for (int i = 0; i < viewEntries.length; i++) {
-            viewEntries[i].reset();
+        for (int i = 0; i < animatedObjects.length; i++) {
+            animatedObjects[i].reset();
         }
 
         resetPriorityBands();
@@ -113,11 +113,11 @@ public class ViewTable {
 
     public void resetNewRoom() {
         screen.reset();
-        for (int i = 0; i < MAX_VIEWENTRY; i++) {
-            ViewEntry v = viewEntries[i];
+        for (int i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
+            AnimatedObject v = animatedObjects[i];
 
-            v.removeFlags(ViewEntry.FLAG_ANIMATE | ViewEntry.FLAG_DRAWN);
-            v.addFlags(ViewEntry.FLAG_UPDATE);
+            v.removeFlags(AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_DRAWN);
+            v.addFlags(AnimatedObject.FLAG_UPDATE);
             v.setStepTime((short) 1);
             v.setStepTimeCount((short) 1);
             v.setCycleTime((short) 1);
@@ -158,26 +158,26 @@ public class ViewTable {
     }
 
     public boolean inBox(short entry, short x1, short y1, short x2, short y2) {
-        return viewEntries[entry].inBox(x1, y1, x2, y2);
+        return animatedObjects[entry].inBox(x1, y1, x2, y2);
     }
 
     public boolean inPos(short entry, short x1, short y1, short x2, short y2) {
-        return viewEntries[entry].inPos(x1, y1, x2, y2);
+        return animatedObjects[entry].inPos(x1, y1, x2, y2);
     }
 
     public boolean inCentre(short entry, short x1, short y1, short x2, short y2) {
-        return viewEntries[entry].inCentre(x1, y1, x2, y2);
+        return animatedObjects[entry].inCentre(x1, y1, x2, y2);
     }
 
     public boolean inRight(short entry, short x1, short y1, short x2, short y2) {
-        return viewEntries[entry].inCentre(x1, y1, x2, y2);
+        return animatedObjects[entry].inCentre(x1, y1, x2, y2);
     }
 
     public short distance(short s, short d) {
-        ViewEntry si = viewEntries[s];
-        ViewEntry di = viewEntries[d];
+        AnimatedObject si = animatedObjects[s];
+        AnimatedObject di = animatedObjects[d];
 
-        if (si.isSomeFlagsSet(ViewEntry.FLAG_DRAWN) && di.isSomeFlagsSet(ViewEntry.FLAG_DRAWN)) {
+        if (si.isSomeFlagsSet(AnimatedObject.FLAG_DRAWN) && di.isSomeFlagsSet(AnimatedObject.FLAG_DRAWN)) {
             int r = absolute((si.getX() + (si.getWidth() / 2)) - (di.getX() + (di.getWidth() / 2))) + absolute(si.getY() - di.getY());
 
             if (r > 0xfe) {
@@ -207,56 +207,56 @@ public class ViewTable {
     }
 
     public void setView(short entry, short view) {
-        viewEntries[entry].setView(logicContext, view);
+        animatedObjects[entry].setView(logicContext, view);
     }
 
     public short getView(short entry) {
-        return viewEntries[entry].getView();
+        return animatedObjects[entry].getView();
     }
 
     public void setLoop(short entry, short loop) {
-        viewEntries[entry].setLoop(logicContext, loop);
+        animatedObjects[entry].setLoop(logicContext, loop);
     }
 
     public short getLoop(short entry) {
-        return viewEntries[entry].getLoop();
+        return animatedObjects[entry].getLoop();
     }
 
     public void setCell(short entry, short cell) {
-        viewEntries[entry].setCell(logicContext, cell);
+        animatedObjects[entry].setCell(logicContext, cell);
     }
 
     public short getCell(short entry) {
-        return viewEntries[entry].getCell();
+        return animatedObjects[entry].getCell();
     }
 
     public void setDirection(short entry, short direction) {
-        viewEntries[entry].setDirection(direction);
+        animatedObjects[entry].setDirection(direction);
     }
 
     public short getDirection(short entry) {
-        return viewEntries[entry].getDirection();
+        return animatedObjects[entry].getDirection();
     }
 
     public short getPriority(short entry) {
-        return viewEntries[entry].getPriority();
+        return animatedObjects[entry].getPriority();
     }
 
     public void setPriority(short entry, short priority) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
-        v.addFlags(ViewEntry.FLAG_FIX_PRIORITY);
+        v.addFlags(AnimatedObject.FLAG_FIX_PRIORITY);
         v.setPriority(priority);
     }
 
     public void releasePriority(short entry) {
-        viewEntries[entry].removeFlags(entry);
+        animatedObjects[entry].removeFlags(entry);
     }
 
     public void moveObject(short entry, short x, short y, short stepSize, short flag) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
-        v.setMotionType(ViewEntry.MOTION_MOVEOBJECT);
+        v.setMotionType(AnimatedObject.MOTION_MOVEOBJECT);
         v.setTargetX(x);
         v.setTargetY(y);
         v.setOldStepSize(v.getStepSize());
@@ -267,7 +267,7 @@ public class ViewTable {
 
         v.setEndFlag(flag);
         logicContext.setFlag(flag, false);
-        v.addFlags(ViewEntry.FLAG_UPDATE);
+        v.addFlags(AnimatedObject.FLAG_UPDATE);
 
         if (entry == 0) {
             logicContext.setPlayerControl(false);
@@ -277,20 +277,20 @@ public class ViewTable {
     }
 
     public void wanderObject(short entry) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
         if (entry == 0) {
             logicContext.setPlayerControl(false);
         }
 
-        v.setMotionType(ViewEntry.MOTION_WANDER);
-        v.addFlags(ViewEntry.FLAG_UPDATE);
+        v.setMotionType(AnimatedObject.MOTION_WANDER);
+        v.addFlags(AnimatedObject.FLAG_UPDATE);
     }
 
     public void followEgo(short entry, short stepSize, short flag) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
-        v.setMotionType(ViewEntry.MOTION_FOLLOWEGO);
+        v.setMotionType(AnimatedObject.MOTION_FOLLOWEGO);
 
         if (stepSize <= v.getStepSize()) {
             v.setTargetX(v.getStepSize());
@@ -301,60 +301,60 @@ public class ViewTable {
         v.setTargetY(flag);
         logicContext.setFlag(flag, false);
         v.setOldStepSize((short) 0xff);
-        v.addFlags(ViewEntry.FLAG_UPDATE);
+        v.addFlags(AnimatedObject.FLAG_UPDATE);
     }
 
     public void animateObject(short entry) {
-        if (entry >= MAX_VIEWENTRY) {
+        if (entry >= MAX_ANIMATED_OBJECTS) {
             logicContext.setError((short) 0xd);
         }
 
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
-        if (!v.isSomeFlagsSet(ViewEntry.FLAG_ANIMATE)) {
-            v.setFlags((short) (ViewEntry.FLAG_ANIMATE | ViewEntry.FLAG_CYCLING | ViewEntry.FLAG_UPDATE));
-            v.setMotionType(ViewEntry.MOTION_NORMAL);
-            v.setCycleType(ViewEntry.CYCLE_NORMAL);
-            v.setDirection(ViewEntry.DIRECTION_NONE);
+        if (!v.isSomeFlagsSet(AnimatedObject.FLAG_ANIMATE)) {
+            v.setFlags((short) (AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_CYCLING | AnimatedObject.FLAG_UPDATE));
+            v.setMotionType(AnimatedObject.MOTION_NORMAL);
+            v.setCycleType(AnimatedObject.CYCLE_NORMAL);
+            v.setDirection(AnimatedObject.DIRECTION_NONE);
         }
     }
 
     public void unanimateAll() {
         int i;
 
-        for (i = 0; i < MAX_VIEWENTRY; i++) {
-            viewEntries[i].removeFlags(
-                    ViewEntry.FLAG_ANIMATE |
-                            ViewEntry.FLAG_DRAWN);
+        for (i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
+            animatedObjects[i].removeFlags(
+                    AnimatedObject.FLAG_ANIMATE |
+                            AnimatedObject.FLAG_DRAWN);
         }
     }
 
     public void observeBlocks(short entry) {
-        viewEntries[entry].removeFlags(ViewEntry.FLAG_IGNORE_BLOCKS);
+        animatedObjects[entry].removeFlags(AnimatedObject.FLAG_IGNORE_BLOCKS);
     }
 
     public void ignoreBlocks(short entry) {
-        viewEntries[entry].addFlags(ViewEntry.FLAG_IGNORE_BLOCKS);
+        animatedObjects[entry].addFlags(AnimatedObject.FLAG_IGNORE_BLOCKS);
     }
 
     public void observeHorizon(short entry) {
-        viewEntries[entry].removeFlags(ViewEntry.FLAG_IGNORE_HORIZON);
+        animatedObjects[entry].removeFlags(AnimatedObject.FLAG_IGNORE_HORIZON);
     }
 
     public void ignoreHorizon(short entry) {
-        viewEntries[entry].addFlags(ViewEntry.FLAG_IGNORE_HORIZON);
+        animatedObjects[entry].addFlags(AnimatedObject.FLAG_IGNORE_HORIZON);
     }
 
     public void observeObjects(short entry) {
-        viewEntries[entry].removeFlags(ViewEntry.FLAG_IGNORE_OBJECTS);
+        animatedObjects[entry].removeFlags(AnimatedObject.FLAG_IGNORE_OBJECTS);
     }
 
     public void ignoreObjects(short entry) {
-        viewEntries[entry].addFlags(ViewEntry.FLAG_IGNORE_OBJECTS);
+        animatedObjects[entry].addFlags(AnimatedObject.FLAG_IGNORE_OBJECTS);
     }
 
     public void forceUpdate(short entry) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
         eraseBoth();
         blitBoth();
@@ -362,151 +362,151 @@ public class ViewTable {
     }
 
     public void normalCycling(short entry) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
-        v.setCycleType(ViewEntry.CYCLE_NORMAL);
-        v.addFlags(ViewEntry.FLAG_CYCLING);
+        v.setCycleType(AnimatedObject.CYCLE_NORMAL);
+        v.addFlags(AnimatedObject.FLAG_CYCLING);
     }
 
     public void reverseCycling(short entry) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
-        v.setCycleType(ViewEntry.CYCLE_REVERSE);
-        v.addFlags(ViewEntry.FLAG_CYCLING);
+        v.setCycleType(AnimatedObject.CYCLE_REVERSE);
+        v.addFlags(AnimatedObject.FLAG_CYCLING);
     }
 
     public void normalMotion(short entry) {
-        viewEntries[entry].setMotionType(ViewEntry.MOTION_NORMAL);
+        animatedObjects[entry].setMotionType(AnimatedObject.MOTION_NORMAL);
     }
 
     public void endOfLoop(short entry, short flag) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
-        v.setCycleType(ViewEntry.CYCLE_ENDOFLOOP);
-        v.addFlags(ViewEntry.FLAG_DONT_UPDATE | ViewEntry.FLAG_UPDATE | ViewEntry.FLAG_CYCLING);
+        v.setCycleType(AnimatedObject.CYCLE_ENDOFLOOP);
+        v.addFlags(AnimatedObject.FLAG_DONT_UPDATE | AnimatedObject.FLAG_UPDATE | AnimatedObject.FLAG_CYCLING);
         v.setTargetX(flag);
 
         logicContext.setFlag(flag, false);
     }
 
     public void reverseLoop(short entry, short flag) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
-        v.setCycleType(ViewEntry.CYCLE_REVERSELOOP);
-        v.addFlags(ViewEntry.FLAG_DONT_UPDATE | ViewEntry.FLAG_UPDATE | ViewEntry.FLAG_CYCLING);
+        v.setCycleType(AnimatedObject.CYCLE_REVERSELOOP);
+        v.addFlags(AnimatedObject.FLAG_DONT_UPDATE | AnimatedObject.FLAG_UPDATE | AnimatedObject.FLAG_CYCLING);
         v.setTargetX(flag);
 
         logicContext.setFlag(flag, false);
     }
 
     public void fixLoop(short entry) {
-        viewEntries[entry].addFlags(ViewEntry.FLAG_FIX_LOOP);
+        animatedObjects[entry].addFlags(AnimatedObject.FLAG_FIX_LOOP);
     }
 
     public void releaseLoop(short entry) {
-        viewEntries[entry].removeFlags(ViewEntry.FLAG_FIX_LOOP);
+        animatedObjects[entry].removeFlags(AnimatedObject.FLAG_FIX_LOOP);
     }
 
     public void startUpdate(short entry) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
-        if (!v.isSomeFlagsSet(ViewEntry.FLAG_UPDATE)) {
+        if (!v.isSomeFlagsSet(AnimatedObject.FLAG_UPDATE)) {
             eraseBoth();
-            v.addFlags(ViewEntry.FLAG_UPDATE);
+            v.addFlags(AnimatedObject.FLAG_UPDATE);
             blitBoth();
         }
     }
 
     public void stopUpdate(short entry) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
-        if (v.isSomeFlagsSet(ViewEntry.FLAG_UPDATE)) {
+        if (v.isSomeFlagsSet(AnimatedObject.FLAG_UPDATE)) {
             eraseBoth();
-            v.removeFlags(ViewEntry.FLAG_UPDATE);
+            v.removeFlags(AnimatedObject.FLAG_UPDATE);
             blitBoth();
         }
     }
 
     public void startMotion(short entry) {
-        viewEntries[entry].setMotionType(ViewEntry.MOTION_NORMAL);
+        animatedObjects[entry].setMotionType(AnimatedObject.MOTION_NORMAL);
 
         if (entry == 0) {
-            logicContext.setVar(LogicContext.VAR_EGO_DIRECTION, ViewEntry.DIRECTION_NONE);
+            logicContext.setVar(LogicContext.VAR_EGO_DIRECTION, AnimatedObject.DIRECTION_NONE);
             logicContext.setPlayerControl(true);
         }
     }
 
     public void stopMotion(short entry) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
-        v.setDirection(ViewEntry.DIRECTION_NONE);
-        v.setMotionType(ViewEntry.MOTION_NORMAL);
+        v.setDirection(AnimatedObject.DIRECTION_NONE);
+        v.setMotionType(AnimatedObject.MOTION_NORMAL);
 
         if (entry == 0) {
-            logicContext.setVar(LogicContext.VAR_EGO_DIRECTION, ViewEntry.DIRECTION_NONE);
+            logicContext.setVar(LogicContext.VAR_EGO_DIRECTION, AnimatedObject.DIRECTION_NONE);
             logicContext.setPlayerControl(false);
         }
     }
 
     public void startCycling(short entry) {
-        viewEntries[entry].addFlags(ViewEntry.FLAG_CYCLING);
+        animatedObjects[entry].addFlags(AnimatedObject.FLAG_CYCLING);
     }
 
     public void stopCycling(short entry) {
-        viewEntries[entry].removeFlags(ViewEntry.FLAG_CYCLING);
+        animatedObjects[entry].removeFlags(AnimatedObject.FLAG_CYCLING);
     }
 
     public void onWater(short entry) {
-        viewEntries[entry].addFlags(ViewEntry.FLAG_ON_WATER);
+        animatedObjects[entry].addFlags(AnimatedObject.FLAG_ON_WATER);
     }
 
     public void onLand(short entry) {
-        viewEntries[entry].addFlags(ViewEntry.FLAG_ON_LAND);
+        animatedObjects[entry].addFlags(AnimatedObject.FLAG_ON_LAND);
     }
 
     public void onAnything(short entry) {
-        viewEntries[entry].removeFlags(ViewEntry.FLAG_ON_LAND | ViewEntry.FLAG_ON_WATER);
+        animatedObjects[entry].removeFlags(AnimatedObject.FLAG_ON_LAND | AnimatedObject.FLAG_ON_WATER);
     }
 
     public short getCycleTime(short entry) {
-        return viewEntries[entry].getCycleTime();
+        return animatedObjects[entry].getCycleTime();
     }
 
     public void setCycleTime(short entry, short cycleTime) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
         v.setCycleTime(cycleTime);
         v.setCycleTimeCount(cycleTime);
     }
 
     public short getStepSize(short entry) {
-        return viewEntries[entry].getStepSize();
+        return animatedObjects[entry].getStepSize();
     }
 
     public void setStepSize(short entry, short stepSize) {
-        viewEntries[entry].setStepSize(stepSize);
+        animatedObjects[entry].setStepSize(stepSize);
     }
 
     public short getStepTime(short entry) {
-        return viewEntries[entry].getStepTime();
+        return animatedObjects[entry].getStepTime();
     }
 
     public void setStepTime(short entry, short stepTime) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
         v.setStepTime(stepTime);
         v.setStepTimeCount(stepTime);
     }
 
-    public ViewEntry getEntry(short entry) {
-        return viewEntries[entry];
+    public AnimatedObject getEntry(short entry) {
+        return animatedObjects[entry];
     }
 
     public void draw(short entry) {
-        ViewEntry v;
+        AnimatedObject v;
 
         try {
-            v = viewEntries[entry];
+            v = animatedObjects[entry];
         } catch (IndexOutOfBoundsException oobex) {
             logicContext.setError((short) 0x13);
             return;
@@ -516,38 +516,38 @@ public class ViewTable {
             logicContext.setError((short) 0x14);
         }
 
-        if (!v.isSomeFlagsSet(ViewEntry.FLAG_DRAWN)) {
-            v.addFlags(ViewEntry.FLAG_UPDATE);
+        if (!v.isSomeFlagsSet(AnimatedObject.FLAG_DRAWN)) {
+            v.addFlags(AnimatedObject.FLAG_UPDATE);
             fixPosition(v);
             v.saveCell();
             v.savePosition();
             eraseAll(updateList);
-            v.addFlags(ViewEntry.FLAG_DRAWN);
+            v.addFlags(AnimatedObject.FLAG_DRAWN);
             blitAll(buildUpdateBlitList());
             // commitView(v);
-            v.removeFlags(ViewEntry.FLAG_DONT_UPDATE);
+            v.removeFlags(AnimatedObject.FLAG_DONT_UPDATE);
         }
     }
 
     public void erase(short entry) {
-        ViewEntry v;
+        AnimatedObject v;
 
         try {
-            v = viewEntries[entry];
+            v = animatedObjects[entry];
         } catch (IndexOutOfBoundsException oobex) {
             logicContext.setError((short) 0xc);
             return;
         }
 
-        if (v.isSomeFlagsSet(ViewEntry.FLAG_DRAWN)) {
+        if (v.isSomeFlagsSet(AnimatedObject.FLAG_DRAWN)) {
             eraseAll(updateList);
-            boolean b = !v.isSomeFlagsSet(ViewEntry.FLAG_UPDATE);
+            boolean b = !v.isSomeFlagsSet(AnimatedObject.FLAG_UPDATE);
 
             if (b) {
                 eraseAll(updateNotList);
             }
 
-            v.removeFlags(ViewEntry.FLAG_DRAWN);
+            v.removeFlags(AnimatedObject.FLAG_DRAWN);
 
             if (b) {
                 blitAll(buildUpdateNotBlitList());
@@ -559,12 +559,12 @@ public class ViewTable {
     }
 
     public Point getPosition(short entry) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
         return new Point(v.getX(), v.getY());
     }
 
     public void setPosition(short entry, short x, short y) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
         v.setX(x);
         v.setY(y);
@@ -578,9 +578,9 @@ public class ViewTable {
      * @param y Delta for the Y position (signed, where negative is to the top)
      */
     public void reposition(short entry, byte x, byte y) {
-        ViewEntry v = viewEntries[entry];
+        AnimatedObject v = animatedObjects[entry];
 
-        v.addFlags(ViewEntry.FLAG_UPDATE_POS);
+        v.addFlags(AnimatedObject.FLAG_UPDATE_POS);
 
         short t = v.getX();
 
@@ -601,12 +601,12 @@ public class ViewTable {
         fixPosition(v);
     }
 
-    protected boolean checkPosition(ViewEntry v) {
+    protected boolean checkPosition(AnimatedObject v) {
         if ((v.getX() >= 0) &&
                 ((v.getX() + v.getWidth()) <= WIDTH) &&
                 ((v.getY() - v.getHeight()) >= -1) &&
                 (v.getY() < HEIGHT)) {
-            if (!v.isSomeFlagsSet(ViewEntry.FLAG_IGNORE_HORIZON)) {
+            if (!v.isSomeFlagsSet(AnimatedObject.FLAG_IGNORE_HORIZON)) {
                 return v.getY() > logicContext.getHorizon();
             }
 
@@ -616,22 +616,22 @@ public class ViewTable {
         return false;
     }
 
-    protected boolean checkClutter(ViewEntry v) {
+    protected boolean checkClutter(AnimatedObject v) {
         int i;
-        ViewEntry w;
+        AnimatedObject w;
 
-        if (v.isSomeFlagsSet(ViewEntry.FLAG_IGNORE_OBJECTS)) {
+        if (v.isSomeFlagsSet(AnimatedObject.FLAG_IGNORE_OBJECTS)) {
             return false;
         }
 
-        for (i = 0; i < MAX_VIEWENTRY; i++) {
-            w = viewEntries[i];
+        for (i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
+            w = animatedObjects[i];
 
-            if (!w.isAllFlagsSet(ViewEntry.FLAG_ANIMATE | ViewEntry.FLAG_DRAWN)) {
+            if (!w.isAllFlagsSet(AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_DRAWN)) {
                 continue;
             }
 
-            if (w.isSomeFlagsSet(ViewEntry.FLAG_IGNORE_OBJECTS)) {
+            if (w.isSomeFlagsSet(AnimatedObject.FLAG_IGNORE_OBJECTS)) {
                 continue;
             }
 
@@ -667,8 +667,8 @@ public class ViewTable {
         return false;
     }
 
-    protected boolean checkPriority(ViewEntry v) {
-        if (!v.isSomeFlagsSet(ViewEntry.FLAG_FIX_PRIORITY)) {
+    protected boolean checkPriority(AnimatedObject v) {
+        if (!v.isSomeFlagsSet(AnimatedObject.FLAG_FIX_PRIORITY)) {
             v.setPriority(priorityTable[v.getY()]);
         }
 
@@ -697,7 +697,7 @@ public class ViewTable {
 
                 if (priority == 1) {
                     /* Conditional blue */
-                    if (v.isSomeFlagsSet(ViewEntry.FLAG_IGNORE_BLOCKS)) {
+                    if (v.isSomeFlagsSet(AnimatedObject.FLAG_IGNORE_BLOCKS)) {
                         continue;
                     }
 
@@ -712,17 +712,17 @@ public class ViewTable {
             }
 
             if (canBeHere) {
-                if (!water && v.isSomeFlagsSet(ViewEntry.FLAG_ON_WATER)) {
+                if (!water && v.isSomeFlagsSet(AnimatedObject.FLAG_ON_WATER)) {
                     canBeHere = false;
                 }
 
-                if (water && v.isSomeFlagsSet(ViewEntry.FLAG_ON_LAND)) {
+                if (water && v.isSomeFlagsSet(AnimatedObject.FLAG_ON_LAND)) {
                     canBeHere = false;
                 }
             }
         }
 
-        if (v == viewEntries[0]) {
+        if (v == animatedObjects[0]) {
             logicContext.setFlag(LogicContext.FLAG_EGO_TOUCHED_ALERT, signal);
             logicContext.setFlag(LogicContext.FLAG_EGO_WATER, water);
         }
@@ -730,8 +730,8 @@ public class ViewTable {
         return canBeHere;
     }
 
-    protected void fixPosition(ViewEntry v) {
-        if ((v.getY() <= logicContext.getHorizon()) && !v.isSomeFlagsSet(ViewEntry.FLAG_IGNORE_HORIZON)) {
+    protected void fixPosition(AnimatedObject v) {
+        if ((v.getY() <= logicContext.getHorizon()) && !v.isSomeFlagsSet(AnimatedObject.FLAG_IGNORE_HORIZON)) {
             v.setY((short) (logicContext.getHorizon() + 1));
         }
 
@@ -790,36 +790,36 @@ public class ViewTable {
     }
 
     protected ViewList buildList(ViewList list, int listType) {
-        ViewEntry[] vList = new ViewEntry[MAX_VIEWENTRY];
-        short[] yList = new short[MAX_VIEWENTRY];
+        AnimatedObject[] vList = new AnimatedObject[MAX_ANIMATED_OBJECTS];
+        short[] yList = new short[MAX_ANIMATED_OBJECTS];
         int i, j, k;
         int minY, minIndex = 0, c = 0;
-        ViewEntry v;
+        AnimatedObject v;
         ViewSprite head = null, sprite;
 
         list.prev = null;
         list.next = null;
 
-        for (i = 0; i < MAX_VIEWENTRY; i++) {
-            v = viewEntries[i];
+        for (i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
+            v = animatedObjects[i];
 
             switch (listType) {
                 default:
                 case 0:
-                    if (!v.isAllFlagsSet(ViewEntry.FLAG_ANIMATE | ViewEntry.FLAG_UPDATE | ViewEntry.FLAG_DRAWN)) {
+                    if (!v.isAllFlagsSet(AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_UPDATE | AnimatedObject.FLAG_DRAWN)) {
                         continue;
                     }
                     break;
 
                 case 1:
-                    if (v.getFlags(ViewEntry.FLAG_ANIMATE | ViewEntry.FLAG_UPDATE | ViewEntry.FLAG_DRAWN) != (ViewEntry.FLAG_ANIMATE | ViewEntry.FLAG_DRAWN)) {
+                    if (v.getFlags(AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_UPDATE | AnimatedObject.FLAG_DRAWN) != (AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_DRAWN)) {
                         continue;
                     }
                     break;
             }
 
             vList[c] = v;
-            yList[c] = v.isSomeFlagsSet(ViewEntry.FLAG_FIX_PRIORITY) ? v.getY() : priorityToY(v.getPriority());
+            yList[c] = v.isSomeFlagsSet(AnimatedObject.FLAG_FIX_PRIORITY) ? v.getY() : priorityToY(v.getPriority());
             c++;
         }
 
@@ -859,7 +859,7 @@ public class ViewTable {
         return buildList(updateNotList, 1);
     }
 
-    protected void commitView(ViewEntry v) {
+    protected void commitView(AnimatedObject v) {
         /*
         if (picShown) {
         }
@@ -992,7 +992,7 @@ public class ViewTable {
 
     protected void checkMove(ViewList list) {
         ViewSprite s = list.prev;
-        ViewEntry v;
+        AnimatedObject v;
 
         for (; s != null; s = s.prev) {
             v = s.getViewEntry();
@@ -1009,45 +1009,45 @@ public class ViewTable {
 
     public void checkAllMotion() {
         int i;
-        ViewEntry v;
+        AnimatedObject v;
 
-        for (i = 0; i < MAX_VIEWENTRY; i++) {
-            v = viewEntries[i];
+        for (i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
+            v = animatedObjects[i];
 
-            if (v.isAllFlagsSet(ViewEntry.FLAG_ANIMATE | ViewEntry.FLAG_UPDATE | ViewEntry.FLAG_DRAWN) &&
+            if (v.isAllFlagsSet(AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_UPDATE | AnimatedObject.FLAG_DRAWN) &&
                     (v.getStepTimeCount() == 1)) {
                 checkMotion(v);
             }
         }
     }
 
-    protected void checkMotion(ViewEntry v) {
+    protected void checkMotion(AnimatedObject v) {
         switch (v.getMotionType()) {
-            case ViewEntry.MOTION_WANDER:
+            case AnimatedObject.MOTION_WANDER:
                 checkMotionWander(v);
                 break;
-            case ViewEntry.MOTION_FOLLOWEGO:
+            case AnimatedObject.MOTION_FOLLOWEGO:
                 checkMotionFollowEgo(v);
                 break;
-            case ViewEntry.MOTION_MOVEOBJECT:
+            case AnimatedObject.MOTION_MOVEOBJECT:
                 checkMotionMoveObject(v);
                 break;
         }
 
-        if ((blockSet && (!v.isSomeFlagsSet(ViewEntry.FLAG_IGNORE_BLOCKS))) &&
+        if ((blockSet && (!v.isSomeFlagsSet(AnimatedObject.FLAG_IGNORE_BLOCKS))) &&
                 (v.getDirection() != 0)) {
             changePos(v);
         }
     }
 
-    protected void checkMotionWander(ViewEntry v) {
+    protected void checkMotionWander(AnimatedObject v) {
         short entry27;
         int direction;
 
         entry27 = v.getTargetX();
         v.setTargetX((short) (entry27 - 1));
 
-        if ((entry27 == 0) || v.isSomeFlagsSet(ViewEntry.FLAG_DIDNT_MOVE)) {
+        if ((entry27 == 0) || v.isSomeFlagsSet(AnimatedObject.FLAG_DIDNT_MOVE)) {
             direction = randomSeed.nextInt() % 9;
 
             if (direction < 0) {
@@ -1056,7 +1056,7 @@ public class ViewTable {
 
             v.setDirection((short) direction);
 
-            if (v == viewEntries[0]) {
+            if (v == animatedObjects[0]) {
                 logicContext.setVar(LogicContext.VAR_EGO_DIRECTION, (short) direction);
             }
 
@@ -1070,8 +1070,8 @@ public class ViewTable {
         return randomSeed.nextInt();
     }
 
-    protected void checkMotionFollowEgo(ViewEntry obj) {
-        ViewEntry ego = viewEntries[0];
+    protected void checkMotionFollowEgo(AnimatedObject obj) {
+        AnimatedObject ego = animatedObjects[0];
         short egoX;
         short objX;
         short direction, n;
@@ -1081,16 +1081,16 @@ public class ViewTable {
 
         direction = getDirection(egoX, ego.getY(), objX, obj.getY(), obj.getTargetX());
 
-        if (direction == ViewEntry.DIRECTION_NONE) {
-            obj.setDirection(ViewEntry.DIRECTION_NONE);
-            obj.setMotionType(ViewEntry.MOTION_NORMAL);
+        if (direction == AnimatedObject.DIRECTION_NONE) {
+            obj.setDirection(AnimatedObject.DIRECTION_NONE);
+            obj.setMotionType(AnimatedObject.MOTION_NORMAL);
             logicContext.setFlag(obj.getTargetY(), true);
             return;
         }
 
         if (obj.getOldStepSize() == (short) 0xff) {
             obj.setOldStepSize((short) 0);
-        } else if (obj.isSomeFlagsSet(ViewEntry.FLAG_DIDNT_MOVE)) {
+        } else if (obj.isSomeFlagsSet(AnimatedObject.FLAG_DIDNT_MOVE)) {
             obj.setDirection((short) ((randomSeed.nextInt() % 8) + 1));
 
             n = (short) (((absolute(obj.getY() - ego.getY()) + absolute(obj.getX() - ego.getX())) / 2) + 1);
@@ -1118,30 +1118,30 @@ public class ViewTable {
         }
     }
 
-    protected void checkMotionMoveObject(ViewEntry v) {
+    protected void checkMotionMoveObject(AnimatedObject v) {
         v.setDirection(getDirection(v.getX(), v.getY(), v.getTargetX(), v.getTargetY(), v.getStepSize()));
 
-        if (v == viewEntries[0]) {
+        if (v == animatedObjects[0]) {
             logicContext.setVar(LogicContext.VAR_EGO_DIRECTION, v.getDirection());
         }
 
-        if (v.getDirection() == ViewEntry.DIRECTION_NONE) {
+        if (v.getDirection() == AnimatedObject.DIRECTION_NONE) {
             inDestination(v);
         }
     }
 
-    protected void inDestination(ViewEntry v) {
+    protected void inDestination(AnimatedObject v) {
         v.setStepSize(v.getOldStepSize());
         logicContext.setFlag(v.getEndFlag(), true);
-        v.setMotionType(ViewEntry.MOTION_NORMAL);
+        v.setMotionType(AnimatedObject.MOTION_NORMAL);
 
-        if (v == viewEntries[0]) {
+        if (v == animatedObjects[0]) {
             logicContext.setPlayerControl(true);
             logicContext.setVar(LogicContext.VAR_EGO_DIRECTION, (short) 0);
         }
     }
 
-    protected void changePos(ViewEntry v) {
+    protected void changePos(AnimatedObject v) {
         int x, y, s;
         boolean b;
 
@@ -1151,55 +1151,55 @@ public class ViewTable {
         b = checkBlock(x, y);
 
         switch (v.getDirection()) {
-            case ViewEntry.DIRECTION_NE:
+            case AnimatedObject.DIRECTION_NE:
                 x += s;
-            case ViewEntry.DIRECTION_N:
+            case AnimatedObject.DIRECTION_N:
                 y -= s;
                 break;
 
-            case ViewEntry.DIRECTION_E:
+            case AnimatedObject.DIRECTION_E:
                 x += s;
                 break;
 
-            case ViewEntry.DIRECTION_SE:
+            case AnimatedObject.DIRECTION_SE:
                 x += s;
                 y += s;
                 break;
 
-            case ViewEntry.DIRECTION_SW:
+            case AnimatedObject.DIRECTION_SW:
                 x -= s;
-            case ViewEntry.DIRECITON_S:
+            case AnimatedObject.DIRECITON_S:
                 y += s;
                 break;
 
-            case ViewEntry.DIRECTION_W:
+            case AnimatedObject.DIRECTION_W:
                 x -= s;
                 break;
 
-            case ViewEntry.DIRECTION_NW:
+            case AnimatedObject.DIRECTION_NW:
                 x -= s;
                 y -= s;
                 break;
         }
 
         if (checkBlock(x, y) == b) {
-            v.removeFlags(ViewEntry.FLAG_MOTION);
+            v.removeFlags(AnimatedObject.FLAG_MOTION);
         } else {
-            v.addFlags(ViewEntry.FLAG_MOTION);
+            v.addFlags(AnimatedObject.FLAG_MOTION);
             v.setDirection((short) 0);
 
-            if (v == viewEntries[0]) {
+            if (v == animatedObjects[0]) {
                 logicContext.setVar(LogicContext.VAR_EGO_DIRECTION, (short) 0);
             }
         }
     }
 
     public short lastCell(short entry) {
-        return (short) (viewEntries[entry].getLoopData().getCellCount() - 1);
+        return (short) (animatedObjects[entry].getLoopData().getCellCount() - 1);
     }
 
     public short lastLoop(short entry) {
-        return viewEntries[entry].getViewData().getLoopCount();
+        return animatedObjects[entry].getViewData().getLoopCount();
     }
 
     protected boolean checkBlock(int x, int y) {
@@ -1229,18 +1229,18 @@ public class ViewTable {
     }
 
     public void update() {
-        ViewEntry v;
+        AnimatedObject v;
         int i, c, m;
         short n;
 
-        for (i = 0, c = 0; i < MAX_VIEWENTRY; i++) {
-            v = viewEntries[i];
+        for (i = 0, c = 0; i < MAX_ANIMATED_OBJECTS; i++) {
+            v = animatedObjects[i];
 
-            if (v.isAllFlagsSet(ViewEntry.FLAG_DRAWN | ViewEntry.FLAG_ANIMATE | ViewEntry.FLAG_UPDATE)) {
+            if (v.isAllFlagsSet(AnimatedObject.FLAG_DRAWN | AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_UPDATE)) {
                 c++;
                 n = (short) 4;
 
-                if (!v.isSomeFlagsSet(ViewEntry.FLAG_FIX_LOOP)) {
+                if (!v.isSomeFlagsSet(AnimatedObject.FLAG_FIX_LOOP)) {
                     m = v.getLoopCount();
 
                     if ((m == 2) || (m == 3)) {
@@ -1258,7 +1258,7 @@ public class ViewTable {
                     }
                 }
 
-                if (v.isSomeFlagsSet(ViewEntry.FLAG_CYCLING)) {
+                if (v.isSomeFlagsSet(AnimatedObject.FLAG_CYCLING)) {
                     if (v.getCycleTimeCount() != 0) {
                         v.setCycleTimeCount((short) (v.getCycleTimeCount() - 1));
 
@@ -1277,12 +1277,12 @@ public class ViewTable {
             blitAll(buildUpdateBlitList());
             checkMove(updateList);
 
-            viewEntries[0].removeFlags(ViewEntry.FLAG_ON_LAND | ViewEntry.FLAG_ON_WATER);
+            animatedObjects[0].removeFlags(AnimatedObject.FLAG_ON_LAND | AnimatedObject.FLAG_ON_WATER);
         }
     }
 
     public void updatePosition() {
-        ViewEntry v;
+        AnimatedObject v;
         int i, x, y, oldX, oldY, dir, step, border;
         short n;
 
@@ -1290,10 +1290,10 @@ public class ViewTable {
         logicContext.setVar(LogicContext.VAR_EGO_EDGE, (short) 0);
         logicContext.setVar(LogicContext.VAR_BORDER_TOUCHING, (short) 0);
 
-        for (i = 0; i < MAX_VIEWENTRY; i++) {
-            v = viewEntries[i];
+        for (i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
+            v = animatedObjects[i];
 
-            if (v.isAllFlagsSet(ViewEntry.FLAG_DRAWN | ViewEntry.FLAG_ANIMATE | ViewEntry.FLAG_CYCLING)) {
+            if (v.isAllFlagsSet(AnimatedObject.FLAG_DRAWN | AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_CYCLING)) {
                 n = v.getStepTimeCount();
 
                 if (n != 0) {
@@ -1309,7 +1309,7 @@ public class ViewTable {
                 x = oldX = v.getX();
                 y = oldY = v.getY();
 
-                if (!v.isSomeFlagsSet(ViewEntry.FLAG_UPDATE_POS)) {
+                if (!v.isSomeFlagsSet(AnimatedObject.FLAG_UPDATE_POS)) {
                     dir = v.getDirection();
                     step = v.getStepSize();
 
@@ -1333,7 +1333,7 @@ public class ViewTable {
                 } else if (y > (HEIGHT - 1)) {
                     y = HEIGHT - 1;
                     border = 3;
-                } else if (!v.isSomeFlagsSet(ViewEntry.FLAG_IGNORE_HORIZON) && y <= logicContext.getHorizon()) {
+                } else if (!v.isSomeFlagsSet(AnimatedObject.FLAG_IGNORE_HORIZON) && y <= logicContext.getHorizon()) {
                     y++;
                     border = 1;
                 }
@@ -1356,13 +1356,13 @@ public class ViewTable {
                         logicContext.setVar(LogicContext.VAR_BORDER_TOUCHING, (short) border);
                     }
 
-                    if (v.getMotionType() == ViewEntry.MOTION_MOVEOBJECT) {
+                    if (v.getMotionType() == AnimatedObject.MOTION_MOVEOBJECT) {
                         inDestination(v);
                     }
                 }
             }
 
-            v.removeFlags(ViewEntry.FLAG_UPDATE_POS);
+            v.removeFlags(AnimatedObject.FLAG_UPDATE_POS);
         }
     }
 

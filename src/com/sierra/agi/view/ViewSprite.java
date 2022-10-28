@@ -12,7 +12,7 @@ import java.awt.*;
 import java.awt.geom.Area;
 
 public class ViewSprite extends ViewList {
-    protected ViewEntry entry;
+    protected AnimatedObject entry;
     protected int x;
     protected int y;
     protected int width;
@@ -20,7 +20,7 @@ public class ViewSprite extends ViewList {
     protected byte[] backupPriority;
     protected int[] backupScreen;
 
-    public ViewSprite(ViewEntry v) {
+    public ViewSprite(AnimatedObject v) {
         entry = v;
         x = v.getX();
         y = v.getY() - v.getHeight() + 1;
@@ -113,7 +113,7 @@ public class ViewSprite extends ViewList {
         //backupPriority = null;
     }
 
-    public ViewEntry getViewEntry() {
+    public AnimatedObject getViewEntry() {
         return entry;
     }
 

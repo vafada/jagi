@@ -10,7 +10,7 @@ package com.sierra.agi.view;
 
 import com.sierra.agi.logic.LogicContext;
 
-public class ViewEntry {
+public class AnimatedObject {
     public static final short DIRECTION_NONE = (short) 0;
     public static final short DIRECTION_N = (short) 1;
     public static final short DIRECTION_NE = (short) 2;
@@ -73,7 +73,7 @@ public class ViewEntry {
     protected short oldStepSize;           // 29
     protected short endFlag;           // Flag to set when this AnimatedObject reaches the target position.
 
-    public ViewEntry(int viewNumber) {
+    public AnimatedObject(int viewNumber) {
         this.viewNumber = viewNumber;
     }
 
@@ -497,8 +497,8 @@ public class ViewEntry {
     public void update(LogicContext logicContext) {
         short cell, cellLast;
 
-        if (isSomeFlagsSet(ViewEntry.FLAG_DONT_UPDATE)) {
-            removeFlags(ViewEntry.FLAG_DONT_UPDATE);
+        if (isSomeFlagsSet(AnimatedObject.FLAG_DONT_UPDATE)) {
+            removeFlags(AnimatedObject.FLAG_DONT_UPDATE);
             return;
         }
 
