@@ -24,6 +24,7 @@ import com.sierra.agi.view.ViewProvider;
 import com.sierra.agi.word.Words;
 import com.sierra.agi.word.WordsProvider;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
@@ -353,5 +354,9 @@ public class ResourceCache {
 
     protected Reference generateReference(Object o) {
         return new WeakReference(o);
+    }
+
+    public File getPath() {
+        return resProvider.getPath();
     }
 }

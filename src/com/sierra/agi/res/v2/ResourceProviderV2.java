@@ -480,15 +480,13 @@ public class ResourceProviderV2 implements ResourceProvider {
     protected void calculateConfiguration() {
         Properties props = new Properties();
         String scrc = "0x" + Long.toString(crc, 16);
-        String ver;
-        boolean amiga, agds;
 
         try {
             props.load(getClass().getResourceAsStream("version.conf"));
         } catch (IOException ioex) {
         }
 
-        ver = props.getProperty(scrc, "0x2917");
+        String ver = props.getProperty(scrc, "0x2917");
         configuration.amiga = ver.indexOf('a') != -1;
         configuration.agds = ver.indexOf('g') != -1;
         ver = ver.substring(2);
@@ -507,5 +505,9 @@ public class ResourceProviderV2 implements ResourceProvider {
         }
 
         configuration.name = props.getProperty(scrc, "Unknown Game");
+    }
+
+    public File getPath() {
+        return this.path;
     }
 }

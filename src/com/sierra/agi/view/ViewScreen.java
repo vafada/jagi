@@ -487,4 +487,16 @@ public class ViewScreen {
 
         putBlock(0, y, WIDTH, CHAR_HEIGHT);
     }
+
+    public void setLineUserInput(int lineUserInput) {
+        this.lineUserInput = lineUserInput;
+    }
+
+    public void setLineStatus(int lineStatus) {
+        this.lineStatus = lineStatus;
+    }
+
+    public void setLineMinPrint(int lineMinPrint) {
+        this.lineMinPrint = lineMinPrint;
+    }
 }

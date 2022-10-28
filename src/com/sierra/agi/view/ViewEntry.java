@@ -547,4 +547,44 @@ public class ViewEntry {
 
         setCell(logicContext, cell);
     }
+
+    public void setViewNumber(int viewNumber) {
+        this.viewNumber = viewNumber;
+    }
+
+    public void setCurrentView(short currentView) {
+        this.currentView = currentView;
+    }
+
+    public void setCurrentLoop(short currentLoop) {
+        this.currentLoop = currentLoop;
+    }
+
+    public void setCurrentCell(short currentCell) {
+        this.currentCell = currentCell;
+    }
+
+    public View getCurrentViewData() {
+        return currentViewData;
+    }
+
+    public void setPreviousCellData(Cell previousCellData) {
+        this.previousCellData = previousCellData;
+    }
+
+    public Cell getCurrentCellData() {
+        return currentCellData;
+    }
+
+    public void setCurrentCellData(Cell currentCellData) {
+        this.currentCellData = currentCellData;
+    }
+
+    public void setxCopy(short xCopy) {
+        this.xCopy = xCopy;
+    }
+
+    public void setyCopy(short yCopy) {
+        this.yCopy = yCopy;
+    }
 }

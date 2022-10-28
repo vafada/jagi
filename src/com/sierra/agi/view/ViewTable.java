@@ -42,10 +42,10 @@ public class ViewTable {
     private ViewEntry[] viewEntries;
     protected boolean picShown;
     protected boolean blockSet;
-    protected short blockX1;
-    protected short blockX2;
-    protected short blockY1;
-    protected short blockY2;
+    protected short blockUpperLeftX;
+    protected short blockLowerRightX;
+    protected short blockUpperLeftY;
+    protected short blockLowerRightY;
     protected Random randomSeed;
     protected byte[] priorityTable = new byte[HEIGHT];
     protected ViewScreen screen;
@@ -86,12 +86,10 @@ public class ViewTable {
     }
 
     public void reset() {
-        int i;
-
         blockSet = false;
         picShown = false;
 
-        for (i = 0; i < viewEntries.length; i++) {
+        for (int i = 0; i < viewEntries.length; i++) {
             viewEntries[i].reset();
         }
 
@@ -194,10 +192,10 @@ public class ViewTable {
 
     public void setBlock(short x1, short y1, short x2, short y2) {
         blockSet = true;
-        blockX1 = x1;
-        blockY1 = y1;
-        blockX2 = x2;
-        blockY2 = y2;
+        blockUpperLeftX = x1;
+        blockUpperLeftY = y1;
+        blockLowerRightX = x2;
+        blockLowerRightY = y2;
     }
 
     public void resetBlock() {
@@ -1205,10 +1203,10 @@ public class ViewTable {
     }
 
     protected boolean checkBlock(int x, int y) {
-        return ((x >= blockX1) &&
-                (x <= blockX2) &&
-                (y >= blockY1) &&
-                (y <= blockY2));
+        return ((x >= blockUpperLeftX) &&
+                (x <= blockLowerRightX) &&
+                (y >= blockUpperLeftY) &&
+                (y <= blockLowerRightY));
     }
 
     protected short getDirection(short x, short y, short destX, short destY, short stepSize) {
@@ -1376,5 +1374,25 @@ public class ViewTable {
         }
 
         screenUpdate.reset();
+    }
+
+    public void setBlockSet(boolean blockSet) {
+        this.blockSet = blockSet;
+    }
+
+    public void setBlockUpperLeftX(short blockUpperLeftX) {
+        this.blockUpperLeftX = blockUpperLeftX;
+    }
+
+    public void setBlockLowerRightX(short blockLowerRightX) {
+        this.blockLowerRightX = blockLowerRightX;
+    }
+
+    public void setBlockUpperLeftY(short blockUpperLeftY) {
+        this.blockUpperLeftY = blockUpperLeftY;
+    }
+
+    public void setBlockLowerRightY(short blockLowerRightY) {
+        this.blockLowerRightY = blockLowerRightY;
     }
 }

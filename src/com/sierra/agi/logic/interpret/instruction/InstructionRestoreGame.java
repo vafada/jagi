@@ -7,6 +7,7 @@ package com.sierra.agi.logic.interpret.instruction;
 import com.sierra.agi.logic.Logic;
 import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.logic.interpret.LogicReader;
+import com.sierra.agi.save.RestoreGame;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +44,8 @@ public class InstructionRestoreGame extends Instruction {
      */
     public int execute(Logic logic, LogicContext logicContext) {
         System.out.println("TODO: implement restore.game");
+        RestoreGame restoreGame = new RestoreGame(logicContext);
+        restoreGame.restore();
         return 1;
     }
 

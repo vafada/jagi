@@ -337,6 +337,8 @@ public abstract class EgaUtils {
                     KeyEvent.VK_PAGE_DOWN, 0x5100,
                     KeyEvent.VK_HOME, 0x4700,
                     KeyEvent.VK_END, 0x4f00,
+
+                    KeyEvent.VK_EQUALS, KeyEvent.VK_EQUALS,
             };
     /**
      * EGA Color Model Cache

@@ -705,22 +705,15 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                     break;
                 }
 
-
-                // works for now... needs clean up later.. store everything in a map
                 short keyCode = (short) ev.getKeyCode();
                 short convertedKeyCode = EgaUtils.convertKey(keyCode);
 
-                if (this.keyToControllerMap.containsKey(keyCode)) {
-                    short controllerNum = this.keyToControllerMap.get(keyCode);
-                    this.controllers[controllerNum] = true;
-                } else if (this.keyToControllerMap.containsKey(convertedKeyCode)) {
+                if (this.keyToControllerMap.containsKey(convertedKeyCode)) {
                     short controllerNum = this.keyToControllerMap.get(convertedKeyCode);
                     this.controllers[controllerNum] = true;
                 }
 
-                // -----------------------------------------
-
-                switch (ev.getKeyCode()) {
+                switch (keyCode) {
                     case 8:
                     case KeyEvent.VK_BACK_SLASH:
                     case KeyEvent.VK_DELETE:
@@ -912,7 +905,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
             soundStatus.append(flags[FLAG_SOUND_ON] ? "on" : "off");
             String soundString = String.format("%-10s", soundStatus.toString());
 
-            viewScreen.displayStatusLine( scoreString + soundString);
+            viewScreen.displayStatusLine(scoreString + soundString);
         }
     }
 

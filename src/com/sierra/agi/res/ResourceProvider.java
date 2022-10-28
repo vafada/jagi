@@ -8,6 +8,7 @@
 
 package com.sierra.agi.res;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -104,4 +105,6 @@ public interface ResourceProvider {
      * Return the resource configuration.
      */
     ResourceConfiguration getConfiguration();
+
+    File getPath();
 }

@@ -62,6 +62,7 @@ public class LogicVariables {
     protected static final int MAX_LOGICS = 256;
     protected static final int MAX_OBJECTS = 256;
     protected static final int MAX_STRINGS = 24;
+    public static final int STRING_LENGTH = 40;
 
     /* ------------------------ Screen edges ------------------------ */
 
