@@ -19,12 +19,23 @@ public class RestoreGame {
         this.logicContext = logicContext;
     }
 
-    public void restore() {
+    public boolean restore() {
         String path = logicContext.getCache().getPath().getAbsolutePath();
         System.out.println("path = " + path);
+        try {
+            return this.restoreFile(Paths.get(path, "sg.1").toString());
+        } catch (Exception e) {
+            System.out.println("e = " + e);
+        }
+        return false;
     }
 
-    public void restoreFile(String filename) throws Exception {
+    public static int unsignedToBytes(byte b) {
+        return b & 0xFF;
+    }
+
+    public boolean restoreFile(String filename) throws Exception {
+        System.out.println("Restore file = " + filename);
         byte[] savedGameData = Files.readAllBytes(Paths.get(filename));
         ViewTable viewTable = this.logicContext.getViewTable();
         ViewScreen viewScreen = this.logicContext.getViewScreen();
@@ -49,11 +60,13 @@ public class RestoreGame {
 
         // If we're sure that this saved game file is for this game, then continue.
         this.logicContext.reset();
-        //textGraphics.ClearLines(0, 24, 0);
+        viewScreen.clearLines(0, 24, (short) 0);
 
         // [9] 40 - 295(256 bytes) Variables, 1 variable per byte
         for (int i = 0; i < 256; i++) {
-            this.logicContext.setVar((short) i, savedGameData[40 + i]);
+            int byteVal = savedGameData[40 + i];
+            int intVal = unsignedToBytes((byte)byteVal);
+            this.logicContext.setVar((short) i, (short) intVal);
         }
 
         // [265] 296 - 327(32 bytes) Flags, 8 flags per byte
@@ -347,6 +360,8 @@ public class RestoreGame {
                 viewEntry.setOldStepSize((short)-1);
             } ;
         }
+
+        return true;
     }
 
     public static void main(String[] args) {

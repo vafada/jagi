@@ -45,7 +45,20 @@ public class InstructionRestoreGame extends Instruction {
     public int execute(Logic logic, LogicContext logicContext) {
         System.out.println("TODO: implement restore.game");
         RestoreGame restoreGame = new RestoreGame(logicContext);
-        restoreGame.restore();
+        if (restoreGame.restore()) {
+            System.out.println("restore success");
+            logicContext.getViewTable().showPic();
+            /* TODO!!!
+            soundPlayer.Reset();
+            menu.EnableAllMenus();
+            ReplayScriptEvents();
+            ShowPicture(false);
+            newRoom = state.CurrentRoom = state.Vars[Defines.CURROOM];
+            textGraphics.UpdateStatusLine();
+            exit = true;
+
+             */
+        }
         return 1;
     }
 
