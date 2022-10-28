@@ -526,14 +526,13 @@ public class ViewTable {
             eraseAll(updateList);
             v.addFlags(ViewEntry.FLAG_DRAWN);
             blitAll(buildUpdateBlitList());
-            commitView(v);
+            // commitView(v);
             v.removeFlags(ViewEntry.FLAG_DONT_UPDATE);
         }
     }
 
     public void erase(short entry) {
         ViewEntry v;
-        boolean b;
 
         try {
             v = viewEntries[entry];
@@ -544,7 +543,7 @@ public class ViewTable {
 
         if (v.isSomeFlagsSet(ViewEntry.FLAG_DRAWN)) {
             eraseAll(updateList);
-            b = !v.isSomeFlagsSet(ViewEntry.FLAG_UPDATE);
+            boolean b = !v.isSomeFlagsSet(ViewEntry.FLAG_UPDATE);
 
             if (b) {
                 eraseAll(updateNotList);
@@ -862,9 +861,9 @@ public class ViewTable {
     }
 
     protected void commitView(ViewEntry v) {
+        /*
         if (picShown) {
         }
-        /*
         Rectangle previousRect = new Rectangle();
         Rectangle currentRect  = new Rectangle();
         Cell      current      = v.getCellData();
@@ -1369,10 +1368,8 @@ public class ViewTable {
     }
 
     public void doUpdate() {
-        Rectangle r;
-
         if (!screenUpdate.isEmpty()) {
-            r = screenUpdate.getBounds();
+            Rectangle r = screenUpdate.getBounds();
 
             screen.putBlock(screenView, r.x, r.y, r.width, r.height);
         }
