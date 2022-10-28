@@ -1212,10 +1212,8 @@ public class ViewTable {
     }
 
     protected short getDirection(short x, short y, short destX, short destY, short stepSize) {
-        int s, t;
-
-        s = checkStep((short) (destX - x), stepSize);
-        t = checkStep((short) (destY - y), stepSize);
+        int s = checkStep((short) (destX - x), stepSize);
+        int t = checkStep((short) (destY - y), stepSize);
 
         return directionTable[s + (3 * t)];
     }
