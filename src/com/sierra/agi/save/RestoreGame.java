@@ -30,25 +30,33 @@ public class RestoreGame {
         return false;
     }
 
-    public static int unsignedToBytes(byte b) {
-        return b & 0xFF;
+    public static int[] convertToUnsignedInt(byte[] b) {
+        int[] converted = new int[b.length];
+        for (int i = 0; i < b.length; i++) {
+            converted[i] = b[i] & 0xFF;
+        }
+        return converted;
     }
 
     public boolean restoreFile(String filename) throws Exception {
         System.out.println("Restore file = " + filename);
-        byte[] savedGameData = Files.readAllBytes(Paths.get(filename));
+        byte[] rawData = Files.readAllBytes(Paths.get(filename));
+        int[] savedGameData = convertToUnsignedInt(rawData);
         ViewTable viewTable = this.logicContext.getViewTable();
         ViewScreen viewScreen = this.logicContext.getViewScreen();
 
         // 0 - 30(31 bytes) SAVED GAME DESCRIPTION.
         int textEnd = 0;
         while (savedGameData[textEnd] != 0) textEnd++;
-        String savedGameDescription = new String(savedGameData, 0, textEnd, "US-ASCII");
+        String savedGameDescription = new String(rawData, 0, textEnd, "US-ASCII");
         System.out.println("savedGameDescription = " + savedGameDescription);
 
         // FIRST PIECE: SAVE VARIABLES
         // [0] 31 - 32(2 bytes) Length of save variables piece. Length depends on AGI interpreter version. [e.g. (0xE1 0x05) for some games, (0xDB 0x03) for some]
         int saveVarsLength = savedGameData[31] + (savedGameData[32] << 8);
+        System.out.println("savedGameData[31] = " + savedGameData[31]);
+        System.out.println("savedGameData[32] = " + (savedGameData[32] << 8));
+        System.out.println("saveVarsLength = " + saveVarsLength);
         int aniObjsOffset = 33 + saveVarsLength;
 
         // [2] 33 - 39(7 bytes) Game ID("SQ2", "KQ3", "LLLLL", etc.), NUL padded.
@@ -64,8 +72,10 @@ public class RestoreGame {
 
         // [9] 40 - 295(256 bytes) Variables, 1 variable per byte
         for (int i = 0; i < 256; i++) {
-            int byteVal = savedGameData[40 + i];
-            int intVal = unsignedToBytes((byte)byteVal);
+            int intVal = savedGameData[40 + i];
+            if (intVal != 0) {
+                System.out.println("var " + i + " = " + savedGameData[40 + i]);
+            }
             this.logicContext.setVar((short) i, (short) intVal);
         }
 
@@ -131,7 +141,7 @@ public class RestoreGame {
             while ((savedGameData[textEnd] != 0) && ((textEnd - stringOffset) < this.logicContext.STRING_LENGTH)) {
                 textEnd++;
             }
-            this.logicContext.setString((short) i, new String(savedGameData, stringOffset, textEnd - stringOffset, "US-ASCII"));
+            this.logicContext.setString((short) i, new String(rawData, stringOffset, textEnd - stringOffset, "US-ASCII"));
         }
 
         int postStringsOffset = postKeyMapOffset + (numOfStrings * this.logicContext.STRING_LENGTH);
@@ -186,10 +196,18 @@ public class RestoreGame {
         // SECOND PIECE: ANIMATED OBJECT STATE
         // 17 aniobjs = 0x02DB length, 18 aniobjs = 0x0306, 20 aniobjs = 0x035C, 21 aniobjs = 0x0387, 91 = 0x0F49] 2B, 2B, 2B, 2B, 2B
         // 1538 - 1539(2 bytes) Length of piece (ANIOBJ should divide evenly in to this length)
+        System.out.println("aniObjsOffset = " + aniObjsOffset);
+        System.out.println("savedGameData[aniObjsOffset + 0] = " + savedGameData[aniObjsOffset + 0]);
+        System.out.println("savedGameData[aniObjsOffset + 1] = " + (savedGameData[aniObjsOffset + 1] << 8));
+
         int aniObjectsLength = (savedGameData[aniObjsOffset + 0] + (savedGameData[aniObjsOffset + 1] << 8));
+
+        System.out.println("aniObjectsLength = " + aniObjectsLength);
         // Each ANIOBJ entry is 0x2B in length, i.e. 43 bytes.
         // 17 aniobjs = 0x02DB length, 18 aniobjs = 0x0306, 20 aniobjs = 0x035C, 21 aniobjs = 0x0387, 91 = 0x0F49] 2B, 2B, 2B, 2B, 2B
         int numOfAniObjs = (aniObjectsLength / 0x2B);
+
+        System.out.println("numOfAniObjs = " + numOfAniObjs);
 
         for (int i = 0; i < numOfAniObjs; i++) {
             int aniObjOffset = aniObjsOffset + 2 + (i * 0x2B);
@@ -202,32 +220,34 @@ public class RestoreGame {
             // 31 6b 31 6b 2f 9c 6e 00 64 00 06 00 20 00 01 01
             // 01 00 00 00 09 53 40 00 00 00 00
 
-            //UBYTE movefreq;     /* number of animation cycles between motion  */    e.g.   01
-            viewEntry.setStepTime(savedGameData[aniObjOffset + 0]);
-            //UBYTE moveclk;      /* number of cycles between moves of object   */    e.g.   01
-            viewEntry.setStepTimeCount(savedGameData[aniObjOffset + 1]);
             //UBYTE num;          /* object number                              */    e.g.   00
             viewEntry.setViewNumber(savedGameData[aniObjOffset + 2]);
+            viewEntry.setView(this.logicContext, (short) savedGameData[aniObjOffset + 2]);
+            //UBYTE movefreq;     /* number of animation cycles between motion  */    e.g.   01
+            viewEntry.setStepTime((short) savedGameData[aniObjOffset + 0]);
+            //UBYTE moveclk;      /* number of cycles between moves of object   */    e.g.   01
+            viewEntry.setStepTimeCount((short) savedGameData[aniObjOffset + 1]);
+
             //COORD x;            /* current x coordinate                       */    e.g.   6e 00 (0x006e = )
             viewEntry.setX((short) (savedGameData[aniObjOffset + 3] + (savedGameData[aniObjOffset + 4] << 8)));
             //COORD y;            /* current y coordinate                       */    e.g.   64 00 (0x0064 = )
             viewEntry.setY((short) (savedGameData[aniObjOffset + 5] + (savedGameData[aniObjOffset + 6] << 8)));
             //UBYTE view;         /* current view number                        */    e.g.   00
-            viewEntry.setCurrentView(savedGameData[aniObjOffset + 7]);
+            viewEntry.setCurrentView((short) savedGameData[aniObjOffset + 7]);
             //VIEW* viewptr;      /* pointer to current view                    */    e.g.   17 6b (0x6b17 = ) IGNORE.
             //UBYTE loop;         /* current loop in view                       */    e.g.   00
-            viewEntry.setCurrentLoop(savedGameData[aniObjOffset + 10]);
+            viewEntry.setCurrentLoop((short) savedGameData[aniObjOffset + 10]);
             //UBYTE loopcnt;      /* number of loops in view                    */    e.g.   04                IGNORE
             //LOOP* loopptr;      /* pointer to current loop                    */    e.g.   24 6b (0x6b24 = ) IGNORE
             //UBYTE cel;          /* current cell in loop                       */    e.g.   00
-            viewEntry.setCurrentCell(savedGameData[aniObjOffset + 14]);
+            viewEntry.setCurrentCell((short) savedGameData[aniObjOffset + 14]);
             //UBYTE celcnt;       /* number of cells in current loop            */    e.g.   06                IGNORE
             //CEL* celptr;        /* pointer to current cell                    */    e.g.   31 6b (0x6b31 = ) IGNORE
             //CEL* prevcel;       /* pointer to previous cell                   */    e.g.   31 6b (0x6b31 = )
             if (viewEntry.getCurrentViewData() != null) {
                 viewEntry.setPreviousCellData(viewEntry.getCurrentCellData());
             }
-            ;
+
             //STRPTR save;        /* pointer to background save area            */    e.g.   2f 9c (0x9c2f = ) IGNORE
             //COORD prevx;        /* previous x coordinate                      */    e.g.   6e 00 (0x006e = )
             viewEntry.setxCopy((byte) (savedGameData[aniObjOffset + 22] + (savedGameData[aniObjOffset + 23] << 8)));
@@ -236,26 +256,26 @@ public class RestoreGame {
             //COORD xsize;        /* x dimension of current cell                */    e.g.   06 00 (0x0006 = ) IGNORE
             //COORD ysize;        /* y dimension of current cell                */    e.g.   20 00 (0x0020 = ) IGNORE
             //UBYTE stepsize;     /* distance object can move                   */    e.g.   01
-            viewEntry.setStepSize(savedGameData[aniObjOffset + 30]);
+            viewEntry.setStepSize((short) savedGameData[aniObjOffset + 30]);
             //UBYTE cyclfreq;     /* time interval between cells of object      */    e.g.   01
-            viewEntry.setCycleTime(savedGameData[aniObjOffset + 31]);
+            viewEntry.setCycleTime((short) savedGameData[aniObjOffset + 31]);
             //UBYTE cycleclk;     /* counter for determining when object cycles */    e.g.   01
-            viewEntry.setCycleTimeCount(savedGameData[aniObjOffset + 32]);
+            viewEntry.setCycleTimeCount((short) savedGameData[aniObjOffset + 32]);
             //UBYTE dir;          /* object direction                           */    e.g.   00
-            viewEntry.setDirection(savedGameData[aniObjOffset + 33]);
+            viewEntry.setDirection((short) savedGameData[aniObjOffset + 33]);
             //UBYTE motion;       /* object motion type                         */    e.g.   00
             // #define	WANDER	1		/* random movement */
             // #define	FOLLOW	2		/* follow an object */
             // #define	MOVETO	3		/* move to a given coordinate */
-            viewEntry.setMotionType(savedGameData[aniObjOffset + 34]);
+            viewEntry.setMotionType((short) savedGameData[aniObjOffset + 34]);
             //UBYTE cycle;        /* cell cycling type                          */    e.g.   00
             // #define NORMAL	0		/* normal repetative cycling of object */
             // #define ENDLOOP	1		/* animate to end of loop and stop */
             // #define RVRSLOOP	2		/* reverse of ENDLOOP */
             // #define REVERSE	3		/* cycle continually in reverse */
-            viewEntry.setCycleType(savedGameData[aniObjOffset + 35]);
+            viewEntry.setCycleType((short) savedGameData[aniObjOffset + 35]);
             //UBYTE pri;          /* priority of object                         */    e.g.   09
-            viewEntry.setPriority(savedGameData[aniObjOffset + 36]);
+            viewEntry.setPriority((short) savedGameData[aniObjOffset + 36]);
             //UWORD control;      /* object control flag (bit mapped)           */    e.g.   53 40 (0x4053 = )
             int controlBits = (savedGameData[aniObjOffset + 37] + (savedGameData[aniObjOffset + 38] << 8));
             /* object control bits */
@@ -351,15 +371,131 @@ public class RestoreGame {
                 viewEntry.removeFlags(ViewEntry.FLAG_DIDNT_MOVE);
             }
             //UBYTE parms[4];     /* space for various motion parameters        */    e.g.   00 00 00 00
-            viewEntry.setTargetX(savedGameData[aniObjOffset + 39]);
-            viewEntry.setTargetY(savedGameData[aniObjOffset + 40]);
-            viewEntry.setOldStepSize(savedGameData[aniObjOffset + 41]);
-            viewEntry.setEndFlag(savedGameData[aniObjOffset + 42]);
+            viewEntry.setTargetX((short) savedGameData[aniObjOffset + 39]);
+            viewEntry.setTargetY((short) savedGameData[aniObjOffset + 40]);
+            viewEntry.setOldStepSize((short) savedGameData[aniObjOffset + 41]);
+            viewEntry.setEndFlag((short) savedGameData[aniObjOffset + 42]);
             // If motion type is follow, then force a re-initialisation of the follow path.
             if (viewEntry.getMotionType() == ViewEntry.MOTION_FOLLOWEGO) {
-                viewEntry.setOldStepSize((short)-1);
-            } ;
+                viewEntry.setOldStepSize((short) -1);
+            }
         }
+
+        // THIRD PIECE: OBJECTS
+        // Almost an exact copy of the OBJECT file, but with the 3 byte header removed, and room
+        // numbers reflecting the current location of each object.
+        int objectsOffset = aniObjsOffset + 2 + aniObjectsLength;
+        int objectsLength = (savedGameData[objectsOffset + 0] + (savedGameData[objectsOffset + 1] << 8));
+        // TODO: state.Objects.NumOfAnimatedObjects = (byte)numOfAniObjs;
+        int numOfObjects = (savedGameData[objectsOffset + 2] + (savedGameData[objectsOffset + 3] << 8)) / 3;
+        // Set the saved room number of each Object.
+        for (int objectNum = 0, roomPos = objectsOffset + 4; objectNum < numOfObjects; objectNum++, roomPos += 3) {
+            logicContext.setObject((short) objectNum, (short) savedGameData[roomPos]);
+        }
+
+        // FOURTH PIECE: SCRIPT BUFFER EVENTS
+        // A transcript of events leading to the current state in the current room.
+        int scriptsOffset = objectsOffset + 2 + objectsLength;
+        int scriptsLength = (savedGameData[scriptsOffset + 0] + (savedGameData[scriptsOffset + 1] << 8));
+        int numOfScripts = (scriptsLength / 2);
+        // Each script entry is two unsigned bytes long:
+        // UBYTE action;
+        // UBYTE who;
+        //
+        // Action byte is a code defined as follows:
+        // S_LOADLOG       0
+        // S_LOADVIEW      1
+        // S_LOADPIC       2
+        // S_LOADSND       3
+        // S_DRAWPIC       4
+        // S_ADDPIC        5
+        // S_DSCRDPIC      6
+        // S_DSCRDVIEW     7
+        // S_OVERLAYPIC    8
+        //
+        // Example:
+        // c8 00 Length
+        // 00 01 load.logic  0x01
+        // 01 00 load.view   0x00
+        // 00 66 load.logic  0x66
+        // 01 4b load.view   0x4B
+        // 01 57 load.view   0x57
+        // 01 6e load.view   0x6e
+        // 02 01 load.pic    0x01
+        // 04 01 draw.pic    0x01
+        // 06 01 discard.pic 0x01
+        // 00 65 load.logic  0x65
+        // 01 6b load.view   0x6B
+        // 01 61 load.view   0x61
+        // 01 5d load.view   0x5D
+        // 01 46 load.view   0x46
+        // 03 0d load.sound  0x0D
+        // etc...
+        /* TODO
+        state.ScriptBuffer.InitScript();
+        for (int i = 0; i < numOfScripts; i++)
+        {
+            int scriptOffset = scriptsOffset + 2 + (i * 2);
+            int action = savedGameData[scriptOffset + 0];
+            int resourceNum = savedGameData[scriptOffset + 1];
+            byte[] data = null;
+            if (action == (int)ScriptBuffer.ScriptBufferEventType.AddToPic)
+            {
+                // The add.to.pics are stored in the saved game file across 8 bytes, i.e. 4 separate script
+                // entries (that is also how the original AGI interpreter stored it in memory).
+                // What we do though is store these in an additional data array associated with
+                // the script event since utilitising multiple event entries is a bit of a hack
+                // really. I can understand why they did it though.
+                data = new byte[] {
+                        savedGameData[scriptOffset + 2], savedGameData[scriptOffset + 3], savedGameData[scriptOffset + 4],
+                        savedGameData[scriptOffset + 5], savedGameData[scriptOffset + 6], savedGameData[scriptOffset + 7]
+                };
+
+                // Increase i to account for the fact that we've processed an additional 3 slots.
+                i += 3;
+            }
+            state.ScriptBuffer.AddScript((ScriptBuffer.ScriptBufferEventType)action, resourceNum, data);
+        }
+         */
+
+        // FIFTH PIECE: SCAN OFFSETS
+        // Note: Not every logic can set a scan offset, as there is a max of 30. But only
+        // loaded logics can have this set and I'd imagine you'd run out of memory before
+        // loading that many logics at once.
+        int scanOffsetsOffset = scriptsOffset + 2 + scriptsLength;
+        int scanOffsetsLength = (savedGameData[scanOffsetsOffset + 0] + (savedGameData[scanOffsetsOffset + 1] << 8));
+        int numOfScanOffsets = (scanOffsetsLength / 4);
+        // Each entry is 4 bytes long, made up of 2 16-bit words:
+        // COUNT num;                                    /* logic number         */
+        // COUNT ofs;                                    /* offset to scan start */
+        //
+        // Example:
+        // 18 00
+        // 00 00 00 00  Start of list. Seems to always be 4 zeroes.
+        // 00 00 00 00  Logic 0 - Offset 0
+        // 01 00 00 00  Logic 1 - Offset 0
+        // 66 00 00 00  Logic 102 - Offset 0
+        // 65 00 00 00  Logic 101 - Offset 0
+        // ff ff 00 00  End of list
+        //
+        // Quick Analysis of the above:
+        // * Only logics that are current loaded are in the scan offset list, i.e. they're removed when the room changes.
+        // * The order logics appear in this list is the order that they are loaded.
+        // * Logics disappear from this list when they are unloaded (on new.room).
+        // * The new.room command unloads all logics except for logic 0, so it never leaves this list.
+        for (int i = 0; i < 256; i++) {
+            this.logicContext.setScanStart((short) i, 0);
+        }
+
+        for (int i = 1; i < numOfScanOffsets; i++) {
+            int scanOffsetOffset = scanOffsetsOffset + 2 + (i * 4);
+            int logicNumber = (savedGameData[scanOffsetOffset + 0] + (savedGameData[scanOffsetOffset + 1] << 8));
+            if (logicNumber < 256) {
+                this.logicContext.setScanStart((short) logicNumber, (savedGameData[scanOffsetOffset + 2] + (savedGameData[scanOffsetOffset + 3] << 8)));
+            }
+        }
+
+        this.logicContext.setFlag(this.logicContext.FLAG_RESTORE_JUST_RAN, true);
 
         return true;
     }
