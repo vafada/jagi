@@ -90,9 +90,6 @@ public class MessageBox extends Box {
     }
 
     public KeyEvent show(LogicContext logicContext, ViewScreen viewScreen) {
-        // clear out existing open modals
-        viewScreen.restore(true);
-
         KeyEvent ev = null;
         int timeout = this.timeout;
 

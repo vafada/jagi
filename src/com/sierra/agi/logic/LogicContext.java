@@ -303,7 +303,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         pictureNumber = 0;
         horizon = DEFAULT_HORIZON;
         graphicMode = true;
-        // menuBar = new AgiMenuBar();
 
         viewTable.reset();
     }
@@ -786,8 +785,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                     commandLine.append(ev.getKeyChar());
                     changed = true;
                 }
-
-                System.out.println("ev.getKeyCode() == KeyEvent.VK_ENTER = " + (ev.getKeyCode() == KeyEvent.VK_ENTER));
 
                 if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
                     commandLineC = commandLine.toString();
