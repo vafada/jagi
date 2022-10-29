@@ -13,7 +13,7 @@ import com.sierra.agi.logic.interpret.LogicSetScanStart;
 import java.io.InputStream;
 
 /**
- * Set Scan Start Intruction.
+ * Set Scan Start Instruction.
  *
  * <P>Normally, when a logic is called using call command, execution begins at
  * the first instruction. <CODE>set.scan.start</CODE> command sets the entry

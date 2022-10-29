@@ -89,7 +89,7 @@ public class InstructionPrintAt extends Instruction {
         short tp3 = p3;
         short tp4 = p4;
 
-        (new MessageBox(logicContext.processMessage(logic.getMessageProcessed(tp1)), tp2, tp3, tp4)).show(logicContext, logicContext.getViewScreen(), true);
+        (new MessageBox(logicContext.processMessage(logic.getMessageProcessed(tp1)), tp2, tp3, tp4)).show(logicContext, logicContext.getViewScreen());
         return size;
     }
 

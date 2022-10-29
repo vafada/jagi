@@ -97,7 +97,7 @@ public class InstructionPrintAtV extends Instruction {
             tp4 = logicContext.getVar(tp4);
         }
 
-        (new MessageBox(logicContext.processMessage(logic.getMessageProcessed(tp1)), tp2, tp3, tp4)).show(logicContext, logicContext.getViewScreen(), true);
+        (new MessageBox(logicContext.processMessage(logic.getMessageProcessed(tp1)), tp2, tp3, tp4)).show(logicContext, logicContext.getViewScreen());
         return size;
     }
 

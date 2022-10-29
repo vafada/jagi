@@ -34,7 +34,7 @@ public class InstructionPrintFlagValue extends InstructionUni {
     @Override
     public int execute(Logic logic, LogicContext logicContext) throws Exception {
         short p = logicContext.getVar(p1);
-        (new MessageBox("Var/Flag# " + p1 + " = " + p)).show(logicContext, logicContext.getViewScreen(), true);
+        (new MessageBox("Var/Flag# " + p1 + " = " + p)).show(logicContext, logicContext.getViewScreen());
         return 2;
     }
 

@@ -17,6 +17,8 @@ import java.awt.event.KeyEvent;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import static com.sierra.agi.logic.LogicVariables.FLAG_OUTPUT_MODE;
+
 public class MessageBox extends Box {
     private static final int MAX_COLUMN = 30;
 
@@ -87,7 +89,7 @@ public class MessageBox extends Box {
         viewScreen.putBlock(x, oy, width, height);
     }
 
-    public KeyEvent show(LogicContext logicContext, ViewScreen viewScreen, boolean modal) {
+    public KeyEvent show(LogicContext logicContext, ViewScreen viewScreen) {
         KeyEvent ev = null;
         int timeout = this.timeout;
 
@@ -102,6 +104,8 @@ public class MessageBox extends Box {
                 }
             }
         }
+
+        boolean modal = !logicContext.getFlag(FLAG_OUTPUT_MODE);
 
         if (modal) {
             viewScreen.save();

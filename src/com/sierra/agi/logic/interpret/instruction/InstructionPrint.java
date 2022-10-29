@@ -72,7 +72,7 @@ public class InstructionPrint extends InstructionUni {
      */
     public int execute(Logic logic, LogicContext logicContext) {
         short p = p1;
-        (new MessageBox(logicContext.processMessage(logic.getMessageProcessed(p)))).show(logicContext, logicContext.getViewScreen(), true);
+        (new MessageBox(logicContext.processMessage(logic.getMessageProcessed(p)))).show(logicContext, logicContext.getViewScreen());
         return 2;
     }
 

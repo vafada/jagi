@@ -19,7 +19,7 @@ public abstract class Box {
         timeout = -1;
     }
 
-    public abstract KeyEvent show(LogicContext logicContext, ViewScreen viewScreen, boolean modal);
+    public abstract KeyEvent show(LogicContext logicContext, ViewScreen viewScreen);
 
     public abstract int getLineCount();
 

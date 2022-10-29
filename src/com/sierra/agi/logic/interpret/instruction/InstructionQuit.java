@@ -68,7 +68,7 @@ public class InstructionQuit extends Instruction {
             MessageBox box = new MessageBox("Press ENTER to quit.\r\nPress ESC to keep playing.");
             KeyEvent ev;
 
-            ev = box.show(logicContext, logicContext.getViewScreen(), true);
+            ev = box.show(logicContext, logicContext.getViewScreen());
 
             if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
                 System.exit(0);
