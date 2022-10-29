@@ -336,8 +336,6 @@ public class ViewScreen {
 
         int offset = (ViewScreen.WIDTH * y) + x;
 
-        System.out.println("backgroundColor = " + backgroundColor);
-
         Arrays.fill(screen, offset, offset + width, backgroundColor);
         offset += ViewScreen.WIDTH;
         Arrays.fill(screen, offset, offset + width, textColor);

@@ -30,6 +30,9 @@ public class ChooseRestoreGameBox extends Box {
     private String gameId;
     private String path;
 
+    private SavedGame[] savedGames = new SavedGame[NUM_GAMES];
+    private int pointerIndex;
+
     public ChooseRestoreGameBox(String gameId, String path) {
         this.gameId = gameId;
         this.path = path;
@@ -61,23 +64,20 @@ public class ChooseRestoreGameBox extends Box {
         // spacer
         lines.add("");
 
-        SavedGame[] game = new SavedGame[NUM_GAMES];
         long mostRecentTime = 0;
-        int mostRecentGame = 0;
-        int validSaveCount = 0;
 
         for (int i = 0; i < NUM_GAMES; i++) {
-            game[i] = getGameByNumber(i + 1);
+            savedGames[i] = getGameByNumber(i + 1);
 
-            if (game[i].exists) {
-                if (game[i].fileTime > mostRecentTime) {
-                    mostRecentTime = game[i].fileTime;
-                    mostRecentGame = i;
+            if (savedGames[i].exists) {
+                if (savedGames[i].fileTime > mostRecentTime) {
+                    mostRecentTime = savedGames[i].fileTime;
+                    this.pointerIndex = i;
                 }
 
-                // Count how many saved games we currently have.
-                validSaveCount++;
-                lines.add(" - " + game[i].description);
+                lines.add(" - " + savedGames[i].description);
+            } else {
+                lines.add(" - ");
             }
         }
 
@@ -108,14 +108,26 @@ public class ChooseRestoreGameBox extends Box {
 
             switch (ev.getKeyCode()) {
                 case KeyEvent.VK_ENTER:
+                    System.out.println("picked!");
+                    break;
                 case KeyEvent.VK_ESCAPE:
                     looping = false;
                     break;
                 case KeyEvent.VK_UP:
-                    System.out.println("up");
+                    this.pointerIndex--;
+                    if (this.pointerIndex < 0) {
+                        this.pointerIndex = 0;
+                    } else {
+                        draw(viewScreen);
+                    }
                     break;
                 case KeyEvent.VK_DOWN:
-                    System.out.println("down");
+                    this.pointerIndex++;
+                    if (this.pointerIndex == 12) {
+                        this.pointerIndex = 11;
+                    } else {
+                        draw(viewScreen);
+                    }
                     break;
             }
         } while (looping);
@@ -155,6 +167,7 @@ public class ChooseRestoreGameBox extends Box {
 
         y += ViewScreen.CHAR_HEIGHT;
 
+        int pointerYStart = y + (ViewScreen.CHAR_HEIGHT * 5);
         for (int line = 0; line < lines.length; line++) {
             String text = lines[line];
             int textLength = text.length();
@@ -171,6 +184,9 @@ public class ChooseRestoreGameBox extends Box {
             viewScreen.drawRightLine(borderColor, backColor, end, y);
             y += ViewScreen.CHAR_HEIGHT;
         }
+
+        int pointerY = (pointerYStart + (ViewScreen.CHAR_HEIGHT * this.pointerIndex));
+        EgaUtils.putString(screen, font, new String(POINTER_CHAR), 10 + ViewScreen.CHAR_WIDTH, pointerY, ViewScreen.WIDTH, textColor, backColor, true);
 
         viewScreen.drawBottomLine(borderColor, backColor, x, y, width);
         viewScreen.putBlock(x, oy, width, height);
