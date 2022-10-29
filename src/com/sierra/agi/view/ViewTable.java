@@ -15,7 +15,8 @@ import com.sierra.agi.pic.PictureContext;
 import com.sierra.agi.pic.PictureException;
 import com.sierra.agi.res.ResourceException;
 
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.io.IOException;
 import java.util.Arrays;
@@ -27,15 +28,15 @@ public class ViewTable {
     public static final int WIDTH = 160;
     public static final int HEIGHT = 168;
     protected static final short[] directionTable = new short[]{
-            (short) 8, (short) 1, (short) 2,
-            (short) 7, (short) 0, (short) 3,
-            (short) 6, (short) 5, (short) 4};
+            8, 1, 2,
+            7, 0, 3,
+            6, 5, 4};
     protected static final short[] directionTable2 = new short[]{
-            (short) 4, (short) 4, (short) 0, (short) 0, (short) 0,
-            (short) 4, (short) 1, (short) 1, (short) 1, (short) 0};
+            4, 4, 0, 0, 0,
+            4, 1, 1, 1, 0};
     protected static final short[] directionTable4 = new short[]{
-            (short) 4, (short) 3, (short) 0, (short) 0, (short) 0,
-            (short) 2, (short) 1, (short) 1, (short) 1, (short) 0};
+            4, 3, 0, 0, 0,
+            2, 1, 1, 1, 0};
     protected static final int[] directionTableX = new int[]{0, 0, 1, 1, 1, 0, -1, -1, -1};
     protected static final int[] directionTableY = new int[]{0, -1, -1, 0, 1, 1, 1, 0, -1};
     protected LogicContext logicContext;
@@ -134,11 +135,11 @@ public class ViewTable {
         picture.draw(pictureContext);
     }
 
-    public void addToPic(short viewNumber, short loopNumber, short cellNumber, short x, short y, byte priority, short marge) throws ResourceException, IOException, ViewException {
+    public void addToPic(short viewNumber, short loopNumber, short cellNumber, short x, short y, byte priority, short controlBoxColour) throws ResourceException, IOException, ViewException {
         Cell cell;
 
         cell = logicContext.getCache().getView(viewNumber).getLoop(loopNumber).getCell(cellNumber);
-        pictureContext.addToPic(cell, x, y, priority, marge);
+        pictureContext.addToPic(cell, x, y, priority, controlBoxColour);
     }
 
     public void showPic() {
@@ -572,10 +573,9 @@ public class ViewTable {
     }
 
     /**
-     *
      * @param entry
-     * @param x Delta for the X position (signed, where negative is to the left)
-     * @param y Delta for the Y position (signed, where negative is to the top)
+     * @param x     Delta for the X position (signed, where negative is to the left)
+     * @param y     Delta for the Y position (signed, where negative is to the top)
      */
     public void reposition(short entry, byte x, byte y) {
         AnimatedObject v = animatedObjects[entry];
@@ -1008,11 +1008,8 @@ public class ViewTable {
     }
 
     public void checkAllMotion() {
-        int i;
-        AnimatedObject v;
-
-        for (i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
-            v = animatedObjects[i];
+        for (int i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
+            AnimatedObject v = animatedObjects[i];
 
             if (v.isAllFlagsSet(AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_UPDATE | AnimatedObject.FLAG_DRAWN) &&
                     (v.getStepTimeCount() == 1)) {
@@ -1021,7 +1018,7 @@ public class ViewTable {
         }
     }
 
-    protected void checkMotion(AnimatedObject v) {
+    private void checkMotion(AnimatedObject v) {
         switch (v.getMotionType()) {
             case AnimatedObject.MOTION_WANDER:
                 checkMotionWander(v);
@@ -1118,7 +1115,7 @@ public class ViewTable {
         }
     }
 
-    protected void checkMotionMoveObject(AnimatedObject v) {
+    private void checkMotionMoveObject(AnimatedObject v) {
         v.setDirection(getDirection(v.getX(), v.getY(), v.getTargetX(), v.getTargetY(), v.getStepSize()));
 
         if (v == animatedObjects[0]) {
@@ -1130,7 +1127,7 @@ public class ViewTable {
         }
     }
 
-    protected void inDestination(AnimatedObject v) {
+    private void inDestination(AnimatedObject v) {
         v.setStepSize(v.getOldStepSize());
         logicContext.setFlag(v.getEndFlag(), true);
         v.setMotionType(AnimatedObject.MOTION_NORMAL);
@@ -1141,7 +1138,7 @@ public class ViewTable {
         }
     }
 
-    protected void changePos(AnimatedObject v) {
+    private void changePos(AnimatedObject v) {
         int x, y, s;
         boolean b;
 
@@ -1229,31 +1226,29 @@ public class ViewTable {
     }
 
     public void update() {
-        AnimatedObject v;
-        int i, c, m;
-        short n;
+        int count = 0;
 
-        for (i = 0, c = 0; i < MAX_ANIMATED_OBJECTS; i++) {
-            v = animatedObjects[i];
+        for (int i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
+            AnimatedObject v = animatedObjects[i];
 
             if (v.isAllFlagsSet(AnimatedObject.FLAG_DRAWN | AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_UPDATE)) {
-                c++;
-                n = (short) 4;
+                count++;
+                short direction = 4;
 
                 if (!v.isSomeFlagsSet(AnimatedObject.FLAG_FIX_LOOP)) {
-                    m = v.getLoopCount();
+                    short loopCount = v.getLoopCount();
 
-                    if ((m == 2) || (m == 3)) {
-                        n = directionTable2[v.getDirection()];
-                    } else if (m == 4) {
-                        n = directionTable4[v.getDirection()];
+                    if ((loopCount == 2) || (loopCount == 3)) {
+                        direction = directionTable2[v.getDirection()];
+                    } else if (loopCount == 4) {
+                        direction = directionTable4[v.getDirection()];
                     }
                 }
 
                 if (v.getStepTimeCount() == 1) {
-                    if (n != 4) {
-                        if (n != v.getLoop()) {
-                            v.setLoop(logicContext, n);
+                    if (direction != 4) {
+                        if (direction != v.getLoop()) {
+                            v.setLoop(logicContext, direction);
                         }
                     }
                 }
@@ -1271,7 +1266,7 @@ public class ViewTable {
             }
         }
 
-        if (c > 0) {
+        if (count > 0) {
             eraseAll(updateList);
             updatePosition();
             blitAll(buildUpdateBlitList());
@@ -1293,7 +1288,7 @@ public class ViewTable {
         for (i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
             v = animatedObjects[i];
 
-            if (v.isAllFlagsSet(AnimatedObject.FLAG_DRAWN | AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_CYCLING)) {
+            if (v.isAllFlagsSet(AnimatedObject.FLAG_DRAWN | AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_UPDATE)) {
                 n = v.getStepTimeCount();
 
                 if (n != 0) {

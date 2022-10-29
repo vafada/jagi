@@ -597,9 +597,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                 setFlag(FLAG_ENTERED_COMMAND, false);
                 setFlag(FLAG_SAID_ACCEPTED_INPUT, false);
 
-                // Normally, we should pool the joystick, but Java has no support for it.
-                // poolJoystick();
-
                 // Should give control to menu?
                 if (shouldShowMenu) {
                     controller = getViewScreen().menuLoop(menuBar);
@@ -653,6 +650,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                 setFlag(FLAG_LOGIC_ZERO_FIRSTTIME, false); // Not Seen in Dissassembly
 
                 if (graphicMode) {
+                    // updates views position
                     viewTable.update();
                     viewTable.doUpdate();
                 }

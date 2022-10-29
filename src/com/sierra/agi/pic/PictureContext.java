@@ -288,7 +288,7 @@ public class PictureContext {
         return toolkit.createImage(mis);
     }
 
-    public void addToPic(Cell cell, int x, int y, byte pri, int mar) {
+    public void addToPic(Cell cell, int x, int y, byte pri, int controlBoxColour) {
         int[] d = cell.getPixelData();
         int i, j, k, l, w, we, t;
 
