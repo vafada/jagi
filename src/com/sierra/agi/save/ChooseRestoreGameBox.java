@@ -20,7 +20,7 @@ import java.util.StringTokenizer;
 import static com.sierra.agi.save.SaveUtils.NUM_GAMES;
 import static com.sierra.agi.save.SaveUtils.POINTER_CHAR;
 
-public class ChooseRestoreGameBox extends Box {
+public class ChooseRestoreGameBox {
     private static final int MAX_COLUMN = 35;
     private static final String MESSAGE = "Use the arrow keys to select the game which you wish to restore. Press ENTER to restore the game, ESC to not restore a game.";
 
@@ -85,8 +85,9 @@ public class ChooseRestoreGameBox extends Box {
 
     }
 
-    public KeyEvent show(LogicContext logicContext, ViewScreen viewScreen, boolean modal) {
+    public SavedGame show(LogicContext logicContext, ViewScreen viewScreen, boolean modal) {
         KeyEvent ev = null;
+        SavedGame returnedGame = null;
 
         if (logicContext != null) {
             logicContext.stopClock();
@@ -102,13 +103,17 @@ public class ChooseRestoreGameBox extends Box {
         ega.clearEvents();
 
         do {
-            if ((ev = ega.popCharEvent(timeout)) == null) {
+            if ((ev = ega.popCharEvent(-1)) == null) {
                 break;
             }
 
             switch (ev.getKeyCode()) {
                 case KeyEvent.VK_ENTER:
-                    System.out.println("picked!");
+                    if (this.savedGames[pointerIndex].exists) {
+                        System.out.println("picked! = " + pointerIndex);
+                        returnedGame = this.savedGames[pointerIndex];
+                    }
+                    looping = false;
                     break;
                 case KeyEvent.VK_ESCAPE:
                     looping = false;
@@ -138,14 +143,14 @@ public class ChooseRestoreGameBox extends Box {
             logicContext.startClock();
         }
 
-        return ev;
+        return returnedGame;
     }
 
     public void draw(ViewScreen viewScreen) {
         int x = this.x;
         int y = this.y;
-        int width = getWidth();
-        int height = getHeight();
+        int width = ViewScreen.CHAR_WIDTH * (MAX_COLUMN + 2);
+        int height = ViewScreen.CHAR_HEIGHT * (lines.length + 2);
         int textColor = viewScreen.translatePixel(Color.black);
         int backColor = viewScreen.translatePixel(Color.white);
         int borderColor = viewScreen.translatePixel(Color.red.darker());
@@ -191,22 +196,6 @@ public class ChooseRestoreGameBox extends Box {
         viewScreen.drawBottomLine(borderColor, backColor, x, y, width);
         viewScreen.putBlock(x, oy, width, height);
 
-    }
-
-    public int getLineCount() {
-        return lines.length;
-    }
-
-    public int getColumnCount() {
-        return MAX_COLUMN;
-    }
-
-    public int getWidth() {
-        return ViewScreen.CHAR_WIDTH * (MAX_COLUMN + 2);
-    }
-
-    public int getHeight() {
-        return ViewScreen.CHAR_HEIGHT * (lines.length + 2);
     }
 
     private SavedGame getGameByNumber(int num) {

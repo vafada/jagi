@@ -1,16 +1,10 @@
 package com.sierra.agi.save;
 
-import com.sierra.agi.awt.EgaUtils;
 import com.sierra.agi.logic.LogicContext;
-import com.sierra.agi.res.ResourceCache;
-import com.sierra.agi.res.ResourceCacheFile;
 import com.sierra.agi.view.AnimatedObject;
+import com.sierra.agi.view.SavedGame;
 import com.sierra.agi.view.ViewScreen;
 import com.sierra.agi.view.ViewTable;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class RestoreGame {
     private LogicContext logicContext;
@@ -22,26 +16,32 @@ public class RestoreGame {
     public boolean restore() {
         String path = logicContext.getCache().getPath().getAbsolutePath();
         System.out.println("path = " + path);
-        try {
-            return this.restoreFile(Paths.get(path, "sg.1").toString());
-        } catch (Exception e) {
-            System.out.println("e = " + e);
+        // TODO hardcoded game id
+        ChooseRestoreGameBox box = new ChooseRestoreGameBox("kq2", path);
+        SavedGame chosenGame = box.show(this.logicContext, this.logicContext.getViewScreen(), true);
+
+        if (chosenGame != null) {
+            try {
+                System.out.println("chosenGame = " + chosenGame);
+                return this.restoreFile(chosenGame.savedGameData);
+            } catch (Exception e) {
+                System.out.println("e = " + e);
+            }
         }
         return false;
     }
 
 
-
-    public boolean restoreFile(String filename) throws Exception {
-        System.out.println("Restore file = " + filename);
-        byte[] rawData = Files.readAllBytes(Paths.get(filename));
+    public boolean restoreFile(byte[] rawData) throws Exception {
         int[] savedGameData = SaveUtils.convertToUnsignedInt(rawData);
         ViewTable viewTable = this.logicContext.getViewTable();
         ViewScreen viewScreen = this.logicContext.getViewScreen();
 
         // 0 - 30(31 bytes) SAVED GAME DESCRIPTION.
         int textEnd = 0;
-        while (savedGameData[textEnd] != 0) textEnd++;
+        while (savedGameData[textEnd] != 0) {
+            textEnd++;
+        }
         String savedGameDescription = new String(rawData, 0, textEnd, "US-ASCII");
 
         // FIRST PIECE: SAVE VARIABLES
@@ -476,18 +476,5 @@ public class RestoreGame {
         this.logicContext.setFlag(this.logicContext.FLAG_RESTORE_JUST_RAN, true);
 
         return true;
-    }
-
-    public static void main(String[] args) {
-        try {
-            String filename = "C:\\agigames\\kq2\\sg.1";
-            ResourceCache resCache = new ResourceCacheFile(new File(filename));
-            LogicContext context = new LogicContext(resCache);
-            RestoreGame rg = new RestoreGame(context);
-
-            rg.restoreFile(filename);
-        } catch (Exception e) {
-            System.out.println("Error " + e);
-        }
     }
 }
