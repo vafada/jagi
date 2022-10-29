@@ -295,7 +295,16 @@ public class LogicReader {
                 l++;
             }
 
-            m[i] = new String(b, j, l - j, StandardCharsets.US_ASCII);
+            try
+            {
+                String dirtyString = new String(b, j, l - j, "US-ASCII");
+                // remove non-printable ascii string (\xFF in KQ2)
+                m[i] = dirtyString.replaceAll("\\P{Print}", "");
+            }
+            catch (UnsupportedEncodingException ex)
+            {
+            }
+
         }
 
         return m;

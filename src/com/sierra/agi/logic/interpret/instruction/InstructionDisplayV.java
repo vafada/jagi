@@ -51,15 +51,13 @@ public class InstructionDisplayV extends InstructionTri {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
-        short tp1 = p1;
-        short tp2 = p2;
-        short tp3 = p3;
+        int row = logicContext.getVar(p1);
+        int col = logicContext.getVar(p2);
+        int index = logicContext.getVar(p3);
+        String rawMessage = logic.getMessageProcessed(index);
+        String message = logicContext.processMessage(rawMessage);
 
-        tp1 = logicContext.getVar(tp1);
-        tp2 = logicContext.getVar(tp2);
-        tp3 = logicContext.getVar(tp3);
-
-        logicContext.getViewScreen().displayLine(tp2, tp1, logicContext.processMessage(logic.getMessageProcessed(tp3)));
+        logicContext.getViewScreen().displayLine(col, row, message);
         return 4;
     }
 
