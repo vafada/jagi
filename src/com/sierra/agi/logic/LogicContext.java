@@ -688,34 +688,40 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     }
 
     public void pollKeyboard() {
-        boolean changed;
-
+        Arrays.fill(controllers, false);
+        setFlag(FLAG_ENTERED_COMMAND, false);
+        setFlag(FLAG_SAID_ACCEPTED_INPUT, false);
         setVar(VAR_KEY, (short) 0);
         setVar(VAR_WORD_NOT_FOUND, (short) 0);
 
         words = null;
         commandLineC = null;
 
-        if (acceptInput) {
-            changed = false;
+        boolean changed = false;
 
-            while (true) {
-                short dir = (short) 0;
+        while (true) {
+            KeyEvent ev = getComponent().popCharEvent(0);
 
-                KeyEvent ev = getComponent().popCharEvent(0);
+            if (ev == null) {
+                break;
+            }
 
-                if (ev == null) {
-                    break;
+            short keyCode = (short) ev.getKeyCode();
+            short convertedKeyCode = EgaUtils.convertKey(keyCode);
+
+            if (this.keyToControllerMap.containsKey(convertedKeyCode)) {
+                short controllerNum = this.keyToControllerMap.get(convertedKeyCode);
+                this.controllers[controllerNum] = true;
+            } else {
+                if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
+                    setVar(VAR_KEY, (short) ev.getKeyCode());
+                } else {
+                    setVar(VAR_KEY, (short) ev.getKeyChar());
                 }
+            }
 
-                short keyCode = (short) ev.getKeyCode();
-                short convertedKeyCode = EgaUtils.convertKey(keyCode);
-
-                if (this.keyToControllerMap.containsKey(convertedKeyCode)) {
-                    short controllerNum = this.keyToControllerMap.get(convertedKeyCode);
-                    this.controllers[controllerNum] = true;
-                }
-
+            if (acceptInput) {
+                short dir = 0;
                 switch (keyCode) {
                     case 8:
                     case KeyEvent.VK_BACK_SLASH:

@@ -55,7 +55,9 @@ public class LogicInterpreter extends Logic {
             while (true) {
                 instruction = instructions[in];
 
-                System.out.println(logicNumber + ": instruction = " + in + " = " + instruction);
+                if (logicNumber != 0) {
+                    // System.out.println(logicNumber + ": instruction = " + in + " = " + instruction);
+                }
 
                 try {
                     result = instruction.execute(this, logicContext);

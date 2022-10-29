@@ -56,7 +56,7 @@ public class InstructionCallV extends InstructionUni implements Compilable {
     public int execute(Logic logic, LogicContext logicContext) throws LogicException, IOException, ResourceException {
         short p = logicContext.getVar(p1);
         Logic logicToCall = logicContext.getCache().getLogic(p);
-        System.out.println("call logic: " + p);
+        // System.out.println("call logic: " + p);
         logicToCall.execute(logicContext);
         return 2;
     }

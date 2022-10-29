@@ -53,13 +53,8 @@ public class InstructionSubstract extends InstructionBi {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
-        short v = p2;
-
-        if (v != 0) {
-            v -= logicContext.getVar(p1);
-            logicContext.setVar(p1, (short) (v & 0xff));
-        }
-
+        short leftHandSide = logicContext.getVar(p1);
+        logicContext.setVar(p1, (short)(leftHandSide - p2));
         return 3;
     }
 
@@ -111,9 +106,7 @@ public class InstructionSubstract extends InstructionBi {
      */
     public String toString() {
 
-        String buffer = "v" + p1 +
-                " -= " +
-                p2;
+        String buffer = "v" + p1 + " = " + p1 + " - " + p2;
         return buffer;
     }
 //#endif DEBUG
