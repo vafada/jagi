@@ -86,7 +86,7 @@ public class ChooseRestoreGameBox {
     }
 
     public SavedGame show(LogicContext logicContext, ViewScreen viewScreen, boolean modal) {
-        KeyEvent ev = null;
+        KeyEvent ev;
         SavedGame returnedGame = null;
 
         if (logicContext != null) {

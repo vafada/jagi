@@ -44,6 +44,9 @@ public class InstructionGetNum extends InstructionBi {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
+        String message = logic.getMessage(p1);
+        int answer = logicContext.getNum(message);
+        logicContext.setVar(p2, (short) answer);
         return 3;
     }
 

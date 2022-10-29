@@ -18,6 +18,8 @@ import java.awt.event.KeyEvent;
 import java.awt.image.MemoryImageSource;
 import java.util.Arrays;
 
+import static com.sierra.agi.logic.LogicVariables.GET_LINE_SIZE;
+
 public class ViewScreen {
     public static final int WIDTH = 320;
     public static final int HEIGHT = 200;
@@ -82,8 +84,6 @@ public class ViewScreen {
     }
 
     public void setInputLine(String inputLine) {
-        int index, x;
-
         if (inputLine == null) {
             clearLines(lineUserInput, lineUserInput, (short) 0);
         } else {
@@ -104,9 +104,9 @@ public class ViewScreen {
                     translatePixel((byte) 0),
                     true);
 
-            x = CHAR_WIDTH;
+            int x = CHAR_WIDTH;
 
-            for (index = 0; index < inputLine.length(); index++) {
+            for (int index = 0; index < inputLine.length(); index++) {
                 EgaUtils.putCharacter(
                         screen,
                         font,
@@ -496,5 +496,58 @@ public class ViewScreen {
 
     public void setLineMinPrint(int lineMinPrint) {
         this.lineMinPrint = lineMinPrint;
+    }
+
+    public short getNum(String message) {
+        // clear the line
+        setInputLine(null);
+        // Show the prompt message to the user at the specified position.
+        displayLine(0, lineUserInput, message);
+
+        // Get a line of text from the user.
+        //String line = this.getLine(4, (byte) lineUserInput, (byte) message.length());
+        StringBuilder line = new StringBuilder();
+
+        ega.clearEvents();
+
+        int col = message.length();
+        KeyEvent ev;
+        // Process entered keys until either ENTER or ESC is pressed.
+        while (true) {
+            //setInputLine();
+            // Show the currently entered text.
+            displayLine(col, lineUserInput, (line.toString() + cursorChar));
+
+            if ((ev = ega.popCharEvent(-1)) == null) {
+                break;
+            }
+
+            int key = ev.getKeyCode();
+            // 0 -9
+            if (key >= 48 && key <= 57) {
+                // If we haven't reached the max length, add the char to the line of text.
+                if (line.length() < 4) {
+                    line.append((char) (key & 0xff));
+                }
+            } else if (key == KeyEvent.VK_ESCAPE || key == KeyEvent.VK_ENTER) {
+                break;
+            } else if (key == KeyEvent.VK_BACK_SPACE) {
+                // Removes one from the end of the currently entered input.
+                if (line.length() > 0) {
+                    line.deleteCharAt(line.length() - 1);
+                }
+
+                // Render Line with a space overwriting the previous position of the cursor.
+                displayLine(col, lineUserInput, (line.toString() + cursorChar + " "));
+            }
+        }
+
+        // Strip out everything that isn't a digit. A little more robust than the original AGI interpreter.
+        String digitsInLine = line.toString();
+
+        // clear the line
+        setInputLine(null);
+
+        return (digitsInLine.length() > 0 ? Short.parseShort(digitsInLine) : 0);
     }
 }

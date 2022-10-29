@@ -333,6 +333,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     }
 
     public void newRoom(short p) throws Exception {
+        System.out.println("newRoom = " + p);
         /* 1 */
         viewTable.resetNewRoom();
 
@@ -970,5 +971,12 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
         public void soundVolumeChanged(SoundClip soundClip, int volume) {
         }
+    }
+
+    public short getNum(String message) {
+        ViewScreen viewScreen = getViewScreen();
+        short num = viewScreen.getNum(message);
+
+        return num;
     }
 }
