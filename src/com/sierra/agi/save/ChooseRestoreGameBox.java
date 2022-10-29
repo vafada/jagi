@@ -1,14 +1,24 @@
-package com.sierra.agi.view;
+package com.sierra.agi.save;
 
 import com.sierra.agi.awt.EgaComponent;
 import com.sierra.agi.awt.EgaUtils;
 import com.sierra.agi.logic.LogicContext;
+import com.sierra.agi.view.Box;
+import com.sierra.agi.view.SavedGame;
+import com.sierra.agi.view.ViewScreen;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import static com.sierra.agi.save.SaveUtils.NUM_GAMES;
+import static com.sierra.agi.save.SaveUtils.POINTER_CHAR;
 
 public class ChooseRestoreGameBox extends Box {
     private static final int MAX_COLUMN = 35;
@@ -17,8 +27,12 @@ public class ChooseRestoreGameBox extends Box {
     private String[] lines;
     private int x = -1;
     private int y = -1;
+    private String gameId;
+    private String path;
 
-    public ChooseRestoreGameBox() {
+    public ChooseRestoreGameBox(String gameId, String path) {
+        this.gameId = gameId;
+        this.path = path;
         init();
     }
 
@@ -44,18 +58,39 @@ public class ChooseRestoreGameBox extends Box {
         }
 
         lines.add(current.toString());
+        // spacer
+        lines.add("");
+
+        SavedGame[] game = new SavedGame[NUM_GAMES];
+        long mostRecentTime = 0;
+        int mostRecentGame = 0;
+        int validSaveCount = 0;
+
+        for (int i = 0; i < NUM_GAMES; i++) {
+            game[i] = getGameByNumber(i + 1);
+
+            if (game[i].exists) {
+                if (game[i].fileTime > mostRecentTime) {
+                    mostRecentTime = game[i].fileTime;
+                    mostRecentGame = i;
+                }
+
+                // Count how many saved games we currently have.
+                validSaveCount++;
+                lines.add(" - " + game[i].description);
+            }
+        }
 
         lines.toArray(this.lines = new String[lines.size()]);
 
     }
 
-    public KeyEvent show(LogicContext logicContext, ViewScreen viewScreen,  boolean modal) {
+    public KeyEvent show(LogicContext logicContext, ViewScreen viewScreen, boolean modal) {
         KeyEvent ev = null;
 
         if (logicContext != null) {
             logicContext.stopClock();
         }
-
 
         viewScreen.save();
 
@@ -156,5 +191,54 @@ public class ChooseRestoreGameBox extends Box {
 
     public int getHeight() {
         return ViewScreen.CHAR_HEIGHT * (lines.length + 2);
+    }
+
+    private SavedGame getGameByNumber(int num) {
+        SavedGame theGame = new SavedGame();
+        theGame.num = num;
+
+        // Build full path to the saved game of this number for this game ID.
+        theGame.fileName = String.format("%sSG.%d", this.gameId, num);
+
+        try {
+            Path path = Paths.get(this.path, theGame.fileName);
+            byte[] rawData = Files.readAllBytes(path);
+            theGame.savedGameData = rawData;
+
+            // Get last modified time
+            FileTime fileTime = Files.getLastModifiedTime(path);
+            theGame.fileTime = fileTime.toMillis();
+
+            // 0 - 30(31 bytes) SAVED GAME DESCRIPTION.
+            int textEnd = 0;
+            while (theGame.savedGameData[textEnd] != 0) {
+                textEnd++;
+            }
+            theGame.description = new String(rawData, 0, textEnd, "US-ASCII");
+
+            // 33 - 39(7 bytes) Game ID("SQ2", "KQ3", "LLLLL", etc.), NUL padded.
+            textEnd = 33;
+            while ((theGame.savedGameData[textEnd] != 0) && ((textEnd - 33) < 7)) {
+                textEnd++;
+            }
+            String gameId = new String(theGame.savedGameData, 33, textEnd - 33, "US-ASCII");
+
+            // If the saved Game ID  doesn't match the current, don't use  this game.
+            // TODO
+            /*if (!gameId.Equals(state.GameId)) {
+                theGame.Description = "";
+                theGame.Exists = false;
+                return theGame;
+            }*/
+
+            // If we get this far, there is a valid saved game with this number for this game.
+            theGame.exists = true;
+            return theGame;
+        } catch (Exception ex) {
+            // Something unexpected happened. Bad file I guess. Return false.
+            theGame.description = "";
+            theGame.exists = false;
+            return theGame;
+        }
     }
 }

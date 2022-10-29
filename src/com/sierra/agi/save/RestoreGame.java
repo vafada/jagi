@@ -30,18 +30,12 @@ public class RestoreGame {
         return false;
     }
 
-    public static int[] convertToUnsignedInt(byte[] b) {
-        int[] converted = new int[b.length];
-        for (int i = 0; i < b.length; i++) {
-            converted[i] = b[i] & 0xFF;
-        }
-        return converted;
-    }
+
 
     public boolean restoreFile(String filename) throws Exception {
         System.out.println("Restore file = " + filename);
         byte[] rawData = Files.readAllBytes(Paths.get(filename));
-        int[] savedGameData = convertToUnsignedInt(rawData);
+        int[] savedGameData = SaveUtils.convertToUnsignedInt(rawData);
         ViewTable viewTable = this.logicContext.getViewTable();
         ViewScreen viewScreen = this.logicContext.getViewScreen();
 

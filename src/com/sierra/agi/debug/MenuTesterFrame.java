@@ -9,8 +9,7 @@
 package com.sierra.agi.debug;
 
 import com.sierra.agi.menu.AgiMenuBar;
-import com.sierra.agi.view.MessageBox;
-import com.sierra.agi.view.ChooseRestoreGameBox;
+import com.sierra.agi.save.ChooseRestoreGameBox;
 import com.sierra.agi.view.ViewScreen;
 
 import java.awt.*;
@@ -72,7 +71,7 @@ public class MenuTesterFrame extends Frame implements Runnable {
     }
 
     public void run() {
-        ChooseRestoreGameBox restoreBox = new ChooseRestoreGameBox();
+        ChooseRestoreGameBox restoreBox = new ChooseRestoreGameBox("kq2", "C:\\agigames\\kq2" );
         restoreBox.show(null, screen, true);
         /*MessageBox box;
 
