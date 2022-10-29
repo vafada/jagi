@@ -90,6 +90,9 @@ public class MessageBox extends Box {
     }
 
     public KeyEvent show(LogicContext logicContext, ViewScreen viewScreen) {
+        // clear out existing open modals
+        viewScreen.restore(true);
+
         KeyEvent ev = null;
         int timeout = this.timeout;
 
@@ -133,6 +136,8 @@ public class MessageBox extends Box {
             } while (looping);
 
             viewScreen.restore(true);
+        } else {
+            logicContext.setFlag(FLAG_OUTPUT_MODE, false);
         }
 
         if (logicContext != null) {

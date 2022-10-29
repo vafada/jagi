@@ -787,6 +787,8 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                     changed = true;
                 }
 
+                System.out.println("ev.getKeyCode() == KeyEvent.VK_ENTER = " + (ev.getKeyCode() == KeyEvent.VK_ENTER));
+
                 if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
                     commandLineC = commandLine.toString();
                     commandLine = new StringBuffer();
@@ -803,15 +805,14 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                     entry.setDirection(entry.getDirection() == dir ? (short) 0 : dir);
                 }
             }
+        }
+        if (commandLineC != null) {
+            // User said something!
+            enterCommand(commandLineC);
+        }
 
-            if (commandLineC != null) {
-                // User said something!
-                enterCommand(commandLineC);
-            }
-
-            if (changed) {
-                getViewScreen().setInputLine(commandLine.toString());
-            }
+        if (changed) {
+            getViewScreen().setInputLine(commandLine.toString());
         }
     }
 

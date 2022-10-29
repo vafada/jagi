@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -270,7 +269,7 @@ public class LogicReader {
         int startPos;
         int numMessages;
         int fileData, marker;
-        int i, j, k, l;
+        int j, l;
         String[] m;
 
         startPos = ByteCaster.lohiUnsignedShort(b, 0) + 2;
@@ -280,7 +279,7 @@ public class LogicReader {
         m = new String[numMessages + 1];
         marker = fileData;
 
-        for (i = 1; i <= numMessages; i++, marker += 2) {
+        for (int i = 1; i <= numMessages; i++, marker += 2) {
             j = ByteCaster.lohiUnsignedShort(b, marker);
 
             if (j == 0) {
@@ -295,14 +294,9 @@ public class LogicReader {
                 l++;
             }
 
-            try
-            {
-                String dirtyString = new String(b, j, l - j, "US-ASCII");
-                // remove non-printable ascii string (\xFF in KQ2)
-                m[i] = dirtyString.replaceAll("\\P{Print}", "");
-            }
-            catch (UnsupportedEncodingException ex)
-            {
+            try {
+                m[i] = (new String(b, j, l - j, "US-ASCII")).replace('�', ' ');
+            } catch (UnsupportedEncodingException ex) {
             }
 
         }

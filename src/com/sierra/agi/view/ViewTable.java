@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
 
+import static com.sierra.agi.logic.LogicVariables.FLAG_OUTPUT_MODE;
+
 public class ViewTable {
     public static final int MAX_ANIMATED_OBJECTS = 32;
     public static final short EGO_ENTRY = (short) 0;
@@ -143,6 +145,7 @@ public class ViewTable {
     }
 
     public void showPic() {
+        logicContext.setFlag(FLAG_OUTPUT_MODE, false);
         eraseBoth();
         System.arraycopy(pictureContext.getPictureData(), 0, screenView, 0, screenView.length);
         System.arraycopy(pictureContext.getPriorityData(), 0, priority, 0, priority.length);
