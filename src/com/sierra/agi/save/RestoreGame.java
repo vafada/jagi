@@ -15,14 +15,11 @@ public class RestoreGame {
 
     public boolean restore() {
         String path = logicContext.getCache().getPath().getAbsolutePath();
-        System.out.println("path = " + path);
-        // TODO hardcoded game id
-        ChooseRestoreGameBox box = new ChooseRestoreGameBox("kq2", path);
+        ChooseRestoreGameBox box = new ChooseRestoreGameBox(logicContext.getGameID(), path);
         SavedGame chosenGame = box.show(this.logicContext, this.logicContext.getViewScreen(), true);
 
         if (chosenGame != null) {
             try {
-                System.out.println("chosenGame = " + chosenGame);
                 return this.restoreFile(chosenGame.savedGameData);
             } catch (Exception e) {
                 System.out.println("e = " + e);

@@ -110,7 +110,6 @@ public class ChooseRestoreGameBox {
             switch (ev.getKeyCode()) {
                 case KeyEvent.VK_ENTER:
                     if (this.savedGames[pointerIndex].exists) {
-                        System.out.println("picked! = " + pointerIndex);
                         returnedGame = this.savedGames[pointerIndex];
                     }
                     looping = false;
@@ -229,12 +228,11 @@ public class ChooseRestoreGameBox {
             String gameId = new String(theGame.savedGameData, 33, textEnd - 33, "US-ASCII");
 
             // If the saved Game ID  doesn't match the current, don't use  this game.
-            // TODO
-            /*if (!gameId.Equals(state.GameId)) {
-                theGame.Description = "";
-                theGame.Exists = false;
+            if (!gameId.equals(this.gameId)) {
+                theGame.description = "";
+                theGame.exists = false;
                 return theGame;
-            }*/
+            }
 
             // If we get this far, there is a valid saved game with this number for this game.
             theGame.exists = true;
