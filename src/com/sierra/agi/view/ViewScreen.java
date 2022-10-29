@@ -332,10 +332,11 @@ public class ViewScreen {
     }
 
     public void drawTopLine(int textColor, int backgroundColor, int x, int y, int width) {
-        int i, offset, w;
         int[] screen = this.screen;
 
-        offset = (ViewScreen.WIDTH * y) + x;
+        int offset = (ViewScreen.WIDTH * y) + x;
+
+        System.out.println("backgroundColor = " + backgroundColor);
 
         Arrays.fill(screen, offset, offset + width, backgroundColor);
         offset += ViewScreen.WIDTH;
@@ -352,7 +353,6 @@ public class ViewScreen {
         Arrays.fill(screen, offset, offset + width, backgroundColor);
         offset += ViewScreen.WIDTH;
         Arrays.fill(screen, offset, offset + width, backgroundColor);
-        offset += ViewScreen.WIDTH;
 
         offset = (ViewScreen.WIDTH * (y + 1)) + x;
         screen[offset] = backgroundColor;
@@ -360,7 +360,7 @@ public class ViewScreen {
         screen[offset + width - 1] = backgroundColor;
         screen[offset + width - 2] = backgroundColor;
 
-        for (i = 2; i < ViewScreen.CHAR_HEIGHT; i++) {
+        for (int i = 2; i < ViewScreen.CHAR_HEIGHT; i++) {
             offset += ViewScreen.WIDTH;
             screen[offset + 2] = textColor;
             screen[offset + 3] = textColor;

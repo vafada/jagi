@@ -361,9 +361,7 @@ public class ResourceFrame extends JFrame implements MouseListener, ActionListen
             positionWindow(frame);
             frame.setVisible(true);
         } else if (s.equals("newmenutest")) {
-            MenuTesterFrame frame;
-
-            frame = new MenuTesterFrame();
+            MenuTesterFrame frame = new MenuTesterFrame();
             positionWindow(frame);
             frame.setVisible(true);
 

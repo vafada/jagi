@@ -10,6 +10,7 @@ package com.sierra.agi.debug;
 
 import com.sierra.agi.menu.AgiMenuBar;
 import com.sierra.agi.view.MessageBox;
+import com.sierra.agi.view.ChooseRestoreGameBox;
 import com.sierra.agi.view.ViewScreen;
 
 import java.awt.*;
@@ -71,7 +72,9 @@ public class MenuTesterFrame extends Frame implements Runnable {
     }
 
     public void run() {
-        MessageBox box;
+        ChooseRestoreGameBox restoreBox = new ChooseRestoreGameBox();
+        restoreBox.show(null, screen, true);
+        /*MessageBox box;
 
         box = new MessageBox("You selected controller " + screen.menuLoop(bar) + ".\r\nYoink!");
         box.setTimeout(8192);
@@ -79,7 +82,7 @@ public class MenuTesterFrame extends Frame implements Runnable {
 
         box = new MessageBox("This should be an extremely long text that should be warped to multiple lines.\r\n    Yabadabadou!");
         box.setTimeout(8192);
-        box.show(null, screen, true);
+        box.show(null, screen, true);*/
 
         setVisible(false);
 
@@ -89,5 +92,12 @@ public class MenuTesterFrame extends Frame implements Runnable {
         }
 
         dispose();
+
+    }
+
+    public static void main(String[] args) {
+        MenuTesterFrame frame = new MenuTesterFrame();
+        frame.setVisible(true);
+        (new Thread(frame, "Menu Loop")).start();
     }
 }
