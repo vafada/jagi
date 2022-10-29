@@ -117,8 +117,7 @@ public class RestoreGame {
             int keyCode = (savedGameData[356 + keyMapOffset] + (savedGameData[357 + keyMapOffset] << 8));
             int controllerNum = (savedGameData[358 + keyMapOffset] + (savedGameData[359 + keyMapOffset] << 8));
             if (!((keyCode == 0) && (controllerNum == 0))) {
-                int interKeyCode = EgaUtils.convertKey(keyCode);
-                this.logicContext.addKeyToController((short) interKeyCode, (short) controllerNum);
+                this.logicContext.addKeyToController((short) keyCode, (short) controllerNum);
             }
         }
 

@@ -1281,7 +1281,7 @@ public class ViewTable {
         }
     }
 
-    public void updatePosition() {
+    private void updatePosition() {
         AnimatedObject v;
         int i, x, y, oldX, oldY, dir, step, border;
         short n;

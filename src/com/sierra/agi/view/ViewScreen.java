@@ -24,8 +24,8 @@ public class ViewScreen {
     public static final int CHAR_WIDTH = 8;
     public static final int CHAR_HEIGHT = 8;
 
-    protected int[] screen;
-    protected int[] screenBackup;
+    private int[] screen;
+    private int[] screenBackup;
     protected MemoryImageSource screenSource;
 
     protected int backgroundColor;

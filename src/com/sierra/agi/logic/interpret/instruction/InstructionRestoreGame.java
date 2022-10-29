@@ -49,10 +49,11 @@ public class InstructionRestoreGame extends Instruction {
         if (restoreGame.restore()) {
             // TODO: soundPlayer.Reset();
             logicContext.getMenuBar().enableAllMenuItem();
+            logicContext.clearInput();
             // TODO: ReplayScriptEvents();
             logicContext.getViewTable().showPic();
             logicContext.newRoom(logicContext.getVar(LogicVariables.VAR_CURRENT_ROOM));
-            logicContext.updateStatusLine();
+
             throw new LogicReturn();
         }
         return 1;
