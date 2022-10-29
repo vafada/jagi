@@ -377,6 +377,8 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
         /* 11 */
 
+
+        this.updateStatusLine();
         /* The New Room Instruction is a ideal place to force a garbage collection! */
         System.gc();
 
@@ -889,7 +891,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         this.keyToControllerMap.put(keyCode, controllerNum);
     }
 
-    private void updateStatusLine() {
+    public void updateStatusLine() {
         if (this.shouldShowStatusLine) {
             ViewScreen viewScreen = getViewScreen();
             // 15 = white
