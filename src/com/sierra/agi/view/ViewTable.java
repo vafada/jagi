@@ -52,7 +52,7 @@ public class ViewTable {
     protected Random randomSeed;
     protected byte[] priorityTable = new byte[HEIGHT];
     protected ViewScreen screen;
-    protected int[] screenView;
+    private int[] visualPixels;
     protected ViewList updateList = new ViewList();
     protected ViewList updateNotList = new ViewList();
     protected PictureContext pictureContext;
@@ -60,7 +60,8 @@ public class ViewTable {
 
     private Area screenUpdate;
 
-    private byte[] priority = new byte[WIDTH * HEIGHT];
+    private byte[] priorityPixels = new byte[WIDTH * HEIGHT];
+    private int[] controlPixels = new int[WIDTH * HEIGHT];
 
     public ViewTable(LogicContext context) {
         int i;
@@ -76,7 +77,7 @@ public class ViewTable {
         resetPriorityBands();
 
         screen = new ViewScreen();
-        screenView = new int[WIDTH * HEIGHT];
+        visualPixels = new int[WIDTH * HEIGHT];
         screenUpdate = new Area(new Rectangle(0, 0, WIDTH, HEIGHT));
     }
 
@@ -100,8 +101,9 @@ public class ViewTable {
 
         screen.reset();
         screenUpdate.add(new Area(new Rectangle(0, 0, WIDTH, HEIGHT)));
-        Arrays.fill(screenView, translatePixel((byte) 0));
-        Arrays.fill(priority, (byte) 4);
+        Arrays.fill(visualPixels, translatePixel((byte) 0));
+        Arrays.fill(priorityPixels, (byte) 4);
+        Arrays.fill(controlPixels, 4);
     }
 
     protected void resetPriorityBands() {
@@ -131,6 +133,8 @@ public class ViewTable {
 
     public void drawPic(Picture picture) throws PictureException {
         pictureContext = picture.draw();
+        System.arraycopy(pictureContext.getPictureData(), 0, visualPixels, 0, visualPixels.length);
+        System.arraycopy(pictureContext.getPriorityData(), 0, priorityPixels, 0, priorityPixels.length);
     }
 
     public void overlayPic(Picture picture) throws PictureException {
@@ -146,11 +150,10 @@ public class ViewTable {
 
     public void showPic() {
         logicContext.setFlag(FLAG_OUTPUT_MODE, false);
+        System.arraycopy(pictureContext.getPictureData(), 0, visualPixels, 0, visualPixels.length);
+        System.arraycopy(pictureContext.getPriorityData(), 0, priorityPixels, 0, priorityPixels.length);
         eraseBoth();
-        System.arraycopy(pictureContext.getPictureData(), 0, screenView, 0, screenView.length);
-        System.arraycopy(pictureContext.getPriorityData(), 0, priority, 0, priority.length);
         blitBoth();
-
         screenUpdate.reset();
         screenUpdate.add(new Area(new Rectangle(0, 0, WIDTH, HEIGHT)));
         doUpdate();
@@ -686,7 +689,8 @@ public class ViewTable {
             int endPixelPos = startPixelPos + v.getWidth();
 
             for (int pixelPos = startPixelPos; pixelPos < endPixelPos; pixelPos++) {
-                byte priority = this.priority[pixelPos];
+                //byte priority = pictureContext.getPriorityData()[pixelPos];
+                byte priority = priorityPixels[pixelPos];
 
                 if (priority == 0) {
                     canBeHere = false;
@@ -747,6 +751,7 @@ public class ViewTable {
         int tries = 1;
 
         while (!checkPosition(v) || checkClutter(v) || !checkPriority(v)) {
+            //System.out.println("tries = " + tries + " = v#: " + v.viewNumber + " obj#: " + v.toString());
             switch (dir) {
                 case 0:
                     v.setX((short) (v.getX() - 1));
@@ -970,7 +975,7 @@ public class ViewTable {
 
     protected void eraseAll(ViewList list) {
         for (ViewSprite s = list.prev; s != null; s = s.prev) {
-            s.restore(screenUpdate, screenView, priority);
+            s.restore(screenUpdate, visualPixels, priorityPixels);
         }
     }
 
@@ -983,8 +988,8 @@ public class ViewTable {
         ViewSprite s;
 
         for (s = list.next; s != null; s = s.next) {
-            s.save(screenView, priority);
-            s.blit(screenUpdate, screenView, priority);
+            s.save(visualPixels, priorityPixels);
+            s.blit(screenUpdate, visualPixels, priorityPixels);
         }
     }
 
@@ -1368,7 +1373,7 @@ public class ViewTable {
         if (!screenUpdate.isEmpty()) {
             Rectangle r = screenUpdate.getBounds();
 
-            screen.putBlock(screenView, r.x, r.y, r.width, r.height);
+            screen.putBlock(visualPixels, r.x, r.y, r.width, r.height);
         }
 
         screenUpdate.reset();
