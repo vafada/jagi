@@ -155,9 +155,7 @@ public abstract class AbstractChooseBox {
 
             switch (ev.getKeyCode()) {
                 case KeyEvent.VK_ENTER:
-                    if (this.savedGames[pointerIndex].exists) {
-                        returnedGame = this.savedGames[pointerIndex];
-                    }
+                    returnedGame = this.savedGames[pointerIndex];
                     looping = false;
                     break;
                 case KeyEvent.VK_ESCAPE:

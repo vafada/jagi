@@ -18,7 +18,7 @@ public class RestoreGame {
         ChooseRestoreGameBox box = new ChooseRestoreGameBox(logicContext.getGameID(), path);
         SavedGame chosenGame = box.show(this.logicContext, this.logicContext.getViewScreen());
 
-        if (chosenGame != null) {
+        if (chosenGame.exists) {
             try {
                 return this.restoreFile(chosenGame.savedGameData);
             } catch (Exception e) {

@@ -49,7 +49,7 @@ public class InstructionSaveGame extends Instruction {
         ChooseSaveGameBox box = new ChooseSaveGameBox(logicContext.getGameID(), path);
         SavedGame chosenGame = box.show(logicContext, logicContext.getViewScreen());
 
-        System.out.println("chosenGame = " + chosenGame);
+        System.out.println("chosenGame = " + chosenGame.num);
         return 1;
     }
 
