@@ -341,6 +341,10 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         /* 4 */
         /* 5 */
         AnimatedObject ego = viewTable.getEntry((short) 0);
+        if (ego.getViewData() != null) {
+            setVar(VAR_EGO_VIEW_RESOURCE, ego.getView());
+        }
+
         switch (vars[LogicContext.VAR_EGO_EDGE]) {
             case LogicContext.TOP:
                 ego.setY(LogicContext.MAXY);
