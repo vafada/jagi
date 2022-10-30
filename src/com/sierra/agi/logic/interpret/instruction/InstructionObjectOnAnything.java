@@ -16,7 +16,7 @@ import java.io.InputStream;
  *
  * <P><CODE><B>object.on.anything</B> Instruction 0x42</CODE><BR>
  * Motion restrictions previously set on the object <CODE>o[p1]</CODE> with
- * commands <CODE>object.on.water</CODE> or <CODE>object.on.land</CODE> are
+ * commands <CODE>object.on.anything</CODE> or <CODE>object.on.land</CODE> are
  * cancelled.
  * </P>
  *
