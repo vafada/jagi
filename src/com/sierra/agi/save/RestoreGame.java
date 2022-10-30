@@ -16,7 +16,7 @@ public class RestoreGame {
     public boolean restore() {
         String path = logicContext.getCache().getPath().getAbsolutePath();
         ChooseRestoreGameBox box = new ChooseRestoreGameBox(logicContext.getGameID(), path);
-        SavedGame chosenGame = box.show(this.logicContext, this.logicContext.getViewScreen(), true);
+        SavedGame chosenGame = box.show(this.logicContext, this.logicContext.getViewScreen());
 
         if (chosenGame != null) {
             try {

@@ -72,7 +72,7 @@ public class MenuTesterFrame extends Frame implements Runnable {
 
     public void run() {
         ChooseRestoreGameBox restoreBox = new ChooseRestoreGameBox("kq2", "C:\\agigames\\kq2" );
-        restoreBox.show(null, screen, true);
+        restoreBox.show(null, screen);
         /*MessageBox box;
 
         box = new MessageBox("You selected controller " + screen.menuLoop(bar) + ".\r\nYoink!");

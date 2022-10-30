@@ -7,6 +7,9 @@ package com.sierra.agi.logic.interpret.instruction;
 import com.sierra.agi.logic.Logic;
 import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.logic.interpret.LogicReader;
+import com.sierra.agi.save.ChooseRestoreGameBox;
+import com.sierra.agi.save.ChooseSaveGameBox;
+import com.sierra.agi.view.SavedGame;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +45,11 @@ public class InstructionSaveGame extends Instruction {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
-        System.out.println("TODO: implement save.game");
+        String path = logicContext.getCache().getPath().getAbsolutePath();
+        ChooseSaveGameBox box = new ChooseSaveGameBox(logicContext.getGameID(), path);
+        SavedGame chosenGame = box.show(logicContext, logicContext.getViewScreen());
+
+        System.out.println("chosenGame = " + chosenGame);
         return 1;
     }
 
