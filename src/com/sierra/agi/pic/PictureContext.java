@@ -289,30 +289,29 @@ public class PictureContext {
     }
 
     public void addToPic(Cell cell, int x, int y, byte pri, int controlBoxColour) {
-        int[] d = cell.getPixelData();
-        int i, j, k, l, w, we, t;
+        int[] pixelData = cell.getPixelData();
 
         y -= cell.getHeight() - 1;
-        l = d.length;
-        w = cell.getWidth();
-        k = (y * width) + x;
-        t = cell.getTransparentPixel();
+        int pixelLength = pixelData.length;
+        int celWidth = cell.getWidth();
+        int offset = (y * width) + x;
+        int transparentPixel = cell.getTransparentPixel();
 
-        for (i = 0; i < l; i += w) {
-            we = i + w;
+        for (int i = 0; i < pixelLength; i += celWidth) {
+            int we = i + celWidth;
 
-            for (j = i; j < we; j++) {
-                if (d[j] != t) {
-                    if (priData[k] <= pri) {
-                        picData[k] = d[j];
-                        priData[k] = pri;
+            for (int j = i; j < we; j++) {
+                if (pixelData[j] != transparentPixel) {
+                    if (priData[offset] <= pri) {
+                        picData[offset] = pixelData[j];
+                        priData[offset] = pri;
                     }
                 }
 
-                k++;
+                offset++;
             }
 
-            k += (width - w);
+            offset += (width - celWidth);
         }
     }
 
