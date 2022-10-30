@@ -1053,7 +1053,7 @@ public class ViewTable {
         v.setTargetX((short) (entry27 - 1));
 
         if ((entry27 == 0) || v.isSomeFlagsSet(AnimatedObject.FLAG_DIDNT_MOVE)) {
-            direction = randomSeed.nextInt() % 9;
+            direction = getRandom() % 9;
 
             if (direction < 0) {
                 direction = -direction;
@@ -1066,13 +1066,13 @@ public class ViewTable {
             }
 
             if (v.getTargetX() < 6) {
-                v.setTargetX((short) (randomSeed.nextInt() % 0x33));
+                v.setTargetX((short) (getRandom() % 0x33));
             }
         }
     }
 
     public int getRandom() {
-        return randomSeed.nextInt();
+        return Math.abs(randomSeed.nextInt());
     }
 
     protected void checkMotionFollowEgo(AnimatedObject obj) {
@@ -1096,7 +1096,7 @@ public class ViewTable {
         if (obj.getOldStepSize() == (short) 0xff) {
             obj.setOldStepSize((short) 0);
         } else if (obj.isSomeFlagsSet(AnimatedObject.FLAG_DIDNT_MOVE)) {
-            obj.setDirection((short) ((randomSeed.nextInt() % 8) + 1));
+            obj.setDirection((short) ((getRandom() % 8) + 1));
 
             n = (short) (((absolute(obj.getY() - ego.getY()) + absolute(obj.getX() - ego.getX())) / 2) + 1);
 
@@ -1105,7 +1105,7 @@ public class ViewTable {
                 return;
             } else {
                 do {
-                    obj.setOldStepSize((short) (randomSeed.nextInt() % n));
+                    obj.setOldStepSize((short) (getRandom() % n));
                 } while (obj.getOldStepSize() < obj.getStepSize());
 
                 return;
