@@ -53,8 +53,8 @@ public class AnimatedObject {
     protected short currentLoop;       // a
     protected Loop currentLoopData;   // c-d
     protected short currentCell;       // e
-    protected Cell currentCellData;   // 10-11
-    protected Cell previousCellData;  // 12-13
+    protected Cel currentCelData;   // 10-11
+    protected Cel previousCelData;  // 12-13
     protected ViewSprite sprite;            // 14-15
     protected short xCopy;             // 16-17
     protected short yCopy;             // 18-19
@@ -156,7 +156,7 @@ public class AnimatedObject {
         currentLoop = 0;
         currentLoopData = null;
         currentCell = 0;
-        currentCellData = null;
+        currentCelData = null;
         xCopy = 0;
         yCopy = 0;
         width = 0;
@@ -182,16 +182,16 @@ public class AnimatedObject {
         this.sprite = sprite;
     }
 
-    public Cell getCellData() {
-        return currentCellData;
+    public Cel getCellData() {
+        return currentCelData;
     }
 
     public void saveCell() {
-        previousCellData = currentCellData;
+        previousCelData = currentCelData;
     }
 
-    public Cell getPreviousCellData() {
-        return previousCellData;
+    public Cel getPreviousCellData() {
+        return previousCelData;
     }
 
     public short getCell() {
@@ -263,9 +263,9 @@ public class AnimatedObject {
         }
 
         currentCell = cell;
-        currentCellData = currentLoopData.getCell(cell);
-        width = currentCellData.getWidth();
-        height = currentCellData.getHeight();
+        currentCelData = currentLoopData.getCell(cell);
+        width = currentCelData.getWidth();
+        height = currentCelData.getHeight();
 
         if ((x + width) > ViewTable.WIDTH) {
             x = (short) (ViewTable.WIDTH - width);
@@ -568,16 +568,16 @@ public class AnimatedObject {
         return currentViewData;
     }
 
-    public void setPreviousCellData(Cell previousCellData) {
-        this.previousCellData = previousCellData;
+    public void setPreviousCellData(Cel previousCelData) {
+        this.previousCelData = previousCelData;
     }
 
-    public Cell getCurrentCellData() {
-        return currentCellData;
+    public Cel getCurrentCellData() {
+        return currentCelData;
     }
 
-    public void setCurrentCellData(Cell currentCellData) {
-        this.currentCellData = currentCellData;
+    public void setCurrentCellData(Cel currentCelData) {
+        this.currentCelData = currentCelData;
     }
 
     public void setxCopy(short xCopy) {

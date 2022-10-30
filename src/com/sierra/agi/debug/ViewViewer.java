@@ -10,7 +10,7 @@ package com.sierra.agi.debug;
 
 import com.keypoint.PngEncoder;
 import com.sierra.agi.res.ResourceCache;
-import com.sierra.agi.view.Cell;
+import com.sierra.agi.view.Cel;
 import com.sierra.agi.view.Loop;
 import com.sierra.agi.view.View;
 
@@ -146,7 +146,7 @@ public class ViewViewer extends JFrame implements ActionListener {
         short i, j, cellc, loopc;
         short w = 0, w2 = 0, h = 0, h2 = 0;
         Loop loop;
-        Cell cell;
+        Cel cel;
 
         loopc = view.getLoopCount();
         images = new Image[loopc][];
@@ -157,9 +157,9 @@ public class ViewViewer extends JFrame implements ActionListener {
             images[i] = new Image[cellc];
 
             for (j = 0; j < cellc; j++) {
-                cell = loop.getCell(j);
-                w2 = cell.getWidth();
-                h2 = cell.getHeight();
+                cel = loop.getCell(j);
+                w2 = cel.getWidth();
+                h2 = cel.getHeight();
 
                 if (w < w2) {
                     w = w2;

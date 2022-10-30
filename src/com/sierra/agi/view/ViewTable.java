@@ -142,10 +142,10 @@ public class ViewTable {
     }
 
     public void addToPic(short viewNumber, short loopNumber, short cellNumber, short x, short y, byte priority, short controlBoxColour) throws ResourceException, IOException, ViewException {
-        Cell cell;
+        Cel cel;
 
-        cell = logicContext.getCache().getView(viewNumber).getLoop(loopNumber).getCell(cellNumber);
-        pictureContext.addToPic(cell, x, y, priority, controlBoxColour);
+        cel = logicContext.getCache().getView(viewNumber).getLoop(loopNumber).getCell(cellNumber);
+        pictureContext.addToPic(cel, x, y, priority, controlBoxColour);
     }
 
     public void showPic() {

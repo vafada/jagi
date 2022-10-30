@@ -21,7 +21,7 @@ import java.awt.image.MemoryImageSource;
  * @author Dr. Z
  * @version 0.00.00.01
  */
-public class Cell {
+public class Cel {
     /**
      * Cell's Width
      */
@@ -45,7 +45,7 @@ public class Cell {
     /**
      * Creates new Cell
      */
-    public Cell(byte[] b, int start, int loopNumber) {
+    public Cel(byte[] b, int start, int loopNumber) {
         width = ByteCaster.lohiUnsignedByte(b, start);
         height = ByteCaster.lohiUnsignedByte(b, start + 1);
         short trans = ByteCaster.lohiUnsignedByte(b, start + 2);

@@ -9,7 +9,7 @@
 package com.sierra.agi.pic;
 
 import com.sierra.agi.awt.EgaUtils;
-import com.sierra.agi.view.Cell;
+import com.sierra.agi.view.Cel;
 
 import java.awt.*;
 import java.awt.image.MemoryImageSource;
@@ -288,14 +288,14 @@ public class PictureContext {
         return toolkit.createImage(mis);
     }
 
-    public void addToPic(Cell cell, int x, int y, byte pri, int controlBoxColour) {
-        int[] pixelData = cell.getPixelData();
+    public void addToPic(Cel cel, int x, int y, byte pri, int controlBoxColour) {
+        int[] pixelData = cel.getPixelData();
 
-        y -= cell.getHeight() - 1;
+        y -= cel.getHeight() - 1;
         int pixelLength = pixelData.length;
-        int celWidth = cell.getWidth();
+        int celWidth = cel.getWidth();
         int offset = (y * width) + x;
-        int transparentPixel = cell.getTransparentPixel();
+        int transparentPixel = cel.getTransparentPixel();
 
         for (int i = 0; i < pixelLength; i += celWidth) {
             int we = i + celWidth;

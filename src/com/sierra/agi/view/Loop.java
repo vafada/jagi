@@ -18,13 +18,13 @@ public class Loop {
     /**
      * Cells
      */
-    protected Cell[] cells = null;
+    protected Cel[] cels = null;
 
     /**
      * Creates new Loop
      */
-    public Loop(Cell[] cells) {
-        this.cells = cells;
+    public Loop(Cel[] cels) {
+        this.cels = cels;
     }
 
     public Loop(byte[] b, int start, int loopNumber) {
@@ -32,20 +32,20 @@ public class Loop {
         int i, j;
 
         cellCount = ByteCaster.lohiUnsignedByte(b, start);
-        cells = new Cell[cellCount];
+        cels = new Cel[cellCount];
 
         j = start + 1;
         for (i = 0; i < cellCount; i++) {
-            cells[i] = new Cell(b, start + ByteCaster.lohiUnsignedShort(b, j), loopNumber);
+            cels[i] = new Cel(b, start + ByteCaster.lohiUnsignedShort(b, j), loopNumber);
             j += 2;
         }
     }
 
-    public Cell getCell(int cellNumber) {
-        return cells[cellNumber];
+    public Cel getCell(int cellNumber) {
+        return cels[cellNumber];
     }
 
     public short getCellCount() {
-        return (short) cells.length;
+        return (short) cels.length;
     }
 }
