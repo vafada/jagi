@@ -277,7 +277,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
     public void reset() {
         Arrays.fill(controllers, false);
-        keyToControllerMap.clear();
         Arrays.fill(flags, false);
         Arrays.fill(vars, (short) 0);
         Arrays.fill(objects, (short) 0);
