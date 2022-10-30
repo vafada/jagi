@@ -690,7 +690,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     }
 
     public void pollKeyboard() {
-        Arrays.fill(controllers, false);
         setFlag(FLAG_ENTERED_COMMAND, false);
         setFlag(FLAG_SAID_ACCEPTED_INPUT, false);
         setVar(VAR_KEY, (short) 0);

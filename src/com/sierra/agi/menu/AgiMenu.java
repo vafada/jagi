@@ -40,11 +40,11 @@ public class AgiMenu {
     }
 
     public boolean isEnabled(int item) {
-        return ((AgiMenuItem) items.get(item)).isEnabled();
+        return items.get(item).isEnabled();
     }
 
     public int getController(int item) {
-        return ((AgiMenuItem) items.get(item)).getController();
+        return items.get(item).getController();
     }
 
     public int getItemCount() {
