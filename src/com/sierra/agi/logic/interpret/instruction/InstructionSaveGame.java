@@ -52,8 +52,12 @@ public class InstructionSaveGame extends Instruction {
 
         System.out.println("chosenGame = " + chosenGame.num);
 
-        SaveGame saveGame = new SaveGame(logicContext);
-        saveGame.save(chosenGame.num);
+        try {
+            SaveGame saveGame = new SaveGame(logicContext);
+            saveGame.save(chosenGame.num);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         return 1;

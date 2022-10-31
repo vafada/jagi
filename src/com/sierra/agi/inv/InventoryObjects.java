@@ -7,6 +7,7 @@ package com.sierra.agi.inv;
 import com.sierra.agi.io.ByteCasterStream;
 import com.sierra.agi.res.ResourceConfiguration;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
@@ -66,12 +67,11 @@ public class InventoryObjects implements InventoryProvider {
      * Object list.
      */
     protected InventoryObject[] objects = null;
-    protected boolean amiga;
-    protected int engineEmulation;
+    protected int numOfAnimatedObjects;
+    protected byte[] rawData;
 
     public InventoryObjects(ResourceConfiguration config) {
-        amiga = config.amiga;
-        engineEmulation = config.engineEmulation;
+
     }
 
     /**
@@ -87,10 +87,9 @@ public class InventoryObjects implements InventoryProvider {
         Hashtable h = new Hashtable(64);
         String o = "";
         int s = offset;
-        int c;
 
         while (true) {
-            c = stream.read();
+            int c = stream.read();
             offset++;
 
             if (c < 0) {
@@ -118,53 +117,40 @@ public class InventoryObjects implements InventoryProvider {
      * @throws IOException Caller must handle IOException from his stream.
      */
     public InventoryObjects loadInventory(InputStream stream) throws IOException {
-        ByteCasterStream bstream = new ByteCasterStream(stream);
-        byte padSize;
-        int offset, i, nobject;
-        int[] offsets;
-        InventoryObject obj;
-        Hashtable hash;
+        ByteCasterStream rawStream = new ByteCasterStream(stream);
+        this.rawData = rawStream.readAllBytes();
 
-        // Pre-AGIv2 games don't appear to have the first three bytes. So we read ahead
-        // to get the deduce the number of objects, and then reset.
-        if (engineEmulation < 0x2000) {
-            bstream.mark(2);
-        }
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(rawData);
+        ByteCasterStream bstream = new ByteCasterStream(byteArrayInputStream);
+
 
         /* Calculate Inventory Object Count */
-        padSize = amiga ? (byte) 4 : (byte) 3;
-        nobject = bstream.lohiReadUnsignedShort();
+        int padSize = 3;
+        int nobject = bstream.lohiReadUnsignedShort();
         nobject /= padSize;
 
-        objects = new InventoryObject[nobject];
-        offsets = new int[nobject];
+        this.objects = new InventoryObject[nobject];
+        int[] offsets = new int[nobject];
 
-        // Pre-AGIv2 games don't appear to have the first three bytes.
-        if (engineEmulation < 0x2000) {
-            bstream.reset();
-        } else {
-            bstream.skip(padSize - 2);
-        }
 
-        offset = 0;
+        this.numOfAnimatedObjects = bstream.readUnsignedByte();
 
-        for (i = 0; i < nobject; i++) {
+        int offset = 0;
+
+        for (int i = 0; i < nobject; i++) {
             offsets[i] = bstream.lohiReadUnsignedShort();
             objects[i] = new InventoryObject(bstream.readUnsignedByte());
-
-            if (padSize > 3) {
-                bstream.skip(padSize - 3);
-            }
-
             offset += padSize;
         }
 
-        hash = loadStringTable(stream, offset);
+        Hashtable hash = loadStringTable(byteArrayInputStream, offset);
 
-        for (i = 0; i < nobject; i++) {
+        for (int i = 0; i < nobject; i++) {
             objects[i].name = (String) hash.get(Integer.valueOf(offsets[i]));
         }
 
+        byteArrayInputStream.close();
+        rawStream.close();
         bstream.close();
         return this;
     }
@@ -194,5 +180,17 @@ public class InventoryObjects implements InventoryProvider {
         for (i = 0; i < objects.length; i++) {
             locations[i] = objects[i].getLocation();
         }
+    }
+
+    public InventoryObject[] getObjects() {
+        return objects;
+    }
+
+    public int getNumOfAnimatedObjects() {
+        return numOfAnimatedObjects;
+    }
+
+    public byte[] getRawData() {
+        return rawData;
     }
 }

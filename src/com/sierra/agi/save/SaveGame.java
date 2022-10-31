@@ -1,5 +1,6 @@
 package com.sierra.agi.save;
 
+import com.sierra.agi.inv.InventoryObjects;
 import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.logic.LogicVariables;
 import com.sierra.agi.view.AnimatedObject;
@@ -19,7 +20,7 @@ public class SaveGame {
         this.logicContext = logicContext;
     }
 
-    public void save(int slotNumber) {
+    public void save(int slotNumber) throws Exception {
         String absolutePath = logicContext.getCache().getPath().getAbsolutePath();
 
         // No saved game will ever be as big as 20000, but we put that as a theoretical lid
@@ -179,25 +180,13 @@ public class SaveGame {
         // SECOND PIECE: ANIMATED OBJECT STATE
         // 1538 - 1539(2 bytes) Length of piece
         // Each ANIOBJ entry is 0x2B in length, i.e. 43 bytes.
+        InventoryObjects objects = logicContext.getCache().getObjects();
         AnimatedObject[] allAnimatedObjects = viewTable.getAnimatedObjects();
-
-        int animatedObjectsCount = 0;
-        for (AnimatedObject allAnimatedObject : allAnimatedObjects) {
-            if (allAnimatedObject.getViewData() != null) {
-                animatedObjectsCount++;
-            }
-        }
-
-        int aniObjectsLength = ((animatedObjectsCount + 1) * 0x2B);
-
+        int aniObjectsLength = ((objects.getNumOfAnimatedObjects() + 1) * 0x2B);
         savedGameData[aniObjsOffset + 0] = (byte) (aniObjectsLength & 0xFF);
         savedGameData[aniObjsOffset + 1] = (byte) ((aniObjectsLength >> 8) & 0xFF);
 
-        int offset = 0;
-        for (int i = 0; i < allAnimatedObjects.length; i++) {
-            if (allAnimatedObjects[i].getViewData() == null) {
-                continue;
-            }
+        for (int i = 0; i < (allAnimatedObjects.length + 1); i++) {
             int aniObjOffset = aniObjsOffset + 2 + (i * 0x2B);
             AnimatedObject aniObj = allAnimatedObjects[i];
 
@@ -300,22 +289,19 @@ public class SaveGame {
             savedGameData[aniObjOffset + 40] = (byte) aniObj.getTargetY();
             savedGameData[aniObjOffset + 41] = (byte) aniObj.getOldStepSize();
             savedGameData[aniObjOffset + 42] = (byte) aniObj.getEndFlag();
-
-            offset++;
         }
 
         // THIRD PIECE: OBJECTS
         // Almost an exact copy of the OBJECT file, but with the 3 byte header removed, and room
         // numbers reflecting the current location of each object.
-        // TODO
-        short[] objectData = logicContext.getObjects();
+        byte[] objectData = objects.getRawData();
         int objectsOffset = aniObjsOffset + 2 + aniObjectsLength;
         int objectsLength = objectData.length - 3;
         savedGameData[objectsOffset + 0] = (byte) (objectsLength & 0xFF);
         savedGameData[objectsOffset + 1] = (byte) ((objectsLength >> 8) & 0xFF);
         pos = objectsOffset + 2;
         for (int x = 3; x < objectData.length; x++) {
-            savedGameData[pos++] = (byte) objectData[x];
+            savedGameData[pos++] = objectData[x];
         }
 
         // TODO
