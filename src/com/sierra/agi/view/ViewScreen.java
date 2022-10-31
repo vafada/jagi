@@ -67,6 +67,10 @@ public class ViewScreen {
         foregroundColor = translatePixel(color);
     }
 
+    public int getForegroundColor() {
+        return foregroundColor;
+    }
+
     public void setBackgroundColor(byte color) {
         backgroundColor = translatePixel(color);
     }
@@ -549,5 +553,21 @@ public class ViewScreen {
         setInputLine(null);
 
         return (digitsInLine.length() > 0 ? Short.parseShort(digitsInLine) : 0);
+    }
+
+    public int getLineUserInput() {
+        return lineUserInput;
+    }
+
+    public char getCursorChar() {
+        return cursorChar;
+    }
+
+    public int getLineStatus() {
+        return lineStatus;
+    }
+
+    public int getLineMinPrint() {
+        return lineMinPrint;
     }
 }

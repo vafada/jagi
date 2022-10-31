@@ -61,7 +61,7 @@ public class LogicVariables {
     protected static final int MAX_VARS = 256;
     protected static final int MAX_LOGICS = 256;
     protected static final int MAX_OBJECTS = 256;
-    protected static final int MAX_STRINGS = 24;
+    public static final int MAX_STRINGS = 24;
     public static final int STRING_LENGTH = 40;
     public static final int GET_LINE_SIZE = 40;                                    /* maximum length for GetLine calls, used internally for things like save dialog */
 
@@ -166,5 +166,9 @@ public class LogicVariables {
 
     public void setHorizon(short horizon) {
         this.horizon = horizon;
+    }
+
+    public short[] getObjects() {
+        return objects;
     }
 }

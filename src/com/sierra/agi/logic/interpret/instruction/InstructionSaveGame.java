@@ -9,6 +9,7 @@ import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.logic.interpret.LogicReader;
 import com.sierra.agi.save.ChooseRestoreGameBox;
 import com.sierra.agi.save.ChooseSaveGameBox;
+import com.sierra.agi.save.SaveGame;
 import com.sierra.agi.view.SavedGame;
 
 import java.io.IOException;
@@ -50,6 +51,11 @@ public class InstructionSaveGame extends Instruction {
         SavedGame chosenGame = box.show(logicContext, logicContext.getViewScreen());
 
         System.out.println("chosenGame = " + chosenGame.num);
+
+        SaveGame saveGame = new SaveGame(logicContext);
+        saveGame.save(chosenGame.num);
+
+
         return 1;
     }
 

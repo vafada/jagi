@@ -1398,4 +1398,32 @@ public class ViewTable {
     public void setBlockLowerRightY(short blockLowerRightY) {
         this.blockLowerRightY = blockLowerRightY;
     }
+
+    public short getBlockUpperLeftX() {
+        return blockUpperLeftX;
+    }
+
+    public short getBlockLowerRightX() {
+        return blockLowerRightX;
+    }
+
+    public short getBlockUpperLeftY() {
+        return blockUpperLeftY;
+    }
+
+    public short getBlockLowerRightY() {
+        return blockLowerRightY;
+    }
+
+    public PictureContext getPictureContext() {
+        return pictureContext;
+    }
+
+    public boolean isBlockSet() {
+        return blockSet;
+    }
+
+    public AnimatedObject[] getAnimatedObjects() {
+        return animatedObjects;
+    }
 }

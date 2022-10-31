@@ -587,4 +587,32 @@ public class AnimatedObject {
     public void setyCopy(short yCopy) {
         this.yCopy = yCopy;
     }
+
+    public int getViewNumber() {
+        return viewNumber;
+    }
+
+    public short getCurrentView() {
+        return currentView;
+    }
+
+    public short getCurrentLoop() {
+        return currentLoop;
+    }
+
+    public Loop getCurrentLoopData() {
+        return currentLoopData;
+    }
+
+    public short getCurrentCell() {
+        return currentCell;
+    }
+
+    public short getxCopy() {
+        return xCopy;
+    }
+
+    public short getyCopy() {
+        return yCopy;
+    }
 }

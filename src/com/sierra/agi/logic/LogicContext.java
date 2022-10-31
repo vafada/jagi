@@ -983,4 +983,16 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
         return num;
     }
+
+    public Map<Short, Short> getKeyToControllerMap() {
+        return keyToControllerMap;
+    }
+
+    public boolean isAcceptInput() {
+        return acceptInput;
+    }
+
+    public boolean isShouldShowStatusLine() {
+        return shouldShowStatusLine;
+    }
 }
