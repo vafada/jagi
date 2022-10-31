@@ -186,7 +186,7 @@ public class SaveGame {
         savedGameData[aniObjsOffset + 0] = (byte) (aniObjectsLength & 0xFF);
         savedGameData[aniObjsOffset + 1] = (byte) ((aniObjectsLength >> 8) & 0xFF);
 
-        for (int i = 0; i < (allAnimatedObjects.length + 1); i++) {
+        for (int i = 0; i < (objects.getNumOfAnimatedObjects() + 1); i++) {
             int aniObjOffset = aniObjsOffset + 2 + (i * 0x2B);
             AnimatedObject aniObj = allAnimatedObjects[i];
 
