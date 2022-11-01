@@ -198,6 +198,7 @@ public class RestoreGame {
 
             //UBYTE num;          /* object number                              */    e.g.   00
             animatedObject.setViewNumber(savedGameData[aniObjOffset + 2]);
+            // TODO: crashes larry
             animatedObject.setView(this.logicContext, (short) savedGameData[aniObjOffset + 2]);
             //UBYTE movefreq;     /* number of animation cycles between motion  */    e.g.   01
             animatedObject.setStepTime((short) savedGameData[aniObjOffset + 0]);

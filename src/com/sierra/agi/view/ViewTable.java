@@ -692,16 +692,19 @@ public class ViewTable {
                 //byte priority = pictureContext.getPriorityData()[pixelPos];
                 byte priority = priorityPixels[pixelPos];
 
+                // The black control line is a unconditional obstacle;
                 if (priority == 0) {
                     canBeHere = false;
                     break;
                 }
 
+                // The cyan is typically used for water
                 if (priority == 3) {
                     water = true;
                     break;
                 }
 
+                // The blue is a conditional obstacle
                 if (priority == 1) {
                     /* Conditional blue */
                     if (v.isSomeFlagsSet(AnimatedObject.FLAG_IGNORE_BLOCKS)) {
@@ -712,6 +715,7 @@ public class ViewTable {
                     break;
                 }
 
+                // The green is an alarm line
                 if (priority == 2) {
                     /* Signal */
                     signal = true;
