@@ -712,7 +712,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
             if (keyCode == KeyEvent.VK_F12) {
                 // TODO show priority pixel
-
+                getViewTable().showPriorityScreen();
             }
 
             if (this.keyToControllerMap.containsKey(convertedKeyCode)) {

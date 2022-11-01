@@ -18,8 +18,6 @@ import java.awt.event.KeyEvent;
 import java.awt.image.MemoryImageSource;
 import java.util.Arrays;
 
-import static com.sierra.agi.logic.LogicVariables.GET_LINE_SIZE;
-
 public class ViewScreen {
     public static final int WIDTH = 320;
     public static final int HEIGHT = 200;

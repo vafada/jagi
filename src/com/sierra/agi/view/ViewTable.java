@@ -8,6 +8,7 @@
 
 package com.sierra.agi.view;
 
+import com.sierra.agi.awt.EgaComponent;
 import com.sierra.agi.awt.EgaUtils;
 import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.pic.Picture;
@@ -51,7 +52,7 @@ public class ViewTable {
     protected short blockLowerRightY;
     protected Random randomSeed;
     protected byte[] priorityTable = new byte[HEIGHT];
-    protected ViewScreen screen;
+    protected ViewScreen viewScreen;
     private int[] visualPixels;
     protected ViewList updateList = new ViewList();
     protected ViewList updateNotList = new ViewList();
@@ -76,7 +77,7 @@ public class ViewTable {
         randomSeed = new Random();
         resetPriorityBands();
 
-        screen = new ViewScreen();
+        viewScreen = new ViewScreen();
         visualPixels = new int[WIDTH * HEIGHT];
         screenUpdate = new Area(new Rectangle(0, 0, WIDTH, HEIGHT));
     }
@@ -99,7 +100,7 @@ public class ViewTable {
 
         resetPriorityBands();
 
-        screen.reset();
+        viewScreen.reset();
         screenUpdate.add(new Area(new Rectangle(0, 0, WIDTH, HEIGHT)));
         Arrays.fill(visualPixels, translatePixel((byte) 0));
         Arrays.fill(priorityPixels, (byte) 4);
@@ -117,7 +118,7 @@ public class ViewTable {
     }
 
     public void resetNewRoom() {
-        screen.reset();
+        viewScreen.reset();
         for (int i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
             AnimatedObject v = animatedObjects[i];
 
@@ -210,7 +211,7 @@ public class ViewTable {
     }
 
     public ViewScreen getViewScreen() {
-        return screen;
+        return viewScreen;
     }
 
     public void setView(short entry, short view) {
@@ -1376,7 +1377,7 @@ public class ViewTable {
         if (!screenUpdate.isEmpty()) {
             Rectangle r = screenUpdate.getBounds();
 
-            screen.putBlock(visualPixels, r.x, r.y, r.width, r.height);
+            viewScreen.putBlock(visualPixels, r.x, r.y, r.width, r.height);
         }
 
         screenUpdate.reset();
@@ -1428,5 +1429,36 @@ public class ViewTable {
 
     public AnimatedObject[] getAnimatedObjects() {
         return animatedObjects;
+    }
+
+    public void showPriorityScreen() {
+        System.out.println("showPriorityScreen");
+        viewScreen.save();
+
+        System.out.println("pop");
+        boolean looping = true;
+
+        EgaComponent egaComponent = viewScreen.getComponent();
+
+        for (int i = 0; i < WIDTH * HEIGHT; i++) {
+            int priColorIndex = this.priorityPixels[i];
+            this.visualPixels[i] = translatePixel((byte) priColorIndex);
+        }
+        //eraseBoth();
+        //blitBoth();
+        screenUpdate.reset();
+        screenUpdate.add(new Area(new Rectangle(0, 0, WIDTH, HEIGHT)));
+        doUpdate();
+
+        do {
+            if ((egaComponent.popCharEvent(-1)) == null) {
+                break;
+            }
+            looping = false;
+        } while (looping);
+
+
+        System.out.println("pop done");
+        viewScreen.restore(true);
     }
 }
