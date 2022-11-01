@@ -55,7 +55,11 @@ public class ViewSprite extends ViewList {
 
                     if (pixel != cellTransparent) {
                         screen[screenOffset] = pixel;
-                        priority[screenOffset] = cellPriority;
+                        int currentPriorityPixel = priority[screenOffset];
+                        // do not override control pixels
+                        if (currentPriorityPixel >= 4) {
+                            priority[screenOffset] = cellPriority;
+                        }
                     }
                 }
             }

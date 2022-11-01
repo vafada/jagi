@@ -184,7 +184,6 @@ public class RestoreGame {
         // Each ANIOBJ entry is 0x2B in length, i.e. 43 bytes.
         // 17 aniobjs = 0x02DB length, 18 aniobjs = 0x0306, 20 aniobjs = 0x035C, 21 aniobjs = 0x0387, 91 = 0x0F49] 2B, 2B, 2B, 2B, 2B
         int numOfAniObjs = (aniObjectsLength / 0x2B);
-        System.out.println("numOfAniObjs = " + numOfAniObjs);
         for (int i = 0; i < numOfAniObjs; i++) {
             int aniObjOffset = aniObjsOffset + 2 + (i * 0x2B);
             AnimatedObject animatedObject = viewTable.getEntry((short) i);

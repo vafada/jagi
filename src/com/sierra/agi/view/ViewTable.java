@@ -1432,10 +1432,8 @@ public class ViewTable {
     }
 
     public void showPriorityScreen() {
-        System.out.println("showPriorityScreen");
         viewScreen.save();
 
-        System.out.println("pop");
         boolean looping = true;
 
         EgaComponent egaComponent = viewScreen.getComponent();
@@ -1444,8 +1442,6 @@ public class ViewTable {
             int priColorIndex = this.priorityPixels[i];
             this.visualPixels[i] = translatePixel((byte) priColorIndex);
         }
-        //eraseBoth();
-        //blitBoth();
         screenUpdate.reset();
         screenUpdate.add(new Area(new Rectangle(0, 0, WIDTH, HEIGHT)));
         doUpdate();
@@ -1458,7 +1454,6 @@ public class ViewTable {
         } while (looping);
 
 
-        System.out.println("pop done");
         viewScreen.restore(true);
     }
 }
