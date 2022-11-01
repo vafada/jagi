@@ -17,7 +17,7 @@ public class ViewSprite extends ViewList {
     protected int y;
     protected int width;
     protected int height;
-    protected byte[] backupPriority;
+    protected int[] backupPriority;
     protected int[] backupScreen;
 
     public ViewSprite(AnimatedObject v) {
@@ -35,7 +35,7 @@ public class ViewSprite extends ViewList {
         backupScreen = null;
     }
 
-    public void blit(Area screenUpdate, int[] screen, byte[] priority) {
+    public void blit(Area screenUpdate, int[] screen, int[] priority) {
         byte cellPriority = (byte) entry.getPriority();
         int[] cellData = entry.getCellData().getPixelData();
         int cellTransparent = entry.getCellData().getTransparentPixel();
@@ -66,12 +66,12 @@ public class ViewSprite extends ViewList {
         screenUpdate.add(new Area(new Rectangle(x, y, width, height)));
     }
 
-    public void save(int[] screen, byte[] priority) {
+    public void save(int[] screen, int[] priority) {
         int screenOffset, backupOffset;
         int line;
 
         if (backupPriority == null) {
-            backupPriority = new byte[width * height];
+            backupPriority = new int[width * height];
         }
 
         if (backupScreen == null) {
@@ -89,7 +89,7 @@ public class ViewSprite extends ViewList {
         }
     }
 
-    public void restore(Area screenUpdate, int[] screen, byte[] priority) {
+    public void restore(Area screenUpdate, int[] screen, int[] priority) {
         int screenOffset, backupOffset;
         int line;
 

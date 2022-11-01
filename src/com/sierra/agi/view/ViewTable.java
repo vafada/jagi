@@ -60,7 +60,7 @@ public class ViewTable {
 
     private Area screenUpdate;
 
-    private byte[] priorityPixels = new byte[WIDTH * HEIGHT];
+    private int[] priorityPixels = new int[WIDTH * HEIGHT];
     private int[] controlPixels = new int[WIDTH * HEIGHT];
 
     public ViewTable(LogicContext context) {
@@ -689,8 +689,7 @@ public class ViewTable {
             int endPixelPos = startPixelPos + v.getWidth();
 
             for (int pixelPos = startPixelPos; pixelPos < endPixelPos; pixelPos++) {
-                //byte priority = pictureContext.getPriorityData()[pixelPos];
-                byte priority = priorityPixels[pixelPos];
+                int priority = priorityPixels[pixelPos];
 
                 // The black control line is a unconditional obstacle;
                 if (priority == 0) {

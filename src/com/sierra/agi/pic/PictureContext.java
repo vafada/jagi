@@ -11,7 +11,8 @@ package com.sierra.agi.pic;
 import com.sierra.agi.awt.EgaUtils;
 import com.sierra.agi.view.Cel;
 
-import java.awt.*;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.image.MemoryImageSource;
 import java.util.Arrays;
 
@@ -34,7 +35,7 @@ public class PictureContext {
     /**
      * Priority data.
      */
-    public byte[] priData;
+    public int[] priData;
 
     /**
      * Picture Picture Color.
@@ -60,12 +61,12 @@ public class PictureContext {
      */
     public PictureContext() {
         picData = new int[width * height];
-        priData = new byte[width * height];
+        priData = new int[width * height];
 
         whitePixel = translatePixel((byte) 15);
 
         Arrays.fill(picData, whitePixel);
-        Arrays.fill(priData, (byte) 4);
+        Arrays.fill(priData, 4);
     }
 
     /**
@@ -120,7 +121,7 @@ public class PictureContext {
      * @param y Y coordinate.
      * @return Priority at the specified pixel.
      */
-    public final byte getPriorityPixel(int x, int y) {
+    public final int getPriorityPixel(int x, int y) {
         return priData[(y * width) + x];
     }
 
@@ -327,7 +328,7 @@ public class PictureContext {
         return picData;
     }
 
-    public byte[] getPriorityData() {
+    public int[] getPriorityData() {
         return priData;
     }
 }

@@ -710,6 +710,11 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
             short keyCode = (short) ev.getKeyCode();
             short convertedKeyCode = EgaUtils.convertKey(keyCode);
 
+            if (keyCode == KeyEvent.VK_F12) {
+                // TODO show priority pixel
+
+            }
+
             if (this.keyToControllerMap.containsKey(convertedKeyCode)) {
                 short controllerNum = this.keyToControllerMap.get(convertedKeyCode);
                 this.controllers[controllerNum] = true;
