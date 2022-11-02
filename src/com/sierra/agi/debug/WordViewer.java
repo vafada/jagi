@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 
 public class WordViewer extends JFrame implements ListSelectionListener {
@@ -98,12 +99,13 @@ public class WordViewer extends JFrame implements ListSelectionListener {
     }
 
     protected Word[] loadWords() {
-        int i, c = words.getWordCount();
-        Enumeration en = words.words();
-        Word[] o = new Word[c];
+        Collection<Word> allWords = words.words();
+        Word[] o = new Word[words.getWordCount()];
 
-        for (i = 0; i < c; i++) {
-            o[i] = (Word) en.nextElement();
+        int i =0;
+        for (Word word : allWords) {
+            o[i] = word;
+            i++;
         }
 
         Arrays.sort(o);

@@ -98,9 +98,9 @@ import java.util.*;
  * @version 0.00.00.01
  */
 public class Words implements WordsProvider {
-    protected Hashtable wordHash = new Hashtable(800);
+    protected Map<String, Word> wordHash = new HashMap(800);
 
-    protected HashMap<Integer, Word> wordNumToWordMap = new HashMap<Integer, Word>();
+    protected Map<Integer, Word> wordNumToWordMap = new HashMap<Integer, Word>();
 
     /**
      * Creates a new Word container.
@@ -108,10 +108,9 @@ public class Words implements WordsProvider {
     public Words() {
     }
 
-    protected static String removeSpaces(String inputString) {
+    private static String removeSpaces(String inputString) {
         StringBuffer buff = new StringBuffer(inputString.length());
         StringTokenizer token = new StringTokenizer(inputString.trim(), " ");
-        String str;
 
         while (token.hasMoreTokens()) {
             buff.append(token.nextToken());
@@ -124,7 +123,7 @@ public class Words implements WordsProvider {
         return buff.toString();
     }
 
-    protected static int findChar(String str, int begin) {
+    private static int findChar(String str, int begin) {
         int ch = str.indexOf(' ', begin);
 
         if (ch < 0) {
@@ -193,7 +192,7 @@ public class Words implements WordsProvider {
         return wordCount;
     }
 
-    protected boolean addWord(int wordNum, String word) {
+    private boolean addWord(int wordNum, String word) {
         Word w = (Word) wordHash.get(word);
 
         if (w != null) {
@@ -225,8 +224,8 @@ public class Words implements WordsProvider {
         return wordHash.size();
     }
 
-    public Enumeration words() {
-        return wordHash.elements();
+    public Collection<Word> words() {
+        return wordHash.values();
     }
 
     public List parse(String inputString) {
