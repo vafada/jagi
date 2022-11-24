@@ -28,14 +28,17 @@ import java.util.Enumeration;
 public class PictureEntryAbsLine extends PictureEntryMulti {
     public void draw(PictureContext pictureContext) {
         Enumeration en = points.elements();
-        Point p1, p2;
 
-        p1 = (Point) en.nextElement();
+        Point p1 = (Point) en.nextElement();
 
-        while (en.hasMoreElements()) {
-            p2 = (Point) en.nextElement();
-            pictureContext.drawLine(p1.x, p1.y, p2.x, p2.y);
-            p1 = p2;
+        if (points.size() == 1) {
+            pictureContext.drawLine(p1.x, p1.y, p1.x, p1.y);
+        } else {
+            while (en.hasMoreElements()) {
+                Point p2 = (Point) en.nextElement();
+                pictureContext.drawLine(p1.x, p1.y, p2.x, p2.y);
+                p1 = p2;
+            }
         }
     }
 }
