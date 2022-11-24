@@ -272,7 +272,7 @@ public class AnimatedObject {
             flags |= FLAG_UPDATE_POS;
         }
 
-        if ((y - height) < 0) {
+        if (((y - height) + 1) < 0) {
             y = (short) (y + height);
             flags |= FLAG_UPDATE_POS;
 
