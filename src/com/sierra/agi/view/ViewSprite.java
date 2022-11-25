@@ -12,13 +12,13 @@ import java.awt.Rectangle;
 import java.awt.geom.Area;
 
 public class ViewSprite implements Comparable<ViewSprite> {
-    protected AnimatedObject entry;
-    protected int x;
-    protected int y;
-    protected int width;
-    protected int height;
-    protected int[] backupPriority;
-    protected int[] backupScreen;
+    private final AnimatedObject entry;
+    private final int x;
+    private final int y;
+    private final int width;
+    private final int height;
+    private int[] backupPriority;
+    private int[] backupScreen;
 
     public ViewSprite(AnimatedObject v) {
         entry = v;
@@ -26,8 +26,6 @@ public class ViewSprite implements Comparable<ViewSprite> {
         y = v.getY() - v.getHeight() + 1;
         width = v.getWidth();
         height = v.getHeight();
-
-        v.setSprite(this);
     }
 
     public void blit(Area screenUpdate, int[] screen, int[] priority) {
@@ -35,18 +33,14 @@ public class ViewSprite implements Comparable<ViewSprite> {
         int[] cellData = entry.getCellData().getPixelData();
         int cellTransparent = entry.getCellData().getTransparentPixel();
 
-        int screenOffset, cellOffset;
-        int line, col, remaining;
-        int pixel;
+        int screenOffset = (y * ViewTable.WIDTH) + x;
+        int cellOffset = 0;
+        int remaining = ViewTable.WIDTH - width;
 
-        screenOffset = (y * ViewTable.WIDTH) + x;
-        cellOffset = 0;
-        remaining = ViewTable.WIDTH - width;
-
-        for (line = 0; line < height; line++) {
-            for (col = 0; col < width; col++, screenOffset++, cellOffset++) {
+        for (int line = 0; line < height; line++) {
+            for (int col = 0; col < width; col++, screenOffset++, cellOffset++) {
                 if (priority[screenOffset] <= cellPriority) {
-                    pixel = cellData[cellOffset];
+                    int pixel = cellData[cellOffset];
 
                     if (pixel != cellTransparent) {
                         screen[screenOffset] = pixel;
@@ -66,9 +60,6 @@ public class ViewSprite implements Comparable<ViewSprite> {
     }
 
     public void save(int[] screen, int[] priority) {
-        int screenOffset, backupOffset;
-        int line;
-
         if (backupPriority == null) {
             backupPriority = new int[width * height];
         }
@@ -77,10 +68,10 @@ public class ViewSprite implements Comparable<ViewSprite> {
             backupScreen = new int[width * height];
         }
 
-        screenOffset = (y * ViewTable.WIDTH) + x;
-        backupOffset = 0;
+        int screenOffset = (y * ViewTable.WIDTH) + x;
+        int backupOffset = 0;
 
-        for (line = 0; line < height; line++) {
+        for (int line = 0; line < height; line++) {
             System.arraycopy(screen, screenOffset, backupScreen, backupOffset, width);
             System.arraycopy(priority, screenOffset, backupPriority, backupOffset, width);
             screenOffset += ViewTable.WIDTH;
@@ -129,7 +120,7 @@ public class ViewSprite implements Comparable<ViewSprite> {
 
     private short effectiveY() {
         if (this.entry.isSomeFlagsSet(AnimatedObject.FLAG_FIX_PRIORITY)) {
-            //  (short)(state.PriorityBase + Math.Ceiling(((168.0 - state.PriorityBase) / 10.0f) * (Priority - Defines.BACK_MOST_PRIORITY - 1)))
+            // TODO  (short)(state.PriorityBase + Math.Ceiling(((168.0 - state.PriorityBase) / 10.0f) * (Priority - Defines.BACK_MOST_PRIORITY - 1)))
             return (short) y;
         }
 
