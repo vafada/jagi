@@ -345,6 +345,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     public void newRoom(short p) throws Exception {
         System.out.println("newRoom = " + p);
         /* 1 */
+        stopSound();
         scriptBuffer.initScript();
         scriptBuffer.scriptOn();
         viewTable.resetNewRoom();
