@@ -94,18 +94,15 @@ public class ViewSprite extends ViewList {
     }
 
     public void restore(Area screenUpdate, int[] screen, int[] priority) {
-        int screenOffset, backupOffset;
-        int line;
-
         if ((backupScreen == null) || (backupPriority == null)) {
             System.out.println("(backupScreen == null) || (backupPriority == null)");
             return;
         }
 
-        screenOffset = (y * ViewTable.WIDTH) + x;
-        backupOffset = 0;
+        int screenOffset = (y * ViewTable.WIDTH) + x;
+        int backupOffset = 0;
 
-        for (line = 0; line < height; line++) {
+        for (int line = 0; line < height; line++) {
             System.arraycopy(backupScreen, backupOffset, screen, screenOffset, width);
             System.arraycopy(backupPriority, backupOffset, priority, screenOffset, width);
             screenOffset += ViewTable.WIDTH;
@@ -113,8 +110,6 @@ public class ViewSprite extends ViewList {
         }
 
         screenUpdate.add(new Area(new Rectangle(x, y, width, height)));
-        //backupScreen   = null;
-        //backupPriority = null;
     }
 
     public AnimatedObject getViewEntry() {
