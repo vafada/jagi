@@ -8,10 +8,10 @@
 
 package com.sierra.agi.view;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.geom.Area;
 
-public class ViewSprite extends ViewList {
+public class ViewSprite implements Comparable<ViewSprite> {
     protected AnimatedObject entry;
     protected int x;
     protected int y;
@@ -28,11 +28,6 @@ public class ViewSprite extends ViewList {
         height = v.getHeight();
 
         v.setSprite(this);
-    }
-
-    public void dispose() {
-        backupPriority = null;
-        backupScreen = null;
     }
 
     public void blit(Area screenUpdate, int[] screen, int[] priority) {
@@ -132,7 +127,29 @@ public class ViewSprite extends ViewList {
         return y;
     }
 
-    public int getScreenOffset() {
-        return (y * ViewTable.WIDTH) + x;
+    private short effectiveY() {
+        if (this.entry.isSomeFlagsSet(AnimatedObject.FLAG_FIX_PRIORITY)) {
+            //  (short)(state.PriorityBase + Math.Ceiling(((168.0 - state.PriorityBase) / 10.0f) * (Priority - Defines.BACK_MOST_PRIORITY - 1)))
+            return (short) y;
+        }
+
+        return (short) y;
+    }
+
+    @Override
+    public int compareTo(ViewSprite other) {
+        if (this.entry.priority < other.entry.priority) {
+            return -1;
+        } else if (this.entry.priority > other.entry.priority) {
+            return 1;
+        } else {
+            if (this.effectiveY() < other.effectiveY()) {
+                return -1;
+            } else if (this.effectiveY() > other.effectiveY()) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
     }
 }

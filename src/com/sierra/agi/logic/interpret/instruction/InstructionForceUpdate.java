@@ -44,7 +44,7 @@ public class InstructionForceUpdate extends InstructionUni {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
-        logicContext.getViewTable().forceUpdate(p1);
+        logicContext.getViewTable().forceUpdate();
         return 2;
     }
 

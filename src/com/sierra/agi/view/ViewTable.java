@@ -20,7 +20,10 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import static com.sierra.agi.logic.LogicVariables.FLAG_OUTPUT_MODE;
@@ -54,8 +57,8 @@ public class ViewTable {
     protected byte[] priorityTable = new byte[HEIGHT];
     protected ViewScreen viewScreen;
     private int[] visualPixels;
-    private ViewList updateList = new ViewList();
-    private ViewList updateNotList = new ViewList();
+    private List<ViewSprite> updateList = new ArrayList<>();
+    private List<ViewSprite> updateNotList = new ArrayList<>();
     protected PictureContext pictureContext;
     protected int[] pixel = new int[1];
 
@@ -360,12 +363,10 @@ public class ViewTable {
         animatedObjects[entry].addFlags(AnimatedObject.FLAG_IGNORE_OBJECTS);
     }
 
-    public void forceUpdate(short entry) {
-        AnimatedObject v = animatedObjects[entry];
-
-        eraseBoth();
+    public void forceUpdate() {
+        restoreBackgrounds();
         blitBoth();
-        checkMoveBoth();
+        // checkMoveBoth();
     }
 
     public void normalCycling(short entry) {
@@ -418,7 +419,7 @@ public class ViewTable {
         AnimatedObject v = animatedObjects[entry];
 
         if (!v.isSomeFlagsSet(AnimatedObject.FLAG_UPDATE)) {
-            eraseBoth();
+            restoreBackgrounds();
             v.addFlags(AnimatedObject.FLAG_UPDATE);
             blitBoth();
         }
@@ -428,7 +429,7 @@ public class ViewTable {
         AnimatedObject v = animatedObjects[entry];
 
         if (v.isSomeFlagsSet(AnimatedObject.FLAG_UPDATE)) {
-            eraseBoth();
+            restoreBackgrounds();
             v.removeFlags(AnimatedObject.FLAG_UPDATE);
             blitBoth();
         }
@@ -528,7 +529,7 @@ public class ViewTable {
             fixPosition(v);
             v.saveCell();
             v.savePosition();
-            eraseAll(updateList);
+            restoreBackgrounds(updateList);
             v.addFlags(AnimatedObject.FLAG_DRAWN);
             blitAll(buildUpdateBlitList());
             // commitView(v);
@@ -547,11 +548,11 @@ public class ViewTable {
         }
 
         if (v.isSomeFlagsSet(AnimatedObject.FLAG_DRAWN)) {
-            eraseAll(updateList);
+            restoreBackgrounds(updateList);
             boolean b = !v.isSomeFlagsSet(AnimatedObject.FLAG_UPDATE);
 
             if (b) {
-                eraseAll(updateNotList);
+                restoreBackgrounds(updateNotList);
             }
 
             v.removeFlags(AnimatedObject.FLAG_DRAWN);
@@ -800,7 +801,21 @@ public class ViewTable {
         }
     }
 
-    protected ViewList buildList(ViewList list, int listType) {
+    private List<ViewSprite> buildList(List<ViewSprite> list, boolean updating) {
+        list.clear();
+
+        for (int i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
+            AnimatedObject aniObj = animatedObjects[i];
+            if (aniObj.isSomeFlagsSet(AnimatedObject.FLAG_DRAWN) && (aniObj.isSomeFlagsSet(AnimatedObject.FLAG_UPDATE) == updating)) {
+                list.add(new ViewSprite(aniObj));
+            }
+        }
+
+        Collections.sort(list);
+
+        return list;
+
+        /*
         AnimatedObject[] vList = new AnimatedObject[MAX_ANIMATED_OBJECTS];
         short[] yList = new short[MAX_ANIMATED_OBJECTS];
         int i, j, k;
@@ -860,14 +875,16 @@ public class ViewTable {
         }
 
         return list;
+
+         */
     }
 
-    protected ViewList buildUpdateBlitList() {
-        return buildList(updateList, 0);
+    protected List<ViewSprite> buildUpdateBlitList() {
+        return buildList(updateList, true);
     }
 
-    protected ViewList buildUpdateNotBlitList() {
-        return buildList(updateNotList, 1);
+    protected List<ViewSprite> buildUpdateNotBlitList() {
+        return buildList(updateNotList, false);
     }
 
     protected void commitView(AnimatedObject v) {
@@ -976,23 +993,21 @@ public class ViewTable {
         */
     }
 
-    protected void eraseAll(ViewList list) {
-        for (ViewSprite s = list.prev; s != null; s = s.prev) {
-            s.restore(screenUpdate, visualPixels, priorityPixels);
+    protected void restoreBackgrounds(List<ViewSprite> list) {
+        for (ViewSprite viewSprite : list) {
+            viewSprite.restore(screenUpdate, visualPixels, priorityPixels);
         }
     }
 
-    protected void eraseBoth() {
-        eraseAll(updateList);
-        eraseAll(updateNotList);
+    protected void restoreBackgrounds() {
+        restoreBackgrounds(updateList);
+        restoreBackgrounds(updateNotList);
     }
 
-    protected void blitAll(ViewList list) {
-        ViewSprite s;
-
-        for (s = list.next; s != null; s = s.next) {
-            s.save(visualPixels, priorityPixels);
-            s.blit(screenUpdate, visualPixels, priorityPixels);
+    protected void blitAll(List<ViewSprite> list) {
+        for (ViewSprite viewSprite : list) {
+            viewSprite.save(visualPixels, priorityPixels);
+            viewSprite.blit(screenUpdate, visualPixels, priorityPixels);
         }
     }
 
@@ -1001,7 +1016,7 @@ public class ViewTable {
         blitAll(buildUpdateBlitList());
     }
 
-    protected void checkMove(ViewList list) {
+    /*protected void checkMove(List<ViewSprite> list) {
         ViewSprite s = list.prev;
         AnimatedObject v;
 
@@ -1011,11 +1026,11 @@ public class ViewTable {
             commitView(v);
             v.checkMove();
         }
-    }
+    }*/
 
     protected void checkMoveBoth() {
-        checkMove(updateNotList);
-        checkMove(updateList);
+        // checkMove(updateNotList);
+        // checkMove(updateList);
     }
 
     public void checkAllMotion() {
@@ -1278,10 +1293,10 @@ public class ViewTable {
         }
 
         if (count > 0) {
-            eraseAll(updateList);
+            restoreBackgrounds(updateList);
             updatePosition();
             blitAll(buildUpdateBlitList());
-            checkMove(updateList);
+            // checkMove(updateList);
 
             animatedObjects[0].removeFlags(AnimatedObject.FLAG_ON_LAND | AnimatedObject.FLAG_ON_WATER);
         }
