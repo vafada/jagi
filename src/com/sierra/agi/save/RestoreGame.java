@@ -206,6 +206,7 @@ public class RestoreGame {
             //COORD y;            /* current y coordinate                       */    e.g.   64 00 (0x0064 = )
             animatedObject.setY((short) (savedGameData[aniObjOffset + 5] + (savedGameData[aniObjOffset + 6] << 8)));
             //UBYTE view;         /* current view number                        */    e.g.   00
+            animatedObject.setView(logicContext, (short) savedGameData[aniObjOffset + 7]);
             animatedObject.setCurrentView((short) savedGameData[aniObjOffset + 7]);
             //VIEW* viewptr;      /* pointer to current view                    */    e.g.   17 6b (0x6b17 = ) IGNORE.
             //UBYTE loop;         /* current loop in view                       */    e.g.   00
