@@ -308,18 +308,15 @@ public class SaveGame {
         // FOURTH PIECE: SCRIPT BUFFER EVENTS
         // A transcript of events leading to the current state in the current room.
         int scriptsOffset = objectsOffset + 2 + objectsLength;
-        int scriptsLength = 0;
-            /*
-            byte[] scriptEventData = state.ScriptBuffer.Encode();
-            int scriptsLength = scriptEventData.Length;
-            savedGameData[scriptsOffset + 0] = (byte)(scriptsLength & 0xFF);
-            savedGameData[scriptsOffset + 1] = (byte)((scriptsLength >> 8) & 0xFF);
-            pos = scriptsOffset + 2;
-            for (int i = 0; i < scriptEventData.Length; i++)
-            {
-                savedGameData[pos++] = scriptEventData[i];
-            }
-             */
+        byte[] scriptEventData = logicContext.getScriptBuffer().encode();
+        int scriptsLength = scriptEventData.length;
+        savedGameData[scriptsOffset + 0] = (byte) (scriptsLength & 0xFF);
+        savedGameData[scriptsOffset + 1] = (byte) ((scriptsLength >> 8) & 0xFF);
+        pos = scriptsOffset + 2;
+        for (int i = 0; i < scriptEventData.length; i++) {
+            savedGameData[pos++] = scriptEventData[i];
+        }
+
         // FIFTH PIECE: SCAN OFFSETS
         int scanOffsetsOffset = scriptsOffset + 2 + scriptsLength;
         int loadedLogicCount = 0;

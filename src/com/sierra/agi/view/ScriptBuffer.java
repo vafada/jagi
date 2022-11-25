@@ -2,6 +2,7 @@ package com.sierra.agi.view;
 
 import com.sierra.agi.logic.LogicContext;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 import static com.sierra.agi.logic.LogicVariables.FLAG_SCRIPT_BLOCKED;
@@ -133,27 +134,19 @@ public class ScriptBuffer {
     /// Returns the script event buffer as a raw byte array.
     /// </summary>
     /// <returns></returns>
-    public byte[] encode() {
+    public byte[] encode()  {
         // Each script entry is two bytes long.
-        /*
-        MemoryStream stream = new MemoryStream(this.ScriptSize * 2);
-
-        foreach(ScriptBufferEvent e in Events)
-        {
-            stream.WriteByte((byte) (e.type));
-            stream.WriteByte((byte) e.resourceNumber);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        for (ScriptBufferEvent e : events) {
+            outputStream.write(e.type.getValue());
+            outputStream.write(e.resourceNumber);
             if (e.data != null) {
-                stream.Write(e.data, 0, e.data.Length);
+                outputStream.write(e.data, 0, e.data.length);
             }
         }
-
-        // We deliberately use GetBuffer rather than ToArray so that we get the
-        // unused part as well.
-        return stream.GetBuffer();
-
-         */
-        // TODO
-        return new byte[]{};
+        byte[] buffer = outputStream.toByteArray();
+        //outputStream.close();
+        return buffer;
     }
 
     /// <summary>
