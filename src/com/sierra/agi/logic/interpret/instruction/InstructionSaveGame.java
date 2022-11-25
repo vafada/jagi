@@ -50,15 +50,14 @@ public class InstructionSaveGame extends Instruction {
         ChooseSaveGameBox box = new ChooseSaveGameBox(logicContext.getGameID(), path);
         SavedGame chosenGame = box.show(logicContext, logicContext.getViewScreen());
 
-        System.out.println("chosenGame = " + chosenGame.num);
-
-        try {
-            SaveGame saveGame = new SaveGame(logicContext);
-            saveGame.save(chosenGame.num);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (chosenGame != null) {
+            try {
+                SaveGame saveGame = new SaveGame(logicContext);
+                saveGame.save(chosenGame.num);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
 
         return 1;
     }

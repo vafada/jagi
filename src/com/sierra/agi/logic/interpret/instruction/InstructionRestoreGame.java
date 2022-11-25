@@ -52,7 +52,6 @@ public class InstructionRestoreGame extends Instruction {
             logicContext.clearInput();
             // TODO: ReplayScriptEvents();
             logicContext.getViewTable().showPic();
-            logicContext.newRoom(logicContext.getVar(LogicVariables.VAR_CURRENT_ROOM));
 
             throw new LogicReturn();
         }
