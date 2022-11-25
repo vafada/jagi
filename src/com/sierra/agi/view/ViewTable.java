@@ -54,8 +54,8 @@ public class ViewTable {
     protected byte[] priorityTable = new byte[HEIGHT];
     protected ViewScreen viewScreen;
     private int[] visualPixels;
-    protected ViewList updateList = new ViewList();
-    protected ViewList updateNotList = new ViewList();
+    private ViewList updateList = new ViewList();
+    private ViewList updateNotList = new ViewList();
     protected PictureContext pictureContext;
     protected int[] pixel = new int[1];
 
@@ -152,7 +152,7 @@ public class ViewTable {
         logicContext.setFlag(FLAG_OUTPUT_MODE, false);
         System.arraycopy(pictureContext.getPictureData(), 0, visualPixels, 0, visualPixels.length);
         System.arraycopy(pictureContext.getPriorityData(), 0, priorityPixels, 0, priorityPixels.length);
-        eraseBoth();
+
         blitBoth();
         screenUpdate.reset();
         screenUpdate.add(new Area(new Rectangle(0, 0, WIDTH, HEIGHT)));
