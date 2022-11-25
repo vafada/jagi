@@ -107,9 +107,9 @@ public class SaveGame {
         // [319] 350 - 351(2 bytes) Max drawn. Always set to 15. Maximum number of animated objects that can be drawn at a time. Set by old max.drawn command in AGI v2.001.
         // TODO: savedGameData[350] = (byte) state.MaxDrawn;
         // [321] 352 - 353(2 bytes) Script size. Set by script.size. Max number of script event items. Default is 50.
-        // TODO: savedGameData[352] = (byte) state.ScriptBuffer.ScriptSize;
+        savedGameData[352] = (byte) logicContext.getScriptBuffer().getScriptSize();
         // [323] 354 - 355(2 bytes) Current number of script event entries.
-        // TODO: savedGameData[354] = (byte) state.ScriptBuffer.ScriptEntries;
+        savedGameData[354] = (byte) logicContext.getScriptBuffer().getScriptEntries();
 
         // [325] 356 - 555(200 or 160 bytes) ? Key to controller map (4 bytes each). Earlier versions had less entries.
         pos = 356;

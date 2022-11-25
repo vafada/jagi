@@ -195,15 +195,12 @@ public class RestoreGame {
             // 31 6b 31 6b 2f 9c 6e 00 64 00 06 00 20 00 01 01
             // 01 00 00 00 09 53 40 00 00 00 00
 
-            //UBYTE num;          /* object number                              */    e.g.   00
-            animatedObject.setViewNumber(savedGameData[aniObjOffset + 2]);
-            // TODO: crashes larry
-            animatedObject.setView(this.logicContext, (short) savedGameData[aniObjOffset + 2]);
             //UBYTE movefreq;     /* number of animation cycles between motion  */    e.g.   01
             animatedObject.setStepTime((short) savedGameData[aniObjOffset + 0]);
             //UBYTE moveclk;      /* number of cycles between moves of object   */    e.g.   01
             animatedObject.setStepTimeCount((short) savedGameData[aniObjOffset + 1]);
-
+            //UBYTE num;          /* object number                              */    e.g.   00
+            animatedObject.setViewNumber(savedGameData[aniObjOffset + 2]);
             //COORD x;            /* current x coordinate                       */    e.g.   6e 00 (0x006e = )
             animatedObject.setX((short) (savedGameData[aniObjOffset + 3] + (savedGameData[aniObjOffset + 4] << 8)));
             //COORD y;            /* current y coordinate                       */    e.g.   64 00 (0x0064 = )

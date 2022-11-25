@@ -150,4 +150,8 @@ public class ScriptBuffer {
             this.maxScript = this.events.size();
         }
     }
+
+    public int getScriptSize() {
+        return scriptSize;
+    }
 }
