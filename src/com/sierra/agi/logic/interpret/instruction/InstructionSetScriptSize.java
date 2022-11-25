@@ -41,6 +41,7 @@ public class InstructionSetScriptSize extends InstructionUni implements Compilab
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
+        logicContext.getScriptBuffer().setScriptSize(p1);
         return 2;
     }
 

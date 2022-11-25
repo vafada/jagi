@@ -19,6 +19,7 @@ import com.sierra.agi.res.ResourceException;
 import com.sierra.agi.sound.SoundClip;
 import com.sierra.agi.sound.SoundListener;
 import com.sierra.agi.view.AnimatedObject;
+import com.sierra.agi.view.ScriptBuffer;
 import com.sierra.agi.view.ViewScreen;
 import com.sierra.agi.view.ViewTable;
 import com.sierra.agi.word.Word;
@@ -146,6 +147,8 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
     protected Map<Short, Short> keyToControllerMap = new HashMap<>();
 
+    protected ScriptBuffer scriptBuffer;
+
     public LogicContext(LogicContext logicContext) {
         // Persistent Data
         System.arraycopy(flags, 0, logicContext.flags, 0, MAX_FLAGS);
@@ -165,6 +168,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         this.cache = cache;
         this.gameID = "";
         this.viewTable = new ViewTable(this);
+        this.scriptBuffer = new ScriptBuffer(this);
     }
 
     public boolean said(int[] wordNumbers) {
@@ -221,6 +225,14 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
     public ViewScreen getViewScreen() {
         return viewTable.getViewScreen();
+    }
+
+    public ScriptBuffer getScriptBuffer() {
+        return scriptBuffer;
+    }
+
+    public void setScriptBuffer(ScriptBuffer scriptBuffer) {
+        this.scriptBuffer = scriptBuffer;
     }
 
     public AgiMenuBar getMenuBar() {

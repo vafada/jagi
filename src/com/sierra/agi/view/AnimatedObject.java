@@ -228,6 +228,7 @@ public class AnimatedObject {
         try {
             viewData = logicContext.getCache().getView(view);
         } catch (Exception ex) {
+            ex.printStackTrace();
             logicContext.setError((short) 0x3);
             return;
         }
