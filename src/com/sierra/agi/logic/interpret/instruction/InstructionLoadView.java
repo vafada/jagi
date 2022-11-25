@@ -9,6 +9,7 @@ import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.logic.interpret.LogicReader;
 import com.sierra.agi.logic.interpret.jit.Compilable;
 import com.sierra.agi.logic.interpret.jit.LogicCompileContext;
+import com.sierra.agi.view.ScriptBuffer;
 import com.sierra.jit.code.Scope;
 
 import java.io.IOException;
@@ -48,6 +49,7 @@ public class InstructionLoadView extends InstructionUni implements Compilable {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) throws Exception {
+        logicContext.getScriptBuffer().addScript(ScriptBuffer.ScriptBufferEventType.LoadView, p1, null);
         logicContext.getCache().loadView(p1);
         return 2;
     }

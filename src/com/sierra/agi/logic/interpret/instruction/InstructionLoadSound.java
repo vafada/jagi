@@ -10,6 +10,7 @@ import com.sierra.agi.logic.interpret.LogicReader;
 import com.sierra.agi.logic.interpret.jit.Compilable;
 import com.sierra.agi.logic.interpret.jit.LogicCompileContext;
 import com.sierra.agi.res.ResourceException;
+import com.sierra.agi.view.ScriptBuffer;
 import com.sierra.jit.code.Scope;
 
 import java.io.IOException;
@@ -46,6 +47,7 @@ public class InstructionLoadSound extends InstructionUni implements Compilable {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) throws ResourceException, IOException {
+        logicContext.getScriptBuffer().addScript(ScriptBuffer.ScriptBufferEventType.LoadSound, p1, null);
         logicContext.getCache().loadSound(p1);
         return 2;
     }

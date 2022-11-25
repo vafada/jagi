@@ -7,6 +7,7 @@ package com.sierra.agi.logic.interpret.instruction;
 import com.sierra.agi.logic.Logic;
 import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.logic.interpret.LogicReader;
+import com.sierra.agi.view.ScriptBuffer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +43,9 @@ public class InstructionDrawPic extends InstructionUni {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) throws Exception {
-        logicContext.getViewTable().drawPic(logicContext.getCache().getPicture(logicContext.getVar(p1)));
+        short pictureNumber = logicContext.getVar(p1);
+        logicContext.getScriptBuffer().addScript(ScriptBuffer.ScriptBufferEventType.DrawPic, pictureNumber, null);
+        logicContext.getViewTable().drawPic(logicContext.getCache().getPicture(pictureNumber));
         return 2;
     }
 

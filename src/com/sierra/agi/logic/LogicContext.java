@@ -381,6 +381,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
         /* 7 */
         cache.loadLogic(p);
+        scriptBuffer.addScript(ScriptBuffer.ScriptBufferEventType.LoadLogic, p, null);
 
         /* 8 */
 

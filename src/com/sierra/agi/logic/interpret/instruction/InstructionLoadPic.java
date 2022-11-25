@@ -9,6 +9,7 @@ import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.logic.interpret.LogicReader;
 import com.sierra.agi.logic.interpret.jit.Compilable;
 import com.sierra.agi.logic.interpret.jit.LogicCompileContext;
+import com.sierra.agi.view.ScriptBuffer;
 import com.sierra.jit.code.Scope;
 
 import java.io.IOException;
@@ -45,7 +46,9 @@ public class InstructionLoadPic extends InstructionUni implements Compilable {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) throws Exception {
-        logicContext.getCache().loadPicture(logicContext.getVar(p1));
+        short pictureNumber = logicContext.getVar(p1);
+        logicContext.getScriptBuffer().addScript(ScriptBuffer.ScriptBufferEventType.LoadPic, pictureNumber, null);
+        logicContext.getCache().loadPicture(pictureNumber);
         return 2;
     }
 

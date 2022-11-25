@@ -7,6 +7,7 @@ package com.sierra.agi.logic.interpret.instruction;
 import com.sierra.agi.logic.Logic;
 import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.logic.interpret.LogicReader;
+import com.sierra.agi.view.ScriptBuffer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,7 +51,7 @@ public class InstructionDiscardView extends InstructionUni {
         if (bytecode == 0x99) {
             p = logicContext.getVar(p);
         }
-
+        logicContext.getScriptBuffer().addScript(ScriptBuffer.ScriptBufferEventType.DiscardView, p, null);
         logicContext.getCache().unloadView(p);
         return 2;
     }

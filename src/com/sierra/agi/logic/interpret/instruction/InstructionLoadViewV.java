@@ -9,6 +9,7 @@ import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.logic.interpret.LogicReader;
 import com.sierra.agi.logic.interpret.jit.Compilable;
 import com.sierra.agi.logic.interpret.jit.LogicCompileContext;
+import com.sierra.agi.view.ScriptBuffer;
 import com.sierra.jit.code.Scope;
 
 import java.io.IOException;
@@ -49,6 +50,7 @@ public class InstructionLoadViewV extends InstructionUni implements Compilable {
      */
     public int execute(Logic logic, LogicContext logicContext) throws Exception {
         short p = logicContext.getVar(p1);
+        logicContext.getScriptBuffer().addScript(ScriptBuffer.ScriptBufferEventType.LoadView, p, null);
         logicContext.getCache().loadView(p);
         return 2;
     }

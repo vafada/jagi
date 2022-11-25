@@ -9,6 +9,7 @@ import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.logic.interpret.LogicReader;
 import com.sierra.agi.logic.interpret.jit.Compilable;
 import com.sierra.agi.logic.interpret.jit.LogicCompileContext;
+import com.sierra.agi.view.ScriptBuffer;
 import com.sierra.jit.code.Scope;
 
 import java.io.IOException;
@@ -30,7 +31,6 @@ public class InstructionLoadLogic extends InstructionUni implements Compilable {
     /**
      * Creates new Load Logic Instruction.
      *
-     * @param context  Game context where this instance of the instruction will be used. (ignored)
      * @param stream   Logic Stream. Instruction must be written in uninterpreted format.
      * @param reader   LogicReader used in the reading of this instruction. (ignored)
      * @param bytecode Bytecode of the current instruction.
@@ -49,6 +49,7 @@ public class InstructionLoadLogic extends InstructionUni implements Compilable {
      */
     public int execute(Logic logic, LogicContext logicContext) throws Exception {
         short p = p1;
+        logicContext.getScriptBuffer().addScript(ScriptBuffer.ScriptBufferEventType.LoadLogic, p, null);
         logicContext.getCache().loadLogic(p);
         return 2;
     }
