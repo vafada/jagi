@@ -45,7 +45,7 @@ public class AnimatedObject {
     public static final short FLAG_DIDNT_MOVE = (short) 0x4000;
     protected short stepTime;          // 0
     protected short stepTimeCount;     // 1
-    protected int viewNumber;        // 2
+    protected int objectNumber;        // 2
     protected short x;                 // 3-4
     protected short y;                 // 5-6
     protected short currentView;       // 7
@@ -73,8 +73,8 @@ public class AnimatedObject {
     protected short oldStepSize;           // 29
     protected short endFlag;           // Flag to set when this AnimatedObject reaches the target position.
 
-    public AnimatedObject(int viewNumber) {
-        this.viewNumber = viewNumber;
+    public AnimatedObject(int objectNumber) {
+        this.objectNumber = objectNumber;
     }
 
     public static String flagsToString(short flags) {
@@ -550,8 +550,8 @@ public class AnimatedObject {
         setCell(logicContext, cell);
     }
 
-    public void setViewNumber(int viewNumber) {
-        this.viewNumber = viewNumber;
+    public void setObjectNumber(int objectNumber) {
+        this.objectNumber = objectNumber;
     }
 
     public void setCurrentView(short currentView) {
@@ -590,8 +590,8 @@ public class AnimatedObject {
         this.yCopy = yCopy;
     }
 
-    public int getViewNumber() {
-        return viewNumber;
+    public int getObjectNumber() {
+        return objectNumber;
     }
 
     public short getCurrentView() {

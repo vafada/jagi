@@ -195,8 +195,8 @@ public class SaveGame {
             //UBYTE moveclk;      /* number of cycles between moves of object   */    e.g.   01
             savedGameData[aniObjOffset + 1] = (byte) aniObj.getStepTimeCount();
             //UBYTE num;          /* object number                              */    e.g.   00
-            savedGameData[aniObjOffset + 2] = (byte) aniObj.getViewNumber();
-            System.out.println("aniObj.getViewNumber() = " + aniObj.getViewNumber());
+            savedGameData[aniObjOffset + 2] = (byte) aniObj.getObjectNumber();
+            System.out.println("aniObj.getViewNumber() = " + aniObj.getObjectNumber());
             //COORD x;            /* current x coordinate                       */    e.g.   6e 00 (0x006e = )
             savedGameData[aniObjOffset + 3] = (byte) (aniObj.getX() & 0xFF);
             savedGameData[aniObjOffset + 4] = (byte) ((aniObj.getX() >> 8) & 0xFF);

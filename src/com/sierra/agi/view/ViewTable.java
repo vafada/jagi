@@ -65,12 +65,10 @@ public class ViewTable {
     private int[] controlPixels = new int[WIDTH * HEIGHT];
 
     public ViewTable(LogicContext context) {
-        int i;
-
         logicContext = context;
         animatedObjects = new AnimatedObject[MAX_ANIMATED_OBJECTS];
 
-        for (i = 0; i < animatedObjects.length; i++) {
+        for (int i = 0; i < animatedObjects.length; i++) {
             animatedObjects[i] = new AnimatedObject(i);
         }
 
