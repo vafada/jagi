@@ -3,6 +3,7 @@ package com.sierra.agi.save;
 import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.view.AnimatedObject;
 import com.sierra.agi.view.SavedGame;
+import com.sierra.agi.view.ScriptBuffer;
 import com.sierra.agi.view.ViewScreen;
 import com.sierra.agi.view.ViewTable;
 
@@ -404,32 +405,30 @@ public class RestoreGame {
         // 01 46 load.view   0x46
         // 03 0d load.sound  0x0D
         // etc...
-        /* TODO
-        state.ScriptBuffer.InitScript();
-        for (int i = 0; i < scriptEntryCount; i++)
-        {
+
+        logicContext.getScriptBuffer().initScript();
+        for (int i = 0; i < scriptEntryCount; i++) {
             int scriptOffset = scriptsOffset + 2 + (i * 2);
             int action = savedGameData[scriptOffset + 0];
             int resourceNum = savedGameData[scriptOffset + 1];
             byte[] data = null;
-            if (action == (int)ScriptBuffer.ScriptBufferEventType.AddToPic)
-            {
+            if (action == ScriptBuffer.ScriptBufferEventType.AddToPic.getValue()) {
                 // The add.to.pics are stored in the saved game file across 8 bytes, i.e. 4 separate script
                 // entries (that is also how the original AGI interpreter stored it in memory).
                 // What we do though is store these in an additional data array associated with
                 // the script event since utilitising multiple event entries is a bit of a hack
                 // really. I can understand why they did it though.
-                data = new byte[] {
-                        savedGameData[scriptOffset + 2], savedGameData[scriptOffset + 3], savedGameData[scriptOffset + 4],
-                        savedGameData[scriptOffset + 5], savedGameData[scriptOffset + 6], savedGameData[scriptOffset + 7]
+                data = new byte[]{
+                        (byte) savedGameData[scriptOffset + 2], (byte) savedGameData[scriptOffset + 3], (byte) savedGameData[scriptOffset + 4],
+                        (byte) savedGameData[scriptOffset + 5], (byte) savedGameData[scriptOffset + 6], (byte) savedGameData[scriptOffset + 7]
                 };
 
                 // Increase i to account for the fact that we've processed an additional 3 slots.
                 i += 3;
             }
-            state.ScriptBuffer.AddScript((ScriptBuffer.ScriptBufferEventType)action, resourceNum, data);
+            logicContext.getScriptBuffer().restoreScript(ScriptBuffer.ScriptBufferEventType.getEnum(action), resourceNum, data);
         }
-         */
+
 
         // FIFTH PIECE: SCAN OFFSETS
         // Note: Not every logic can set a scan offset, as there is a max of 30. But only

@@ -1,7 +1,6 @@
 package com.sierra.agi.view;
 
 import com.sierra.agi.logic.LogicContext;
-import com.sierra.agi.view.ScriptBuffer.ScriptBufferEvent;
 
 import java.util.ArrayList;
 
@@ -9,15 +8,34 @@ import static com.sierra.agi.logic.LogicVariables.FLAG_SCRIPT_BLOCKED;
 
 public class ScriptBuffer {
     public enum ScriptBufferEventType {
-        LoadLogic,
-        LoadView,
-        LoadPic,
-        LoadSound,
-        DrawPic,
-        AddToPic,
-        DiscardPic,
-        DiscardView,
-        OverlayPic
+        LoadLogic(0),
+        LoadView(1),
+        LoadPic(2),
+        LoadSound(3),
+        DrawPic(4),
+        AddToPic(5),
+        DiscardPic(6),
+        DiscardView(7),
+        OverlayPic(8);
+
+        private final int value;
+
+        private ScriptBufferEventType(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public static ScriptBufferEventType getEnum(int id) {
+            for (ScriptBufferEventType eventType : ScriptBufferEventType.values()) {
+                if (eventType.getValue() == id) {
+                    return eventType;
+                }
+            }
+            return null;
+        }
     }
 
     public class ScriptBufferEvent {
@@ -135,7 +153,7 @@ public class ScriptBuffer {
 
          */
         // TODO
-        return new byte[] {};
+        return new byte[]{};
     }
 
     /// <summary>
@@ -153,5 +171,9 @@ public class ScriptBuffer {
 
     public int getScriptSize() {
         return scriptSize;
+    }
+
+    public ArrayList<ScriptBufferEvent> getEvents() {
+        return events;
     }
 }

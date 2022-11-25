@@ -1012,4 +1012,86 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     public boolean isShouldShowStatusLine() {
         return shouldShowStatusLine;
     }
+
+    public void replayScriptEvents() {
+        // Mainly for the AddToPicture method, since that adds script events if active.
+        scriptBuffer.scriptOff();
+
+        for (ScriptBuffer.ScriptBufferEvent scriptBufferEvent : scriptBuffer.getEvents()) {
+            switch (scriptBufferEvent.type) {
+                case AddToPic: {
+                    try {
+                        getViewTable().addToPic(
+                                scriptBufferEvent.data[0], scriptBufferEvent.data[1], scriptBufferEvent.data[2],
+                                scriptBufferEvent.data[3], scriptBufferEvent.data[4], (byte) (scriptBufferEvent.data[5] & 0x0F),
+                                (byte) ((scriptBufferEvent.data[5] >> 4) & 0x0F)
+                        );
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+
+                case DiscardPic: {
+                    /*Picture pic = state.Pictures[scriptBufferEvent.resourceNumber];
+                    if (pic != null) pic.IsLoaded = false;*/
+                }
+                break;
+
+                case DiscardView: {
+                    /*View view = state.Views[scriptBufferEvent.resourceNumber];
+                    if (view != null) view.IsLoaded = false;*/
+                }
+                break;
+
+                case DrawPic: {
+                    try {
+                        getViewTable().drawPic(getCache().getPicture((short) scriptBufferEvent.resourceNumber));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+
+                case LoadLogic: {
+                    /*Logic logic = state.Logics[scriptBufferEvent.resourceNumber];
+                    if (logic != null) logic.IsLoaded = true;*/
+                }
+                break;
+
+                case LoadPic: {
+                    /*Picture pic = state.Pictures[scriptBufferEvent.resourceNumber];
+                    if (pic != null) pic.IsLoaded = true;*/
+                }
+                break;
+
+                case LoadSound: {
+                    /*Sound sound = state.Sounds[scriptBufferEvent.resourceNumber];
+                    if (sound != null)
+                    {
+                        soundPlayer.LoadSound(sound);
+                        sound.IsLoaded = true;
+                    }*/
+                }
+                break;
+
+                case LoadView: {
+                    /*View view = state.Views[scriptBufferEvent.resourceNumber];
+                    if (view != null) view.IsLoaded = true;*/
+                }
+                break;
+
+                case OverlayPic: {
+                    try {
+                        getViewTable().overlayPic(getCache().getPicture((short) scriptBufferEvent.resourceNumber));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            }
+        }
+
+        scriptBuffer.scriptOn();
+    }
 }

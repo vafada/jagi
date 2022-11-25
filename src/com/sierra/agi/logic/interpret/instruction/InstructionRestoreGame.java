@@ -50,7 +50,7 @@ public class InstructionRestoreGame extends Instruction {
             // TODO: soundPlayer.Reset();
             logicContext.getMenuBar().enableAllMenuItem();
             logicContext.clearInput();
-            // TODO: ReplayScriptEvents();
+            logicContext.replayScriptEvents();
             logicContext.getViewTable().showPic();
 
             throw new LogicReturn();
