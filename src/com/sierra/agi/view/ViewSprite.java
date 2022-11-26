@@ -79,7 +79,7 @@ public class ViewSprite implements Comparable<ViewSprite> {
         }
     }
 
-    public void restore(Area screenUpdate, int[] screen, int[] priority) {
+    public void restore(Area screenUpdate, int[] picture, int[] priority) {
         if ((backupPicture == null) || (backupPriority == null)) {
             System.out.println("(backupScreen == null) || (backupPriority == null)");
             return;
@@ -89,7 +89,7 @@ public class ViewSprite implements Comparable<ViewSprite> {
         int backupOffset = 0;
 
         for (int line = 0; line < height; line++) {
-            System.arraycopy(backupPicture, backupOffset, screen, screenOffset, width);
+            System.arraycopy(backupPicture, backupOffset, picture, screenOffset, width);
             System.arraycopy(backupPriority, backupOffset, priority, screenOffset, width);
             screenOffset += ViewTable.WIDTH;
             backupOffset += width;
