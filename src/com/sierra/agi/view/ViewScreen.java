@@ -585,7 +585,7 @@ public class ViewScreen {
     public void textMode() {
         save();
         // Clear the whole screen to the background colour.
-        clearLines(0, 24, (short) this.backgroundColor);
+        clearLines(0, 24, this.backgroundColorByte);
     }
 
     public void graphicMode() {
