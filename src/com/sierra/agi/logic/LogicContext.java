@@ -1116,6 +1116,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         getViewScreen().graphicMode();
 
         updateStatusLine();
-        getViewScreen().setInputLine(null);
+        getViewScreen().setInputLine("");
     }
 }
