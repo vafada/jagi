@@ -366,7 +366,7 @@ public class ViewTable {
     public void forceUpdate() {
         restoreBackgrounds();
         blitBoth();
-        // checkMoveBoth();
+        checkMoveBoth();
     }
 
     public void normalCycling(short entry) {
@@ -562,7 +562,6 @@ public class ViewTable {
             }
 
             blitAll(buildUpdateBlitList());
-            commitView(v);
         }
     }
 
@@ -887,112 +886,6 @@ public class ViewTable {
         return buildList(updateNotList, false);
     }
 
-    protected void commitView(AnimatedObject v) {
-        /*
-        if (picShown) {
-        }
-        Rectangle previousRect = new Rectangle();
-        Rectangle currentRect  = new Rectangle();
-        Cell      current      = v.getCellData();
-        Cell      previous     = v.getPreviousCellData();
-
-        currentRect.x       = v.getX();
-        currentRect.y       = v.getY();
-        currentRect.width   = current.getWidth();
-        currentRect.height  = current.getHeight();
-
-        previousRect.x      = v.getXCopy();
-        previousRect.y      = v.getYCopy();
-        previousRect.width  = previous.getWidth();
-        previousRect.height = previous.getHeight();
-
-        currentRect.y  = currentRect.y  - currentRect.height  - 1;
-        previousRect.y = previousRect.y - previousRect.height - 1;
-
-        if (currentRect.intersects(previousRect))
-        {
-            currentRect.add(previousRect);
-        }
-        else
-        {
-            screen.putBlock(screenView, previousRect.x, previousRect.y, previousRect.width, previousRect.height);
-        }
-
-        screen.putBlock(screenView, currentRect.x,  currentRect.y,  currentRect.width,  currentRect.height);
-        */
-        //screen.putBlock(screenView, 0, 0, WIDTH, HEIGHT);
-
-        /*
-            int  t;
-            Cell current;  // di
-            Cell previous; // si
-            int  x1;       // ah
-            int  y1;       // al
-            int  x2;       // bl
-            int  y2;       // bh
-            int  height1;  // cl
-            int  height2;  // ch
-            int  width1;   // cl
-            int  width2;   // ch
-
-            current  = v.getCellData();
-            previous = v.getPreviousCellData();
-            v.saveCell();
-
-            y1      = v.getY();
-            y2      = v.getYCopy();
-            height1 = current.getHeight();
-            height2 = previous.getHeight();
-
-            if (y1 < y2)
-            {
-                t       = y1;
-                y1      = y2;
-                y2      = t;
-                t       = height1;
-                height1 = height2;
-                height2 = t;
-            }
-
-            y2      -= height2 + 1;
-            height1  = (-height1) + y1 + 1;
-
-            if (y2 > height1)
-            {
-                y2 = height1;
-            }
-
-            y2 = (-y2) + y1 + 1;
-
-            x1     = v.getX();
-            width1 = current.getWidth();
-            x2     = v.getXCopy();
-            width2 = previous.getWidth();
-
-            if (x1 <= x2)
-            {
-                t       = x1;
-                x1      = x2;
-                x2      = t;
-                t       = width1;
-                width1  = width2;
-                width2  = t;
-            }
-
-            width1 += x1;
-            x2     += width2;
-
-            if (x2 < width1)
-            {
-                x2 = width1;
-            }
-
-            x2 -= x1;
-            screen.putBlock(screenView, x1, y1, x2, y2);
-        }
-        */
-    }
-
     protected void restoreBackgrounds(List<ViewSprite> list) {
         for (ViewSprite viewSprite : list) {
             viewSprite.restore(screenUpdate, visualPixels, priorityPixels);
@@ -1016,21 +909,16 @@ public class ViewTable {
         blitAll(buildUpdateBlitList());
     }
 
-    /*protected void checkMove(List<ViewSprite> list) {
-        ViewSprite s = list.prev;
-        AnimatedObject v;
-
-        for (; s != null; s = s.prev) {
-            v = s.getViewEntry();
-
-            commitView(v);
-            v.checkMove();
+    protected void checkMove(List<ViewSprite> list) {
+        for (ViewSprite viewSprite : list) {
+            AnimatedObject aniObj = viewSprite.getViewEntry();
+            aniObj.checkMove();
         }
-    }*/
+    }
 
     protected void checkMoveBoth() {
-        // checkMove(updateNotList);
-        // checkMove(updateList);
+        checkMove(updateNotList);
+        checkMove(updateList);
     }
 
     public void checkAllMotion() {
@@ -1296,7 +1184,7 @@ public class ViewTable {
             restoreBackgrounds(updateList);
             updatePosition();
             blitAll(buildUpdateBlitList());
-            // checkMove(updateList);
+            checkMove(updateList);
 
             animatedObjects[0].removeFlags(AnimatedObject.FLAG_ON_LAND | AnimatedObject.FLAG_ON_WATER);
         }
