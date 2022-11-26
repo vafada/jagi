@@ -172,17 +172,12 @@ public class SaveGame {
         ViewScreen viewScreen = viewTable.getViewScreen();
 
         // [1485] 1516(2 bytes) Foreground colour
-        savedGameData[1516] = (byte) viewScreen.getForegroundColor();
-
-        // TODO: Need to fix the foreground and background colour storage.
-
+        savedGameData[1516] = viewScreen.getForegroundColorByte();
         // [1487] 1518(2 bytes) Background colour
-        //int backgroundColour = (savedGameData[postStringsOffset + 2] + (savedGameData[postStringsOffset + 3] << 8));
-        // TODO: Interpreter doesn't yet properly handle AGI background colour.
-
+        savedGameData[1518] = viewScreen.getBackgroundColorByte();
         // [1489] 1520(2 bytes) Text Attribute value (combined foreground/background value)
+        // TODO
         //int textAttribute = (savedGameData[postStringsOffset + 4] + (savedGameData[postStringsOffset + 5] << 8));
-
         // [1491] 1522(2 bytes) Accept input = 1, Prevent input = 0
         savedGameData[1522] = (byte) (logicContext.isAcceptInput() ? 1 : 0);
 

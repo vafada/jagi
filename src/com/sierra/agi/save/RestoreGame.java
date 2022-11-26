@@ -131,15 +131,12 @@ public class RestoreGame {
         int postStringsOffset = postKeyMapOffset + (numOfStrings * this.logicContext.STRING_LENGTH);
 
         // [1485] 1516(2 bytes) Foreground colour
-
         viewScreen.setForegroundColor((byte) (savedGameData[postStringsOffset + 0] + (savedGameData[postStringsOffset + 1] << 8)));
-
         // [1487] 1518(2 bytes) Background colour
-        // TODO: Interpreter doesn't yet properly handle AGI background colour.
-        // TODO: viewScreen.setBackgroundColor((byte)(savedGameData[postStringsOffset + 2] + (savedGameData[postStringsOffset + 3] << 8)));
+        viewScreen.setBackgroundColor((byte)(savedGameData[postStringsOffset + 2] + (savedGameData[postStringsOffset + 3] << 8)));
 
         // [1489] 1520(2 bytes) Text Attribute value (combined foreground/background value)
-        int textAttribute = (savedGameData[postStringsOffset + 4] + (savedGameData[postStringsOffset + 5] << 8));
+        // TODO: int textAttribute = (savedGameData[postStringsOffset + 4] + (savedGameData[postStringsOffset + 5] << 8));
 
         // [1491] 1522(2 bytes) Accept input = 1, Prevent input = 0
         if ((savedGameData[postStringsOffset + 6] + (savedGameData[postStringsOffset + 7] << 8)) == 1) {

@@ -30,7 +30,9 @@ public class ViewScreen {
     protected MemoryImageSource screenSource;
 
     private int backgroundColor;
+    private byte backgroundColorByte;
     private int foregroundColor;
+    private byte foregroundColorByte;
     protected int[] font;
 
     protected EgaComponent ega;
@@ -52,7 +54,9 @@ public class ViewScreen {
         ega.setImageProducer(screenSource);
 
         backgroundColor = translatePixel((byte) 0);
+        backgroundColorByte = 0;
         foregroundColor = translatePixel((byte) 15);
+        foregroundColorByte = 15;
         font = EgaUtils.getEgaFont();
     }
 
@@ -63,6 +67,7 @@ public class ViewScreen {
     }
 
     public void setForegroundColor(byte color) {
+        foregroundColorByte = color;
         foregroundColor = translatePixel(color);
     }
 
@@ -71,7 +76,12 @@ public class ViewScreen {
     }
 
     public void setBackgroundColor(byte color) {
+        backgroundColorByte = color;
         backgroundColor = translatePixel(color);
+    }
+
+    public int getBackgroundColor() {
+        return backgroundColor;
     }
 
     public void setPromptChar(char ch) {
@@ -623,5 +633,13 @@ public class ViewScreen {
             }
         }
         return line.toString();
+    }
+
+    public byte getBackgroundColorByte() {
+        return backgroundColorByte;
+    }
+
+    public byte getForegroundColorByte() {
+        return foregroundColorByte;
     }
 }
