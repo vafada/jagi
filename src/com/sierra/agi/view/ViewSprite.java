@@ -18,7 +18,7 @@ public class ViewSprite implements Comparable<ViewSprite> {
     private final int width;
     private final int height;
     private int[] backupPriority;
-    private int[] backupScreen;
+    private int[] backupPicture;
 
     public ViewSprite(AnimatedObject v) {
         entry = v;
@@ -59,20 +59,20 @@ public class ViewSprite implements Comparable<ViewSprite> {
         screenUpdate.add(new Area(new Rectangle(x, y, width, height)));
     }
 
-    public void save(int[] screen, int[] priority) {
+    public void save(int[] picture, int[] priority) {
         if (backupPriority == null) {
             backupPriority = new int[width * height];
         }
 
-        if (backupScreen == null) {
-            backupScreen = new int[width * height];
+        if (backupPicture == null) {
+            backupPicture = new int[width * height];
         }
 
         int screenOffset = (y * ViewTable.WIDTH) + x;
         int backupOffset = 0;
 
         for (int line = 0; line < height; line++) {
-            System.arraycopy(screen, screenOffset, backupScreen, backupOffset, width);
+            System.arraycopy(picture, screenOffset, backupPicture, backupOffset, width);
             System.arraycopy(priority, screenOffset, backupPriority, backupOffset, width);
             screenOffset += ViewTable.WIDTH;
             backupOffset += width;
@@ -80,7 +80,7 @@ public class ViewSprite implements Comparable<ViewSprite> {
     }
 
     public void restore(Area screenUpdate, int[] screen, int[] priority) {
-        if ((backupScreen == null) || (backupPriority == null)) {
+        if ((backupPicture == null) || (backupPriority == null)) {
             System.out.println("(backupScreen == null) || (backupPriority == null)");
             return;
         }
@@ -89,7 +89,7 @@ public class ViewSprite implements Comparable<ViewSprite> {
         int backupOffset = 0;
 
         for (int line = 0; line < height; line++) {
-            System.arraycopy(backupScreen, backupOffset, screen, screenOffset, width);
+            System.arraycopy(backupPicture, backupOffset, screen, screenOffset, width);
             System.arraycopy(backupPriority, backupOffset, priority, screenOffset, width);
             screenOffset += ViewTable.WIDTH;
             backupOffset += width;
