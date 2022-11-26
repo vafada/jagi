@@ -4,6 +4,7 @@ import com.sierra.agi.inv.InventoryObjects;
 import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.logic.LogicVariables;
 import com.sierra.agi.view.AnimatedObject;
+import com.sierra.agi.view.ScriptBuffer;
 import com.sierra.agi.view.ViewScreen;
 import com.sierra.agi.view.ViewTable;
 
@@ -304,7 +305,6 @@ public class SaveGame {
             savedGameData[pos++] = objectData[x];
         }
 
-        // TODO
         // FOURTH PIECE: SCRIPT BUFFER EVENTS
         // A transcript of events leading to the current state in the current room.
         int scriptsOffset = objectsOffset + 2 + objectsLength;
@@ -338,19 +338,16 @@ public class SaveGame {
         savedGameData[pos++] = (byte) (logicContext.getScanStart((short) 0) & 0xFF);
         savedGameData[pos++] = (byte) ((logicContext.getScanStart((short) 0) >> 8) & 0xFF);
         // The scan offsets for the rest are stored in the order in which the logics were loaded.
-            /*
-            foreach(ScriptBufferEvent e in state.ScriptBuffer.Events)
-            {
-                if (e.type == ScriptBufferEventType.LoadLogic) {
-                    int logicNum = e.resourceNumber;
-                    int scanOffset = state.ScanStart[logicNum];
-                    savedGameData[pos++] = (byte) (logicNum & 0xFF);
-                    savedGameData[pos++] = (byte) ((logicNum >> 8) & 0xFF);
-                    savedGameData[pos++] = (byte) (scanOffset & 0xFF);
-                    savedGameData[pos++] = (byte) ((scanOffset >> 8) & 0xFF);
-                }
+        for (ScriptBuffer.ScriptBufferEvent event : logicContext.getScriptBuffer().getEvents()) {
+            if (event.type == ScriptBuffer.ScriptBufferEventType.LoadLogic) {
+                int logicNum = event.resourceNumber;
+                int scanOffset = logicContext.getScanStart((short) logicNum);
+                savedGameData[pos++] = (byte) (logicNum & 0xFF);
+                savedGameData[pos++] = (byte) ((logicNum >> 8) & 0xFF);
+                savedGameData[pos++] = (byte) (scanOffset & 0xFF);
+                savedGameData[pos++] = (byte) ((scanOffset >> 8) & 0xFF);
             }
-             */
+        }
         // The scan offset section ends with FF FF 00 00.
         savedGameData[pos++] = (byte) 0xFF;
         savedGameData[pos++] = (byte) 0xFF;
