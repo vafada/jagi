@@ -25,7 +25,10 @@ public class ViewScreen {
     public static final int CHAR_WIDTH = 8;
     public static final int CHAR_HEIGHT = 8;
 
+    // bitmap that's actually rendered!
     private int[] screen;
+
+    // backup bitmap of screen when switching between pri pixel/text mode to graphics
     private int[] screenBackup;
     protected MemoryImageSource screenSource;
 
@@ -580,6 +583,7 @@ public class ViewScreen {
     }
 
     public void textMode() {
+        save();
         // Clear the whole screen to the background colour.
         clearLines(0, 24, (short) this.backgroundColor);
     }
@@ -587,6 +591,7 @@ public class ViewScreen {
     public void graphicMode() {
         // Clear the whole screen to the background colour.
         clearLines(0, 24, (short) 0);
+        restore(true);
     }
 
     public String getStringInput(String message, short row, short col, short length) {
@@ -613,10 +618,10 @@ public class ViewScreen {
             }
 
             int key = ev.getKeyCode();
-            if (key >= 32 && key <= 90) {
+            if ((key >= 65 && key <= 90) || key == 32) {
                 // If we haven't reached the max length, add the char to the line of text.
                 if (line.length() < length) {
-                    line.append((char) (key & 0xff));
+                    line.append((char) key);
                 }
             } else if (key == KeyEvent.VK_ESCAPE) {
                 return null;

@@ -56,7 +56,7 @@ public class ViewTable {
     protected Random randomSeed;
     protected byte[] priorityTable = new byte[HEIGHT];
     protected ViewScreen viewScreen;
-    private int[] visualPixels;
+    private int[] picturePixels;
     private List<ViewSprite> updateList = new ArrayList<>();
     private List<ViewSprite> updateNotList = new ArrayList<>();
     protected PictureContext pictureContext;
@@ -65,7 +65,6 @@ public class ViewTable {
     private Area screenUpdate;
 
     private int[] priorityPixels = new int[WIDTH * HEIGHT];
-    private int[] controlPixels = new int[WIDTH * HEIGHT];
 
     public ViewTable(LogicContext context) {
         logicContext = context;
@@ -79,7 +78,7 @@ public class ViewTable {
         resetPriorityBands();
 
         viewScreen = new ViewScreen();
-        visualPixels = new int[WIDTH * HEIGHT];
+        picturePixels = new int[WIDTH * HEIGHT];
         screenUpdate = new Area(new Rectangle(0, 0, WIDTH, HEIGHT));
     }
 
@@ -103,9 +102,8 @@ public class ViewTable {
 
         viewScreen.reset();
         screenUpdate.add(new Area(new Rectangle(0, 0, WIDTH, HEIGHT)));
-        Arrays.fill(visualPixels, translatePixel((byte) 0));
+        Arrays.fill(picturePixels, translatePixel((byte) 0));
         Arrays.fill(priorityPixels, (byte) 4);
-        Arrays.fill(controlPixels, 4);
     }
 
     protected void resetPriorityBands() {
@@ -135,7 +133,7 @@ public class ViewTable {
 
     public void drawPic(Picture picture) throws PictureException {
         pictureContext = picture.draw();
-        System.arraycopy(pictureContext.getPictureData(), 0, visualPixels, 0, visualPixels.length);
+        System.arraycopy(pictureContext.getPictureData(), 0, picturePixels, 0, picturePixels.length);
         System.arraycopy(pictureContext.getPriorityData(), 0, priorityPixels, 0, priorityPixels.length);
     }
 
@@ -153,7 +151,7 @@ public class ViewTable {
 
     public void showPic() {
         logicContext.setFlag(FLAG_OUTPUT_MODE, false);
-        System.arraycopy(pictureContext.getPictureData(), 0, visualPixels, 0, visualPixels.length);
+        System.arraycopy(pictureContext.getPictureData(), 0, picturePixels, 0, picturePixels.length);
         System.arraycopy(pictureContext.getPriorityData(), 0, priorityPixels, 0, priorityPixels.length);
 
         blitBoth();
@@ -825,7 +823,7 @@ public class ViewTable {
 
     protected void restoreBackgrounds(List<ViewSprite> list) {
         for (ViewSprite viewSprite : list) {
-            viewSprite.restore(screenUpdate, visualPixels, priorityPixels);
+            viewSprite.restore(screenUpdate, picturePixels, priorityPixels);
         }
     }
 
@@ -836,8 +834,8 @@ public class ViewTable {
 
     protected void blitAll(List<ViewSprite> list) {
         for (ViewSprite viewSprite : list) {
-            viewSprite.save(visualPixels, priorityPixels);
-            viewSprite.blit(screenUpdate, visualPixels, priorityPixels);
+            viewSprite.save(picturePixels, priorityPixels);
+            viewSprite.blit(screenUpdate, picturePixels, priorityPixels);
         }
     }
 
@@ -1208,7 +1206,7 @@ public class ViewTable {
         if (!screenUpdate.isEmpty()) {
             Rectangle r = screenUpdate.getBounds();
 
-            viewScreen.putBlock(visualPixels, r.x, r.y, r.width, r.height);
+            viewScreen.putBlock(picturePixels, r.x, r.y, r.width, r.height);
         }
 
         screenUpdate.reset();
@@ -1267,7 +1265,7 @@ public class ViewTable {
 
         int[] backup = new int[WIDTH * HEIGHT];
 
-        System.arraycopy(visualPixels, 0, backup, 0, visualPixels.length);
+        System.arraycopy(picturePixels, 0, backup, 0, picturePixels.length);
 
         boolean looping = true;
 
@@ -1275,7 +1273,7 @@ public class ViewTable {
 
         for (int i = 0; i < WIDTH * HEIGHT; i++) {
             int priColorIndex = this.priorityPixels[i];
-            this.visualPixels[i] = translatePixel((byte) priColorIndex);
+            this.picturePixels[i] = translatePixel((byte) priColorIndex);
         }
         screenUpdate.reset();
         screenUpdate.add(new Area(new Rectangle(0, 0, WIDTH, HEIGHT)));
@@ -1288,7 +1286,7 @@ public class ViewTable {
             looping = false;
         } while (looping);
 
-        System.arraycopy(backup, 0, visualPixels, 0, backup.length);
+        System.arraycopy(backup, 0, picturePixels, 0, backup.length);
 
         viewScreen.restore(true);
     }
