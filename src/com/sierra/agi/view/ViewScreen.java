@@ -10,6 +10,7 @@ package com.sierra.agi.view;
 
 import com.sierra.agi.awt.EgaComponent;
 import com.sierra.agi.awt.EgaUtils;
+import com.sierra.agi.logic.LogicVariables;
 import com.sierra.agi.menu.AgiMenuBar;
 
 import java.awt.Color;
@@ -28,8 +29,8 @@ public class ViewScreen {
     private int[] screenBackup;
     protected MemoryImageSource screenSource;
 
-    protected int backgroundColor;
-    protected int foregroundColor;
+    private int backgroundColor;
+    private int foregroundColor;
     protected int[] font;
 
     protected EgaComponent ega;
@@ -39,7 +40,7 @@ public class ViewScreen {
     protected int lineStatus;
 
     protected char promptChar = '>';
-    protected char cursorChar = '_';
+    private char cursorChar = '_';
     protected int[] pixel = new int[1];
 
     public ViewScreen() {
@@ -507,7 +508,6 @@ public class ViewScreen {
         displayLine(0, lineUserInput, message);
 
         // Get a line of text from the user.
-        //String line = this.getLine(4, (byte) lineUserInput, (byte) message.length());
         StringBuilder line = new StringBuilder();
 
         ega.clearEvents();
@@ -567,5 +567,61 @@ public class ViewScreen {
 
     public int getLineMinPrint() {
         return lineMinPrint;
+    }
+
+    public void textMode() {
+        // Clear the whole screen to the background colour.
+        clearLines(0, 24, (short) this.backgroundColor);
+    }
+
+    public void graphicMode() {
+        // Clear the whole screen to the background colour.
+        clearLines(0, 24, (short) 0);
+    }
+
+    public String getStringInput(String message, short row, short col, short length) {
+        length = length > LogicVariables.STRING_LENGTH ? LogicVariables.STRING_LENGTH : length;
+
+        displayLine(col, row, message);
+
+        // Position the input area immediately after the message.
+        col += message.length();
+
+        // Get a line of text from the user.
+        StringBuilder line = new StringBuilder();
+
+        ega.clearEvents();
+
+        KeyEvent ev;
+        // Process entered keys until either ENTER or ESC is pressed.
+        while (true) {
+            // Show the currently entered text.
+            displayLine(col, row, (line.toString() + cursorChar));
+
+            if ((ev = ega.popCharEvent(-1)) == null) {
+                break;
+            }
+
+            int key = ev.getKeyCode();
+            if (key >= 32 && key <= 90) {
+                // If we haven't reached the max length, add the char to the line of text.
+                if (line.length() < length) {
+                    line.append((char) (key & 0xff));
+                }
+            } else if (key == KeyEvent.VK_ESCAPE) {
+                return null;
+            } else if (key == KeyEvent.VK_ENTER) {
+                break;
+            } else if (key == KeyEvent.VK_BACK_SPACE) {
+                // Removes one from the end of the currently entered input.
+                if (line.length() > 0) {
+                    line.deleteCharAt(line.length() - 1);
+                }
+
+                // Render Line with a space overwriting the previous position of the cursor.
+                displayLine(col, row, (line.toString() + cursorChar + " "));
+            }
+        }
+        return line.toString();
     }
 }

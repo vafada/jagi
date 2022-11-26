@@ -45,6 +45,11 @@ public class InstructionGetString extends InstructionPent {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
+        String message = logic.getMessage(p2);
+        String answer = logicContext.getViewScreen().getStringInput(message, p3, p4, p5);
+        if (answer != null && !answer.isEmpty() && !answer.isBlank()) {
+            logicContext.setString(p1, answer);
+        }
         return 6;
     }
 

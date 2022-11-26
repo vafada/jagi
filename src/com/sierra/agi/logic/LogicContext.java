@@ -124,7 +124,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
     protected boolean playerControl;
     protected int pictureNumber;
-    protected boolean graphicMode;
+    private boolean graphicMode;
     protected boolean shouldShowMenu;
 
     protected boolean shouldShowStatusLine;
@@ -1104,5 +1104,18 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         }
 
         scriptBuffer.scriptOn();
+    }
+
+    public void textMode() {
+        this.graphicMode = false;
+        getViewScreen().textMode();
+    }
+
+    public void graphicMode() {
+        this.graphicMode = true;
+        getViewScreen().graphicMode();
+
+        updateStatusLine();
+        getViewScreen().setInputLine(null);
     }
 }

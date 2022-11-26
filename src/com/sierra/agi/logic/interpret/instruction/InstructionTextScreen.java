@@ -25,7 +25,6 @@ public class InstructionTextScreen extends Instruction {
     /**
      * Creates new Text Screen Instruction.
      *
-     * @param context  Game context where this instance of the instruction will be used. (ignored)
      * @param stream   Logic Stream. Instruction must be written in uninterpreted format.
      * @param reader   LogicReader used in the reading of this instruction. (ignored)
      * @param bytecode Bytecode of the current instruction.
@@ -42,6 +41,7 @@ public class InstructionTextScreen extends Instruction {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
+        logicContext.textMode();
         return 1;
     }
 
