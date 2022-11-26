@@ -55,7 +55,6 @@ public class AnimatedObject {
     protected short currentCell;       // e
     protected Cel currentCelData;   // 10-11
     protected Cel previousCelData;  // 12-13
-    protected ViewSprite sprite;            // 14-15
     protected short xCopy;             // 16-17
     protected short yCopy;             // 18-19
     protected short width;             // 1a
@@ -172,14 +171,6 @@ public class AnimatedObject {
         targetY = 0;
         oldStepSize = 0;
         endFlag = 0;
-    }
-
-    public ViewSprite getSprite() {
-        return sprite;
-    }
-
-    public void setSprite(ViewSprite sprite) {
-        this.sprite = sprite;
     }
 
     public Cel getCellData() {
