@@ -120,8 +120,7 @@ public class ViewSprite implements Comparable<ViewSprite> {
 
     private short effectiveY() {
         if (this.entry.isSomeFlagsSet(AnimatedObject.FLAG_FIX_PRIORITY)) {
-            // TODO  (short)(state.PriorityBase + Math.Ceiling(((168.0 - state.PriorityBase) / 10.0f) * (Priority - Defines.BACK_MOST_PRIORITY - 1)))
-            return (short) y;
+            return (short)(48 + Math.ceil(((168.0 - 48) / 10.0f) * (this.entry.priority - 4 - 1)));
         }
 
         return (short) y;
