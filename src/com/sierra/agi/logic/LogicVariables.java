@@ -93,6 +93,7 @@ public class LogicVariables {
     protected short[] objects = new short[MAX_OBJECTS];
     protected short horizon;
     protected String gameID;
+    protected String version;
 
     public final boolean getFlag(short flagNumber) {
         return flags[flagNumber];
@@ -170,5 +171,9 @@ public class LogicVariables {
 
     public short[] getObjects() {
         return objects;
+    }
+
+    public String getVersion() {
+        return version;
     }
 }

@@ -21,6 +21,36 @@ public class SaveGame {
         this.logicContext = logicContext;
     }
 
+    private int getSaveVariablesLength(String version) {
+        switch (version) {
+            case "2.089":
+            case "2.272":
+            case "2.277":
+                return 0x03DB;
+
+            case "2.411":
+            case "2.425":
+            case "2.426":
+            case "2.435":
+            case "2.439":
+            case "2.440":
+                return 0x05DF;
+
+            case "3.002.102":
+            case "3.002.107":
+                // TODO: Not yet sure what the additional 3 bytes are used for.
+                return 0x05E4;
+
+            case "3.002.149":
+                // This difference between 3.002.107 and 3.002.149 is that the latter has only 12 strings (12x40=480=0x1E0)
+                return 0x0404;
+
+            // Default covers all the 2.9XX versions, 3.002.086 and 3.002.098.
+            default:
+                return 0x05E1;
+        }
+    }
+
     public void save(int slotNumber) throws Exception {
         String absolutePath = logicContext.getCache().getPath().getAbsolutePath();
 
@@ -39,7 +69,7 @@ public class SaveGame {
 
         // FIRST PIECE: SAVE VARIABLES
         // [0] 31 - 32(2 bytes) Length of save variables piece. Length depends on AGI interpreter version. We use 0xE1 0x05
-        int saveVarsLength = 0x05E1;
+        int saveVarsLength = getSaveVariablesLength(logicContext.getVersion());
         int aniObjsOffset = 33 + saveVarsLength;
         savedGameData[31] = (byte) (saveVarsLength & 0xFF);
         savedGameData[32] = (byte) ((saveVarsLength >> 8) & 0xFF);

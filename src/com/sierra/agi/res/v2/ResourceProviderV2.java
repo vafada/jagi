@@ -12,22 +12,38 @@ import com.sierra.agi.io.ByteCaster;
 import com.sierra.agi.io.ByteCasterStream;
 import com.sierra.agi.io.CryptedInputStream;
 import com.sierra.agi.io.SegmentedInputStream;
-import com.sierra.agi.res.*;
+import com.sierra.agi.res.CorruptedResourceException;
+import com.sierra.agi.res.NoDirectoryAvailableException;
+import com.sierra.agi.res.NoVolumeAvailableException;
+import com.sierra.agi.res.ResourceConfiguration;
+import com.sierra.agi.res.ResourceException;
+import com.sierra.agi.res.ResourceNotExistingException;
+import com.sierra.agi.res.ResourceProvider;
+import com.sierra.agi.res.ResourceTypeInvalidException;
 import com.sierra.agi.res.dir.ResourceDirectory;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.file.Files;
 import java.util.Properties;
 
 /**
  * Provide access to resources via the standard storage methods.
  * It reads unmodified sierra's resource files.
- *
+ * <p>
  * All AGI games have either one directory file, or more commonly, four.
  * AGI version 2 games will have the files LOGDIR, PICDIR, VIEWDIR, and SNDDIR.
  * This single file is basically the four version 2 files joined together
  * except that it has an 8 byte header giving the position of each directory
  * within the single file.
- *
+ * <p>
  * The directory files give the location of the data types within the VOL
  * files. The type of directory determines the type of data. For example, the
  * LOGDIR gives the locations of the LOGIC files.
@@ -52,14 +68,24 @@ public class ResourceProviderV2 implements ResourceProvider {
      * original sierra games.
      */
     public static final String SIERRA_KEY = "Avis Durgan";
-    /** Resource's CRC. */
+    /**
+     * Resource's CRC.
+     */
     protected long crc;
-    /** Resource's Entries Tables. */
+    /**
+     * Resource's Entries Tables.
+     */
     protected ResourceDirectory[] entries = new ResourceDirectory[4];
-    /** Path to resources files. */
+    /**
+     * Path to resources files.
+     */
     protected File path;
-    /** Resource Configuration */
+    /**
+     * Resource Configuration
+     */
     protected ResourceConfiguration configuration = new ResourceConfiguration();
+
+    protected String version = "unknown";
 
     /**
      * Initialize the ResourceProvider implentation to access
@@ -81,6 +107,7 @@ public class ResourceProviderV2 implements ResourceProvider {
 
         readVolumes();
         readDirectories();
+        readVersion();
         calculateCRC();
         calculateConfiguration();
     }
@@ -117,12 +144,12 @@ public class ResourceProviderV2 implements ResourceProvider {
      * Only valid with Locic, Picture, Sound and View resource
      * types.
      *
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_LOGIC
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_PICTURE
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_SOUND
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_VIEW
-     * @param  resType Resource type
+     * @param resType Resource type
      * @return Resource count.
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_LOGIC
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_PICTURE
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_SOUND
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_VIEW
      */
     public int count(byte resType) throws ResourceException {
         validateType(resType);
@@ -139,12 +166,12 @@ public class ResourceProviderV2 implements ResourceProvider {
      * Only valid with Locic, Picture, Sound and View resource
      * types.
      *
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_LOGIC
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_PICTURE
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_SOUND
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_VIEW
-     * @param  resType Resource type
+     * @param resType Resource type
      * @return Array containing the resource numbers.
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_LOGIC
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_PICTURE
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_SOUND
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_VIEW
      */
     public short[] enumerate(byte resType) throws ResourceException {
         validateType(resType);
@@ -158,17 +185,17 @@ public class ResourceProviderV2 implements ResourceProvider {
      * if neccessary, by this function. (So you don't have to care
      * about them.)
      *
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_LOGIC
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_OBJECT
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_PICTURE
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_SOUND
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_VIEW
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_WORD
-     * @param  resType   Resource type
-     * @param  resNumber Resource number. Ignored if resource type
-     *                   is <CODE>TYPE_OBJECT</CODE> or
-     *                   <CODE>TYPE_WORD</CODE>
+     * @param resType   Resource type
+     * @param resNumber Resource number. Ignored if resource type
+     *                  is <CODE>TYPE_OBJECT</CODE> or
+     *                  <CODE>TYPE_WORD</CODE>
      * @return InputStream linked to the specified resource.
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_LOGIC
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_OBJECT
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_PICTURE
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_SOUND
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_VIEW
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_WORD
      */
     public InputStream open(byte resType, short resNumber) throws ResourceException, IOException {
         File volf;
@@ -271,9 +298,8 @@ public class ResourceProviderV2 implements ResourceProvider {
      * copied from another platform, we attempt here to look for the requested
      * game file firstly as-is, then in uppercase form, and then in lowercase.
      *
-     * @param path The File that represents the folder that contains the game files.
+     * @param path     The File that represents the folder that contains the game files.
      * @param fileName The name of the file to get.
-     *
      * @return A File representing the game file.
      */
     protected File getGameFile(File path, String fileName) {
@@ -323,17 +349,17 @@ public class ResourceProviderV2 implements ResourceProvider {
     /**
      * Retreive the size in bytes of the specified resource.
      *
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_LOGIC
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_OBJECT
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_PICTURE
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_SOUND
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_VIEW
-     * @see    com.sierra.agi.res.ResourceProvider#TYPE_WORD
-     * @param  resType   Resource type
-     * @param  resNumber Resource number. Ignored if resource type
-     *                   is <CODE>TYPE_OBJECT</CODE> or
-     *                   <CODE>TYPE_WORD</CODE>
+     * @param resType   Resource type
+     * @param resNumber Resource number. Ignored if resource type
+     *                  is <CODE>TYPE_OBJECT</CODE> or
+     *                  <CODE>TYPE_WORD</CODE>
      * @return Size in bytes of the specified resource.
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_LOGIC
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_OBJECT
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_PICTURE
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_SOUND
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_VIEW
+     * @see com.sierra.agi.res.ResourceProvider#TYPE_WORD
      */
     public int getSize(byte resType, short resNumber) throws ResourceException, IOException {
         switch (resType) {
@@ -373,7 +399,9 @@ public class ResourceProviderV2 implements ResourceProvider {
         }
     }
 
-    /** Find volumes files */
+    /**
+     * Find volumes files
+     */
     protected void readVolumes() throws NoVolumeAvailableException {
         boolean founded = false;
         int i = 0;
@@ -399,7 +427,9 @@ public class ResourceProviderV2 implements ResourceProvider {
         }
     }
 
-    /** Read all directory files */
+    /**
+     * Read all directory files
+     */
     protected void readDirectories() throws NoDirectoryAvailableException, IOException {
         byte i;
         int j;
@@ -422,7 +452,9 @@ public class ResourceProviderV2 implements ResourceProvider {
         }
     }
 
-    /** Calculate the Resource's CRC */
+    /**
+     * Calculate the Resource's CRC
+     */
     protected void calculateCRC() throws IOException {
         File dirf = new File(path, "vol.crc");
 
@@ -509,5 +541,30 @@ public class ResourceProviderV2 implements ResourceProvider {
 
     public File getPath() {
         return this.path;
+    }
+
+    private void readVersion() throws IOException {
+        File file = getGameFile(path, "agidata.ovl");
+
+        if (!file.exists()) {
+            throw new FileNotFoundException("File agidata.ovl can't be found.");
+        }
+
+        byte[] fileContent = Files.readAllBytes(file.toPath());
+
+        for (int i = 0; i < fileContent.length; i++) {
+            if (fileContent[i] == 86 && fileContent[i + 1] == 101 && fileContent[i + 2] == 114 && fileContent[i + 3] == 115 && fileContent[i + 4] == 105 && fileContent[i + 5] == 111 && fileContent[i + 6] == 110 && fileContent[i + 7] == 32) {
+                int j;
+                for (j = i + 8; fileContent[j] != 0; j++) {
+                }
+
+                this.version = new String(fileContent, i + 8, j - (i + 8), "US-ASCII");
+                break;
+            }
+        }
+    }
+
+    public String getVersion() {
+        return this.version;
     }
 }

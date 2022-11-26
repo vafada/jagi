@@ -359,4 +359,8 @@ public class ResourceCache {
     public File getPath() {
         return resProvider.getPath();
     }
+
+    public String getVersion() {
+        return this.resProvider.getVersion();
+    }
 }

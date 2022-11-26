@@ -33,7 +33,7 @@ public class ResourceCacheFile extends ResourceCache {
         }
     }
 
-    protected void loadFS(File file) throws IOException, ResourceException {
+    private void loadFS(File file) throws IOException, ResourceException {
         try {
             resProvider = new com.sierra.agi.res.v2.ResourceProviderV2(file);
         } catch (ResourceException e) {

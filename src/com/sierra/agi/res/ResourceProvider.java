@@ -107,4 +107,6 @@ public interface ResourceProvider {
     ResourceConfiguration getConfiguration();
 
     File getPath();
+
+    String getVersion();
 }

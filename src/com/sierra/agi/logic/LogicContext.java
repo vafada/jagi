@@ -158,6 +158,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         System.arraycopy(objects, 0, logicContext.objects, 0, MAX_OBJECTS);
         horizon = logicContext.horizon;
         gameID = logicContext.gameID;
+        version = logicContext.version;
 
         // Volatile
         logicStack.addAll(logicContext.logicStack);
@@ -167,6 +168,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     public LogicContext(ResourceCache cache) {
         this.cache = cache;
         this.gameID = "";
+        this.version = cache.getVersion();
         this.viewTable = new ViewTable(this);
         this.scriptBuffer = new ScriptBuffer(this);
     }
