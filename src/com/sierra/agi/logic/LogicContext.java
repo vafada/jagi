@@ -397,6 +397,10 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         setFlag(LogicContext.FLAG_NEW_ROOM_EXEC, true);
 
         /* 11 */
+        this.playerControl = true;
+        getViewTable().resetBlock();
+        this.horizon = DEFAULT_HORIZON;
+        Arrays.fill(controllers, false);
 
 
         this.updateStatusLine();
