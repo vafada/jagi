@@ -1336,6 +1336,10 @@ public class ViewTable {
     public void showPriorityScreen() {
         viewScreen.save();
 
+        int[] backup = new int[WIDTH * HEIGHT];
+
+        System.arraycopy(visualPixels, 0, backup, 0, visualPixels.length);
+
         boolean looping = true;
 
         EgaComponent egaComponent = viewScreen.getComponent();
@@ -1355,6 +1359,7 @@ public class ViewTable {
             looping = false;
         } while (looping);
 
+        System.arraycopy(backup, 0, visualPixels, 0, backup.length);
 
         viewScreen.restore(true);
     }
