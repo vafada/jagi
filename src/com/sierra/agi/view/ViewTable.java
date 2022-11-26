@@ -813,69 +813,6 @@ public class ViewTable {
         Collections.sort(list);
 
         return list;
-
-        /*
-        AnimatedObject[] vList = new AnimatedObject[MAX_ANIMATED_OBJECTS];
-        short[] yList = new short[MAX_ANIMATED_OBJECTS];
-        int i, j, k;
-        int minY, minIndex = 0, c = 0;
-        AnimatedObject v;
-        ViewSprite head = null, sprite;
-
-        list.prev = null;
-        list.next = null;
-
-        for (i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
-            v = animatedObjects[i];
-
-            switch (listType) {
-                default:
-                case 0:
-                    if (!v.isAllFlagsSet(AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_UPDATE | AnimatedObject.FLAG_DRAWN)) {
-                        continue;
-                    }
-                    break;
-
-                case 1:
-                    if (v.getFlags(AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_UPDATE | AnimatedObject.FLAG_DRAWN) != (AnimatedObject.FLAG_ANIMATE | AnimatedObject.FLAG_DRAWN)) {
-                        continue;
-                    }
-                    break;
-            }
-
-            vList[c] = v;
-            yList[c] = v.isSomeFlagsSet(AnimatedObject.FLAG_FIX_PRIORITY) ? v.getY() : priorityToY(v.getPriority());
-            c++;
-        }
-
-        for (j = 0; j < c; j++) {
-            minY = 0xff;
-
-            for (k = 0; k < c; k++) {
-                if (yList[k] < minY) {
-                    minIndex = k;
-                    minY = yList[k];
-                }
-            }
-
-            yList[minIndex] = 0xff;
-            sprite = new ViewSprite(vList[minIndex]);
-            sprite.prev = list.prev;
-
-            if (list.prev != null) {
-                sprite.prev.next = sprite;
-            }
-
-            list.prev = sprite;
-
-            if (list.next == null) {
-                list.next = sprite;
-            }
-        }
-
-        return list;
-
-         */
     }
 
     protected List<ViewSprite> buildUpdateBlitList() {
