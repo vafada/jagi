@@ -236,14 +236,16 @@ public class AnimatedObject {
     }
 
     public void setLoop(LogicContext logicContext, short loop) {
-        if (loop >= currentViewData.getLoopCount()) {
-            logicContext.setError((short) 0x6);
-        }
-
         currentLoop = loop;
-        currentLoopData = currentViewData.getLoop(loop);
 
-        if (currentCell >= currentLoopData.getCellCount()) {
+        try {
+            currentLoopData = currentViewData.getLoop(loop);
+
+            if (currentCell >= currentLoopData.getCellCount()) {
+                currentCell = 0;
+            }
+        } catch (Exception e) {
+            // in kq1, set.loop is called before set.view
             currentCell = 0;
         }
 
