@@ -889,18 +889,10 @@ public class ViewTable {
     }
 
     protected void checkMotionWander(AnimatedObject v) {
-        short entry27;
-        int direction;
+        short targetX = v.getTargetX();
 
-        entry27 = v.getTargetX();
-        v.setTargetX((short) (entry27 - 1));
-
-        if ((entry27 == 0) || v.isSomeFlagsSet(AnimatedObject.FLAG_DIDNT_MOVE)) {
-            direction = getRandom() % 9;
-
-            if (direction < 0) {
-                direction = -direction;
-            }
+        if ((targetX-- == 0) || v.isSomeFlagsSet(AnimatedObject.FLAG_DIDNT_MOVE)) {
+            int direction = getRandom() % 9;
 
             v.setDirection((short) direction);
 

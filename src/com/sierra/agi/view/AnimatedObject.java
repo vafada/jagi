@@ -351,6 +351,9 @@ public class AnimatedObject {
     }
 
     public void setX(short x) {
+        if (x < 0) {
+            throw new IllegalArgumentException("cannot be negative");
+        }
         this.x = x;
     }
 
@@ -367,6 +370,9 @@ public class AnimatedObject {
     }
 
     public void setY(short y) {
+        if (y < 0) {
+            throw new IllegalArgumentException("cannot be negative");
+        }
         this.y = y;
     }
 
@@ -432,6 +438,9 @@ public class AnimatedObject {
     }
 
     public void setTargetX(short targetX) {
+        if (targetX < 0) {
+            throw new IllegalArgumentException("cannot be negative");
+        }
         this.targetX = targetX;
     }
 
@@ -439,8 +448,11 @@ public class AnimatedObject {
         return targetY;
     }
 
-    public void setTargetY(short entry28) {
-        this.targetY = entry28;
+    public void setTargetY(short targetY) {
+        if (targetY < 0) {
+            throw new IllegalArgumentException("cannot be negative");
+        }
+        this.targetY = targetY;
     }
 
     public short getOldStepSize() {
@@ -542,6 +554,9 @@ public class AnimatedObject {
     }
 
     public void setObjectNumber(int objectNumber) {
+        if (objectNumber < 0) {
+            throw new IllegalArgumentException("cannot be negative");
+        }
         this.objectNumber = objectNumber;
     }
 
@@ -569,15 +584,17 @@ public class AnimatedObject {
         return currentCelData;
     }
 
-    public void setCurrentCellData(Cel currentCelData) {
-        this.currentCelData = currentCelData;
-    }
-
     public void setxCopy(short xCopy) {
+        if (xCopy < 0) {
+            throw new IllegalArgumentException("xCopy cannot be negative");
+        }
         this.xCopy = xCopy;
     }
 
     public void setyCopy(short yCopy) {
+        if (yCopy < 0) {
+            throw new IllegalArgumentException("yCopy cannot be negative");
+        }
         this.yCopy = yCopy;
     }
 
@@ -591,10 +608,6 @@ public class AnimatedObject {
 
     public short getCurrentLoop() {
         return currentLoop;
-    }
-
-    public Loop getCurrentLoopData() {
-        return currentLoopData;
     }
 
     public short getCurrentCell() {
