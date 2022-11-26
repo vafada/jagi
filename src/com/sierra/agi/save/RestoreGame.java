@@ -227,9 +227,9 @@ public class RestoreGame {
 
             //STRPTR save;        /* pointer to background save area            */    e.g.   2f 9c (0x9c2f = ) IGNORE
             //COORD prevx;        /* previous x coordinate                      */    e.g.   6e 00 (0x006e = )
-            animatedObject.setxCopy((byte) (savedGameData[aniObjOffset + 22] + (savedGameData[aniObjOffset + 23] << 8)));
+            animatedObject.setxCopy((short) (savedGameData[aniObjOffset + 22] + (savedGameData[aniObjOffset + 23] << 8)));
             //COORD prevy;        /* previous y coordinate                      */    e.g.   64 00 (0x0064 = )
-            animatedObject.setyCopy((byte) (savedGameData[aniObjOffset + 24] + (savedGameData[aniObjOffset + 25] << 8)));
+            animatedObject.setyCopy((short) (savedGameData[aniObjOffset + 24] + (savedGameData[aniObjOffset + 25] << 8)));
             //COORD xsize;        /* x dimension of current cell                */    e.g.   06 00 (0x0006 = ) IGNORE
             //COORD ysize;        /* y dimension of current cell                */    e.g.   20 00 (0x0020 = ) IGNORE
             //UBYTE stepsize;     /* distance object can move                   */    e.g.   01
