@@ -28,7 +28,7 @@ public class ViewSprite implements Comparable<ViewSprite> {
         height = v.getHeight();
     }
 
-    public void blit(Area screenUpdate, int[] screen, int[] priority) {
+    public void blit(Area screenUpdate, int[] picture, int[] priority) {
         byte cellPriority = (byte) entry.getPriority();
         int[] cellData = entry.getCellData().getPixelData();
         int cellTransparent = entry.getCellData().getTransparentPixel();
@@ -43,7 +43,7 @@ public class ViewSprite implements Comparable<ViewSprite> {
                     int pixel = cellData[cellOffset];
 
                     if (pixel != cellTransparent) {
-                        screen[screenOffset] = pixel;
+                        picture[screenOffset] = pixel;
                         int currentPriorityPixel = priority[screenOffset];
                         // do not override control pixels
                         if (currentPriorityPixel >= 4) {
