@@ -663,7 +663,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                 viewTable.setDirection((short) 0, vars[VAR_EGO_DIRECTION]);
 
                 if ((oldScore != vars[VAR_SCORE]) || (oldSound != flags[FLAG_SOUND_ON])) {
-                    writeStatus();
+                    updateStatusLine();
                 }
 
                 setVar(VAR_BORDER_TOUCHING, (short) 0);
@@ -859,9 +859,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         } catch (ResourceException rex) {
             rex.printStackTrace();
         }
-    }
-
-    public void writeStatus() {
     }
 
     public void pushLogic(Object logicInfo) {
