@@ -207,7 +207,6 @@ public class RestoreGame {
             //COORD y;            /* current y coordinate                       */    e.g.   64 00 (0x0064 = )
             animatedObject.setY((short) (savedGameData[aniObjOffset + 5] + (savedGameData[aniObjOffset + 6] << 8)));
             //UBYTE view;         /* current view number                        */    e.g.   00
-            animatedObject.setView(logicContext, (short) savedGameData[aniObjOffset + 7]);
             animatedObject.setCurrentView((short) savedGameData[aniObjOffset + 7]);
             //VIEW* viewptr;      /* pointer to current view                    */    e.g.   17 6b (0x6b17 = ) IGNORE.
             //UBYTE loop;         /* current loop in view                       */    e.g.   00
@@ -222,6 +221,9 @@ public class RestoreGame {
             if (animatedObject.getCurrentViewData() != null) {
                 animatedObject.setPreviousCellData(animatedObject.getCurrentCellData());
             }
+
+            // after we set the loop, cel, view, etc.. call setView to setup internal data
+            animatedObject.setView(logicContext, (short) savedGameData[aniObjOffset + 7]);
 
             //STRPTR save;        /* pointer to background save area            */    e.g.   2f 9c (0x9c2f = ) IGNORE
             //COORD prevx;        /* previous x coordinate                      */    e.g.   6e 00 (0x006e = )
