@@ -266,21 +266,15 @@ public class LogicReader {
     }
 
     protected String[] readMessages(byte[] b) {
-        int startPos;
-        int numMessages;
-        int fileData, marker;
-        int j, l;
-        String[] m;
+        int startPos = ByteCaster.lohiUnsignedShort(b, 0) + 2;
+        int numMessages = ByteCaster.lohiUnsignedByte(b, startPos);
+        int fileData = startPos + 3;
 
-        startPos = ByteCaster.lohiUnsignedShort(b, 0) + 2;
-        numMessages = ByteCaster.lohiUnsignedByte(b, startPos);
-        fileData = startPos + 3;
-
-        m = new String[numMessages + 1];
-        marker = fileData;
+        String[] m = new String[numMessages + 1];
+        int marker = fileData;
 
         for (int i = 1; i <= numMessages; i++, marker += 2) {
-            j = ByteCaster.lohiUnsignedShort(b, marker);
+            int j = ByteCaster.lohiUnsignedShort(b, marker);
 
             if (j == 0) {
                 continue;
@@ -288,7 +282,7 @@ public class LogicReader {
 
             j -= 2;
             j += fileData;
-            l = j;
+            int l = j;
 
             while (b[l] != 0) {
                 l++;
