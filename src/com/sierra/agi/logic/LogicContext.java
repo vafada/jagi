@@ -1028,8 +1028,12 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                 case AddToPic: {
                     try {
                         getViewTable().addToPic(
-                                scriptBufferEvent.data[0], scriptBufferEvent.data[1], scriptBufferEvent.data[2],
-                                scriptBufferEvent.data[3], scriptBufferEvent.data[4], (byte) (scriptBufferEvent.data[5] & 0x0F),
+                                (short) Byte.toUnsignedInt(scriptBufferEvent.data[0]),
+                                (short) Byte.toUnsignedInt(scriptBufferEvent.data[1]),
+                                (short) Byte.toUnsignedInt(scriptBufferEvent.data[2]),
+                                (short) Byte.toUnsignedInt(scriptBufferEvent.data[3]),
+                                (short) Byte.toUnsignedInt(scriptBufferEvent.data[4]),
+                                (byte) (scriptBufferEvent.data[5] & 0x0F),
                                 (byte) ((scriptBufferEvent.data[5] >> 4) & 0x0F)
                         );
                     } catch (Exception e) {
