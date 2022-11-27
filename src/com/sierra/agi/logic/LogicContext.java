@@ -840,7 +840,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         }
 
         if (changed) {
-            System.out.println("commandLine = " + commandLine.toString());
             getViewScreen().setInputLine(commandLine.toString());
         }
     }
