@@ -760,11 +760,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                         }
                         break;
 
-                    case KeyEvent.VK_SPACE:
-                        commandLine.append(ev.getKeyChar());
-                        changed = true;
-                        break;
-
                     case KeyEvent.VK_UP:
                     case KeyEvent.VK_NUMPAD8:
                         dir = (short) 1;
