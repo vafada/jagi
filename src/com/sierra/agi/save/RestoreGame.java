@@ -46,7 +46,6 @@ public class RestoreGame {
         while (savedGameData[textEnd] != 0) {
             textEnd++;
         }
-        String savedGameDescription = new String(rawData, 0, textEnd, "US-ASCII");
 
         // FIRST PIECE: SAVE VARIABLES
         // [0] 31 - 32(2 bytes) Length of save variables piece. Length depends on AGI interpreter version. [e.g. (0xE1 0x05) for some games, (0xDB 0x03) for some]
@@ -56,8 +55,6 @@ public class RestoreGame {
         // [2] 33 - 39(7 bytes) Game ID("SQ2", "KQ3", "LLLLL", etc.), NUL padded.
         textEnd = 33;
         while ((savedGameData[textEnd] != 0) && ((textEnd - 33) < 7)) textEnd++;
-        String gameId = new String(savedGameData, 33, textEnd - 33);
-        //TODO: if (!gameId.Equals(state.GameId)) return false;
 
         // If we're sure that this saved game file is for this game, then continue.
         this.logicContext.reset();
@@ -109,7 +106,7 @@ public class RestoreGame {
         int scriptEntryCount = (savedGameData[354] + (savedGameData[355] << 8));
 
         // [325] 356 - 555(200 or 160 bytes) ? Key to controller map (4 bytes each)
-        int keyMapSize = (saveVarsLength < 1000 ? 40 : 50);   // TODO: This is a version check hack. Need a better way.
+        int keyMapSize = SaveUtils.getNumberOfControllers(logicContext.getVersion());
         for (int i = 0; i < keyMapSize; i++) {
             int keyMapOffset = i << 2;
             int keyCode = (savedGameData[356 + keyMapOffset] + (savedGameData[357 + keyMapOffset] << 8));
@@ -123,7 +120,7 @@ public class RestoreGame {
         int postKeyMapOffset = 356 + (keyMapSize << 2);
 
         // [525] 556 - 1515(480 or 960 bytes) 12 or 24 strings, each 40 bytes long
-        int numOfStrings = (saveVarsLength < 1000 ? 12 : 24);  // TODO: This is a version check hack. Need a better way.
+        int numOfStrings = SaveUtils.getNumberOfStrings(logicContext.getVersion());
         for (int i = 0; i < numOfStrings; i++) {
             int stringOffset = postKeyMapOffset + (i * this.logicContext.STRING_LENGTH);
             textEnd = stringOffset;

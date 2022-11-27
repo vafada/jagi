@@ -24,30 +24,7 @@ public class SaveGame {
         this.logicContext = logicContext;
     }
 
-    private int getNumberOfStrings(String version) {
-        switch (version) {
-            case "2.089":
-            case "2.272":
-            case "2.277":
-            case "3.002.149":
-                return 12;
-            // Most versions have 24 strings, as defined in the Defines constant.
-            default:
-                return MAX_STRINGS;
-        }
-    }
 
-    private int getNumberOfControllers(String version) {
-        switch (version) {
-            case "2.089":
-            case "2.272":
-            case "2.277":
-                return 40;
-            // Most versions have a max of 50 controllers, as defined in the Defines constant.
-            default:
-                return 50;
-        }
-    }
 
     private int getSaveVariablesLength(String version) {
         switch (version) {
@@ -183,7 +160,7 @@ public class SaveGame {
             }
         }
 
-        int keyMapSize = getNumberOfControllers(logicContext.getVersion());
+        int keyMapSize = SaveUtils.getNumberOfControllers(logicContext.getVersion());
         int postKeyMapOffset = 356 + (keyMapSize << 2);
 
         // [525] 556 - 1515(480 or 960 bytes) 12 or 24 strings, each 40 bytes long. For 2.4XX to 2.9XX, it was 24 strings.
@@ -198,7 +175,7 @@ public class SaveGame {
             }
         }
 
-        int numOfStrings = getNumberOfStrings(logicContext.getVersion());
+        int numOfStrings = SaveUtils.getNumberOfStrings(logicContext.getVersion());
         int postStringsOffset = postKeyMapOffset + (numOfStrings * STRING_LENGTH);
         ViewScreen viewScreen = viewTable.getViewScreen();
 
