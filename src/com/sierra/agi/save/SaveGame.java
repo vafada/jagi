@@ -14,11 +14,39 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
 
+import static com.sierra.agi.logic.LogicVariables.MAX_STRINGS;
+import static com.sierra.agi.logic.LogicVariables.STRING_LENGTH;
+
 public class SaveGame {
     private LogicContext logicContext;
 
     public SaveGame(LogicContext logicContext) {
         this.logicContext = logicContext;
+    }
+
+    private int getNumberOfStrings(String version) {
+        switch (version) {
+            case "2.089":
+            case "2.272":
+            case "2.277":
+            case "3.002.149":
+                return 12;
+            // Most versions have 24 strings, as defined in the Defines constant.
+            default:
+                return MAX_STRINGS;
+        }
+    }
+
+    private int getNumberOfControllers(String version) {
+        switch (version) {
+            case "2.089":
+            case "2.272":
+            case "2.277":
+                return 40;
+            // Most versions have a max of 50 controllers, as defined in the Defines constant.
+            default:
+                return 50;
+        }
     }
 
     private int getSaveVariablesLength(String version) {
@@ -129,13 +157,13 @@ public class SaveGame {
         // [313] 344 - 345(2 bytes) Player control (1) / Program control (0)
         savedGameData[344] = (byte) (logicContext.getPlayerControl() ? 1 : 0);
         // [315] 346 - 347(2 bytes) Current PICTURE number
-        // TODO
+        savedGameData[346] = (byte) logicContext.getPictureNumber();
         // savedGameData[346] = (byte) viewTable.getPictureContext().;
         // [317] 348 - 349(2 bytes) Blocking flag (1 = true, 0 = false)
         savedGameData[348] = (byte) (viewTable.isBlockSet() ? 1 : 0);
 
         // [319] 350 - 351(2 bytes) Max drawn. Always set to 15. Maximum number of animated objects that can be drawn at a time. Set by old max.drawn command in AGI v2.001.
-        // TODO: savedGameData[350] = (byte) state.MaxDrawn;
+        savedGameData[350] = (byte) 15;
         // [321] 352 - 353(2 bytes) Script size. Set by script.size. Max number of script event items. Default is 50.
         savedGameData[352] = (byte) logicContext.getScriptBuffer().getScriptSize();
         // [323] 354 - 355(2 bytes) Current number of script event entries.
@@ -155,10 +183,12 @@ public class SaveGame {
             }
         }
 
+        int keyMapSize = getNumberOfControllers(logicContext.getVersion());
+        int postKeyMapOffset = 356 + (keyMapSize << 2);
 
         // [525] 556 - 1515(480 or 960 bytes) 12 or 24 strings, each 40 bytes long. For 2.4XX to 2.9XX, it was 24 strings.
-        for (int i = 0; i < LogicVariables.MAX_STRINGS; i++) {
-            pos = 556 + (i * LogicVariables.STRING_LENGTH);
+        for (int i = 0; i < MAX_STRINGS; i++) {
+            pos = 556 + (i * STRING_LENGTH);
             if ((logicContext.getString((short) i) != null) && (logicContext.getString((short) i).length() > 0)) {
                 String s = logicContext.getString((short) i);
                 byte[] stringBytes = s.getBytes();
@@ -168,39 +198,44 @@ public class SaveGame {
             }
         }
 
+        int numOfStrings = getNumberOfStrings(logicContext.getVersion());
+        int postStringsOffset = postKeyMapOffset + (numOfStrings * STRING_LENGTH);
         ViewScreen viewScreen = viewTable.getViewScreen();
 
         // [1485] 1516(2 bytes) Foreground colour
-        savedGameData[1516] = viewScreen.getForegroundColorByte();
+        savedGameData[postStringsOffset + 0] = viewScreen.getForegroundColorByte();
         // [1487] 1518(2 bytes) Background colour
-        savedGameData[1518] = viewScreen.getBackgroundColorByte();
+        savedGameData[postStringsOffset + 2] = viewScreen.getBackgroundColorByte();
         // [1489] 1520(2 bytes) Text Attribute value (combined foreground/background value)
         // TODO
         //int textAttribute = (savedGameData[postStringsOffset + 4] + (savedGameData[postStringsOffset + 5] << 8));
         // [1491] 1522(2 bytes) Accept input = 1, Prevent input = 0
-        savedGameData[1522] = (byte) (logicContext.isAcceptInput() ? 1 : 0);
+        savedGameData[postStringsOffset + 6] = (byte) (logicContext.isAcceptInput() ? 1 : 0);
 
         // [1493] 1524(2 bytes) User input row on the screen
-        savedGameData[1524] = (byte) (viewScreen.getLineUserInput());
+        savedGameData[postStringsOffset + 8] = (byte) (viewScreen.getLineUserInput());
 
         // [1495] 1526(2 bytes) Cursor character
-        savedGameData[1526] = (byte) viewScreen.getCursorChar();
+        savedGameData[postStringsOffset + 10] = (byte) viewScreen.getCursorChar();
 
         // [1497] 1528(2 bytes) Show status line = 1, Don't show status line = 0
-        savedGameData[1528] = (byte) (logicContext.isShouldShowStatusLine() ? 1 : 0);
+        savedGameData[postStringsOffset + 12] = (byte) (logicContext.isShouldShowStatusLine() ? 1 : 0);
 
         // [1499] 1530(2 bytes) Status line row on the screen
-        savedGameData[1530] = (byte) viewScreen.getLineStatus();
+        savedGameData[postStringsOffset + 14] = (byte) viewScreen.getLineStatus();
 
         // [1501] 1532(2 bytes) Picture top row on the screen
-        savedGameData[1532] = (byte) viewScreen.getLineMinPrint();
+        savedGameData[postStringsOffset + 16] = (byte) viewScreen.getLineMinPrint();
 
         // [1503] 1534(2 bytes) Picture bottom row on the screen
-        savedGameData[1534] = (byte) (viewScreen.getLineMinPrint() + 21);
+        savedGameData[postStringsOffset + 18] = (byte) (viewScreen.getLineMinPrint() + 21);
 
         // [1505] 1536(2 bytes) Stores a pushed position within the script event list
         // Note: Depends on interpreter version. 2.4xx and below didn't have push.script/pop.script, so they didn't have this saved game field.
-        // TODO savedGameData[1536] = (byte) (state.ScriptBuffer.SavedScript);
+        if ((postStringsOffset + 20) < aniObjsOffset) {
+            // The spec is 2 bytes, but as with the fields above, there shouldn't be more than 255.
+            savedGameData[1536] = (byte)(logicContext.getScriptBuffer().getSavedScript());
+        }
 
         // SECOND PIECE: ANIMATED OBJECT STATE
         // 1538 - 1539(2 bytes) Length of piece
@@ -233,7 +268,6 @@ public class SaveGame {
             //UBYTE loop;         /* current loop in view                       */    e.g.   00
             savedGameData[aniObjOffset + 10] = (byte) aniObj.getCurrentLoop();
             //UBYTE loopcnt;      /* number of loops in view                    */    e.g.   04
-            // TODO:
             if (aniObj.getViewData() != null) {
                 savedGameData[aniObjOffset + 11] = (byte) aniObj.getViewData().getLoopCount();
             }

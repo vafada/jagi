@@ -1126,4 +1126,12 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         }
         this.graphicMode = true;
     }
+
+    public int getPictureNumber() {
+        return pictureNumber;
+    }
+
+    public void setPictureNumber(int pictureNumber) {
+        this.pictureNumber = pictureNumber;
+    }
 }

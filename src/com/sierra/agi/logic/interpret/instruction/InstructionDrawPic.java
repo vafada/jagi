@@ -44,6 +44,7 @@ public class InstructionDrawPic extends InstructionUni {
      */
     public int execute(Logic logic, LogicContext logicContext) throws Exception {
         short pictureNumber = logicContext.getVar(p1);
+        logicContext.setPictureNumber(pictureNumber);
         logicContext.getScriptBuffer().addScript(ScriptBuffer.ScriptBufferEventType.DrawPic, pictureNumber, null);
         logicContext.getViewTable().drawPic(logicContext.getCache().getPicture(pictureNumber));
         return 2;

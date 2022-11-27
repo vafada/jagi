@@ -169,4 +169,8 @@ public class ScriptBuffer {
     public ArrayList<ScriptBufferEvent> getEvents() {
         return events;
     }
+
+    public int getSavedScript() {
+        return savedScript;
+    }
 }
