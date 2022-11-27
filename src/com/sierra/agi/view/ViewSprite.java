@@ -120,13 +120,7 @@ public class ViewSprite implements Comparable<ViewSprite> {
         return y;
     }
 
-    private short effectiveY() {
-        if (this.entry.isSomeFlagsSet(AnimatedObject.FLAG_FIX_PRIORITY)) {
-            return (short)(LogicVariables.PRIORITY_BASE + Math.ceil(((168.0 - LogicVariables.PRIORITY_BASE) / 10.0f) * (this.entry.priority - 4 - 1)));
-        }
 
-        return entry.getY();
-    }
 
     @Override
     public int compareTo(ViewSprite other) {
@@ -135,9 +129,9 @@ public class ViewSprite implements Comparable<ViewSprite> {
         } else if (this.entry.priority > other.entry.priority) {
             return 1;
         } else {
-            if (this.effectiveY() < other.effectiveY()) {
+            if (this.entry.effectiveY() < other.entry.effectiveY()) {
                 return -1;
-            } else if (this.effectiveY() > other.effectiveY()) {
+            } else if (this.entry.effectiveY() > other.entry.effectiveY()) {
                 return 1;
             } else {
                 return 0;

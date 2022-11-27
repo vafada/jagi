@@ -9,6 +9,7 @@
 package com.sierra.agi.view;
 
 import com.sierra.agi.logic.LogicContext;
+import com.sierra.agi.logic.LogicVariables;
 
 public class AnimatedObject {
     public static final short DIRECTION_NONE = (short) 0;
@@ -622,5 +623,13 @@ public class AnimatedObject {
 
     public short getyCopy() {
         return yCopy;
+    }
+
+    public short effectiveY() {
+        if (this.isSomeFlagsSet(AnimatedObject.FLAG_FIX_PRIORITY)) {
+            return (short)(LogicVariables.PRIORITY_BASE + Math.ceil(((168.0 - LogicVariables.PRIORITY_BASE) / 10.0f) * (this.priority - 4 - 1)));
+        }
+
+        return y;
     }
 }
