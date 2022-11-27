@@ -197,6 +197,20 @@ public class ViewScreen {
         return pixel[0];
     }
 
+    public void displayLine(int col, int line, String message, byte foregroundColorByte, byte backgroundColorByte) {
+        int backupForeground = this.foregroundColor;
+        int backupBackground = this.backgroundColor;
+
+
+        this.backgroundColor = translatePixel(backgroundColorByte);
+        this.foregroundColor = translatePixel(foregroundColorByte);
+
+        this.displayLine(col, line, message);
+
+        this.foregroundColor = backupForeground;
+        this.backgroundColor = backupBackground;
+    }
+
     public void displayLine(int col, int line, String message) {
         int x = col * CHAR_WIDTH;
         int y = line * CHAR_HEIGHT;

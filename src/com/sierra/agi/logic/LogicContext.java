@@ -1117,8 +1117,13 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
     public void showInventoryScreen() {
         this.graphicMode = false;
-        getViewScreen().textMode((byte) 15);
-        InventoryScreen inventoryScreen = new InventoryScreen();
-        inventoryScreen.show();
+
+        try {
+            InventoryScreen inventoryScreen = new InventoryScreen(this);
+            inventoryScreen.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.graphicMode = true;
     }
 }
