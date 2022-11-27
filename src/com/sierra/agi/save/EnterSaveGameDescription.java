@@ -20,6 +20,7 @@ public class EnterSaveGameDescription {
         if (logicContext != null) {
             logicContext.stopClock();
         }
+        String description = null;
 
         viewScreen.save();
 
@@ -47,9 +48,11 @@ public class EnterSaveGameDescription {
                     line.append((char) key);
                 }
             } else if (key == KeyEvent.VK_ESCAPE) {
-                return null;
+                description = null;
+                break;
             } else if (key == KeyEvent.VK_ENTER) {
-                return line.toString();
+                description = line.toString();
+                break;
             } else if (key == KeyEvent.VK_BACK_SPACE) {
                 // Removes one from the end of the currently entered input.
                 if (line.length() > 0) {
@@ -60,7 +63,14 @@ public class EnterSaveGameDescription {
                 displayLine(viewScreen, inputPoint.x, inputPoint.y, (line + "_ "));
             }
         }
-        return null;
+
+        viewScreen.restore(true);
+
+        if (logicContext != null) {
+            logicContext.startClock();
+        }
+
+        return description;
     }
 
     public Point draw(ViewScreen viewScreen) {

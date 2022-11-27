@@ -51,7 +51,7 @@ public class SaveGame {
         }
     }
 
-    public void save(int slotNumber) throws Exception {
+    public void save(int slotNumber, String description) throws Exception {
         String absolutePath = logicContext.getCache().getPath().getAbsolutePath();
 
         // No saved game will ever be as big as 20000, but we put that as a theoretical lid
@@ -61,7 +61,6 @@ public class SaveGame {
         int pos = 0;
 
         // 0 - 30(31 bytes) SAVED GAME DESCRIPTION.
-        String description = "jagi" + slotNumber;
         byte[] descBytes = description.getBytes();
         for (int i = 0; i < descBytes.length; i++) {
             savedGameData[pos++] = descBytes[i];
