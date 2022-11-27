@@ -9,6 +9,7 @@ import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.logic.interpret.LogicReader;
 import com.sierra.agi.save.ChooseRestoreGameBox;
 import com.sierra.agi.save.ChooseSaveGameBox;
+import com.sierra.agi.save.ConfirmSaveRestoreGame;
 import com.sierra.agi.save.EnterSaveGameDescription;
 import com.sierra.agi.save.SaveGame;
 import com.sierra.agi.view.SavedGame;
@@ -52,15 +53,18 @@ public class InstructionSaveGame extends Instruction {
         SavedGame chosenGame = box.show(logicContext, logicContext.getViewScreen());
 
         if (chosenGame != null) {
-            System.out.println("chosenGame = " + chosenGame.description);
             EnterSaveGameDescription enterSaveGameDescription = new EnterSaveGameDescription(chosenGame.description);
             String newDescription = enterSaveGameDescription.show(logicContext, logicContext.getViewScreen());
             if (newDescription != null && !newDescription.isEmpty() && !newDescription.isBlank()) {
-                try {
-                    SaveGame saveGame = new SaveGame(logicContext);
-                    saveGame.save(chosenGame.num, newDescription);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                ConfirmSaveRestoreGame confirmSaveRestoreGame = new ConfirmSaveRestoreGame(true, newDescription, chosenGame.fileName);
+                boolean confirm = confirmSaveRestoreGame.show(logicContext, logicContext.getViewScreen());
+                if (confirm) {
+                    try {
+                        SaveGame saveGame = new SaveGame(logicContext);
+                        saveGame.save(chosenGame.num, newDescription);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
