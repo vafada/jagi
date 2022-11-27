@@ -10,9 +10,11 @@ package com.sierra.agi.debug;
 
 import com.sierra.agi.menu.AgiMenuBar;
 import com.sierra.agi.save.ChooseRestoreGameBox;
+import com.sierra.agi.save.ConfirmSaveRestoreGame;
 import com.sierra.agi.view.ViewScreen;
 
 import java.awt.*;
+import java.nio.file.Paths;
 
 public class MenuTesterFrame extends Frame implements Runnable {
     protected ViewScreen screen;
@@ -71,8 +73,10 @@ public class MenuTesterFrame extends Frame implements Runnable {
     }
 
     public void run() {
-        ChooseRestoreGameBox restoreBox = new ChooseRestoreGameBox("kq2", "C:\\agigames\\kq2" );
-        restoreBox.show(null, screen);
+        ConfirmSaveRestoreGame confirmSaveRestoreGame = new ConfirmSaveRestoreGame(false, "desc", Paths.get("").toAbsolutePath().toString());
+        confirmSaveRestoreGame.show(null, screen);
+        //ChooseRestoreGameBox restoreBox = new ChooseRestoreGameBox("kq2", "C:\\agigames\\kq2" );
+        //restoreBox.show(null, screen);
         /*MessageBox box;
 
         box = new MessageBox("You selected controller " + screen.menuLoop(bar) + ".\r\nYoink!");
