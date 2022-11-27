@@ -9,10 +9,9 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 public class ConfirmSaveRestoreGame {
-    private static final int MAX_COLUMN = 35;
+    private static final int MAX_COLUMN = 25;
     private String[] lines;
 
     public ConfirmSaveRestoreGame(boolean save, String description, String path) {
@@ -23,28 +22,8 @@ public class ConfirmSaveRestoreGame {
         List lines = new ArrayList<String>();
 
 
-        // header
-        {
-            StringBuffer current = new StringBuffer();
-            StringTokenizer words = new StringTokenizer("About to " + (save ? "save" : "restore") + " the game described as:", " ", true);
-
-            while (words.hasMoreTokens()) {
-                String word = words.nextToken();
-
-                if ((current.length() + word.length()) > MAX_COLUMN) {
-                    lines.add(current.toString());
-                    current = new StringBuffer();
-                }
-
-                if (word.equals(" ") && (current.length() == 0)) {
-                    continue;
-                }
-
-                current.append(word);
-            }
-
-            lines.add(current.toString());
-        }
+        lines.add("About to " + (save ? "save" : "restore") + " the game");
+        lines.add("described as:");
 
         lines.add("");
         lines.add("");

@@ -20,11 +20,16 @@ public class RestoreGame {
         SavedGame chosenGame = box.show(this.logicContext, this.logicContext.getViewScreen());
 
         if (chosenGame != null && chosenGame.exists) {
-            try {
-                return this.restoreFile(chosenGame.savedGameData);
-            } catch (Exception e) {
-                System.out.println("e = " + e);
-                e.printStackTrace();
+            ConfirmSaveRestoreGame confirmSaveRestoreGame = new ConfirmSaveRestoreGame(false, chosenGame.description, chosenGame.fileName);
+            boolean confirm = confirmSaveRestoreGame.show(this.logicContext, this.logicContext.getViewScreen());
+
+            if (confirm) {
+                try {
+                    return this.restoreFile(chosenGame.savedGameData);
+                } catch (Exception e) {
+                    System.out.println("e = " + e);
+                    e.printStackTrace();
+                }
             }
         }
         return false;
