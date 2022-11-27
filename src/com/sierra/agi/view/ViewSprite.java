@@ -125,7 +125,7 @@ public class ViewSprite implements Comparable<ViewSprite> {
             return (short)(LogicVariables.PRIORITY_BASE + Math.ceil(((168.0 - LogicVariables.PRIORITY_BASE) / 10.0f) * (this.entry.priority - 4 - 1)));
         }
 
-        return (short) y;
+        return entry.getY();
     }
 
     @Override
