@@ -50,7 +50,7 @@ public class EnterSaveGameDescription {
             if (key >= 32 && key <= 126) {
                 // If we haven't reached the max length, add the char to the line of text.
                 if (line.length() < MAX_DESCRIPTION_LENGTH) {
-                    line.append((char) key);
+                    line.append(ev.getKeyChar());
                 }
             } else if (key == KeyEvent.VK_ESCAPE) {
                 description = null;

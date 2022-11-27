@@ -810,7 +810,9 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                         break;
                 }
 
-                if ((ev.getKeyCode() >= KeyEvent.VK_A) && (ev.getKeyCode() <= KeyEvent.VK_Z)) {
+                // if ((ev.getKeyCode() >= KeyEvent.VK_A) && (ev.getKeyCode() <= KeyEvent.VK_Z)) {
+                // All visible ascii char
+                if ((ev.getKeyCode() >= 32) && (ev.getKeyCode() <= 126)) {
                     commandLine.append(ev.getKeyChar());
                     changed = true;
                 }
@@ -838,6 +840,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         }
 
         if (changed) {
+            System.out.println("commandLine = " + commandLine.toString());
             getViewScreen().setInputLine(commandLine.toString());
         }
     }
