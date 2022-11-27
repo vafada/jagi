@@ -810,9 +810,8 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                         break;
                 }
 
-                // if ((ev.getKeyCode() >= KeyEvent.VK_A) && (ev.getKeyCode() <= KeyEvent.VK_Z)) {
                 // All visible ascii char
-                if ((ev.getKeyCode() >= 32) && (ev.getKeyCode() <= 126)) {
+                if ((ev.getKeyChar() >= 32) && (ev.getKeyChar() <= 126)) {
                     commandLine.append(ev.getKeyChar());
                     changed = true;
                 }
