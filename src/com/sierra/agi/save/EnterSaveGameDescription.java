@@ -13,7 +13,7 @@ public class EnterSaveGameDescription {
     private static final int MAX_COLUMN = 31;
     private static final int MAX_DESCRIPTION_LENGTH = 30;
 
-    private String description = null;
+    private String description = "";
 
     public EnterSaveGameDescription(String description) {
         if (description != null && !description.isBlank() && !description.isEmpty()) {
@@ -35,7 +35,7 @@ public class EnterSaveGameDescription {
         ega.clearEvents();
 
         // Get a line of text from the user.
-        StringBuilder line = new StringBuilder();
+        StringBuilder line = new StringBuilder(this.description);
         KeyEvent ev;
         // Process entered keys until either ENTER or ESC is pressed.
         while (true) {
@@ -108,7 +108,7 @@ public class EnterSaveGameDescription {
                 "How would you like to describe",
                 "this saved game?",
                 "",
-                " ".repeat(MAX_DESCRIPTION_LENGTH + 1),
+                String.format("%-30s", this.description),
         };
 
         int inputX = 0;
@@ -124,12 +124,21 @@ public class EnterSaveGameDescription {
             if (line == 3) {
                 inputX = x + ViewScreen.CHAR_WIDTH;
                 inputY = y;
+
+                EgaUtils.putString(screen, font, text, x + ViewScreen.CHAR_WIDTH, y, ViewScreen.WIDTH, backColor, textColor, true);
+
+                if (end != textEnd) {
+                    viewScreen.drawBlanks(textColor, textEnd, y, end - textEnd);
+                }
+
             } else {
                 EgaUtils.putString(screen, font, text, x + ViewScreen.CHAR_WIDTH, y, ViewScreen.WIDTH, textColor, backColor, true);
+
+                if (end != textEnd) {
+                    viewScreen.drawBlanks(backColor, textEnd, y, end - textEnd);
+                }
             }
-            if (end != textEnd) {
-                viewScreen.drawBlanks(backColor, textEnd, y, end - textEnd);
-            }
+
 
             viewScreen.drawRightLine(borderColor, backColor, end, y);
             y += ViewScreen.CHAR_HEIGHT;
