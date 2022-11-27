@@ -641,7 +641,7 @@ public class ViewScreen {
             if ((key >= 65 && key <= 90) || key == 32) {
                 // If we haven't reached the max length, add the char to the line of text.
                 if (line.length() < length) {
-                    line.append((char) key);
+                    line.append(ev.getKeyChar());
                 }
             } else if (key == KeyEvent.VK_ESCAPE) {
                 return null;
