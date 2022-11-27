@@ -10,6 +10,7 @@ package com.sierra.agi.view;
 
 import com.sierra.agi.awt.EgaComponent;
 import com.sierra.agi.awt.EgaUtils;
+import com.sierra.agi.inv.InventoryScreen;
 import com.sierra.agi.logic.LogicVariables;
 import com.sierra.agi.menu.AgiMenuBar;
 
@@ -586,6 +587,11 @@ public class ViewScreen {
         save();
         // Clear the whole screen to the background colour.
         clearLines(0, 24, this.backgroundColorByte);
+    }
+    public void textMode(byte backgroundColorByte) {
+        save();
+        // Clear the whole screen to the background colour.
+        clearLines(0, 24, backgroundColorByte);
     }
 
     public void graphicMode() {

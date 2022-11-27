@@ -13,6 +13,7 @@ import com.sierra.agi.awt.EgaEvent;
 import com.sierra.agi.awt.EgaUtils;
 import com.sierra.agi.debug.ExceptionDialog;
 import com.sierra.agi.inv.InventoryObjects;
+import com.sierra.agi.inv.InventoryScreen;
 import com.sierra.agi.menu.AgiMenuBar;
 import com.sierra.agi.res.ResourceCache;
 import com.sierra.agi.res.ResourceException;
@@ -140,7 +141,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     protected short soundFlag;
 
     protected StringBuffer commandLine = new StringBuffer();
-    protected String commandLineP = "";
     protected String commandLineC;
     protected boolean acceptInput;
     protected Word[] words;
@@ -1113,5 +1113,12 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
         updateStatusLine();
         getViewScreen().setInputLine("");
+    }
+
+    public void showInventoryScreen() {
+        this.graphicMode = false;
+        getViewScreen().textMode((byte) 15);
+        InventoryScreen inventoryScreen = new InventoryScreen();
+        inventoryScreen.show();
     }
 }

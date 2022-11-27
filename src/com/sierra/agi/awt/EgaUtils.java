@@ -297,7 +297,7 @@ public abstract class EgaUtils {
     /**
      * Keyboard Handling
      */
-    private static final int[] keys =
+    private static final int[] KEYS =
             {
                     /* Function Keys */
                     KeyEvent.VK_F1, 0x3b00,
@@ -310,6 +310,8 @@ public abstract class EgaUtils {
                     KeyEvent.VK_F8, 0x4200,
                     KeyEvent.VK_F9, 0x4300,
                     KeyEvent.VK_F10, 0x4400,
+
+                    KeyEvent.VK_TAB, 0x0009,
 
                     KeyEvent.VK_BACK_SPACE, 0x0008,
                     KeyEvent.VK_ESCAPE, 0x001b,
@@ -500,11 +502,9 @@ public abstract class EgaUtils {
     }
 
     public static short convertKey(int keyCode) {
-        int index;
-
-        for (index = 0; index < keys.length; index += 2) {
-            if (keyCode == keys[index]) {
-                return (short) keys[index + 1];
+        for (int index = 0; index < KEYS.length; index += 2) {
+            if (keyCode == KEYS[index]) {
+                return (short) KEYS[index + 1];
             }
         }
 

@@ -43,17 +43,11 @@ public class AGI {
         frame.addWindowListener(
                 new WindowAdapter() {
                     public void windowClosing(WindowEvent ev) {
-                        EgaComponent component;
-
-                        logicContext.clearInput();
-                        component = logicContext.getComponent();
-                        component.pushKeyboardEvent(new KeyEvent(frame, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_Q, 'Q'));
-                        component.pushKeyboardEvent(new KeyEvent(frame, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_U, 'u'));
-                        component.pushKeyboardEvent(new KeyEvent(frame, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_I, 'i'));
-                        component.pushKeyboardEvent(new KeyEvent(frame, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_T, 't'));
-                        component.pushKeyboardEvent(new KeyEvent(frame, KeyEvent.KEY_PRESSED, 0, 0, KeyEvent.VK_ENTER));
+                        System.exit(0);
                     }
                 });
+        frame.setFocusable(true);
+        frame.setFocusTraversalKeysEnabled(false);
         frame.pack();
         frame.setResizable(false);
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
