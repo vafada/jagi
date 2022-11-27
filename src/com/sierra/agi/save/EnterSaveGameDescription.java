@@ -10,12 +10,13 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 
 public class EnterSaveGameDescription {
-    private static final int MAX_COLUMN = 30;
+    private static final int MAX_COLUMN = 31;
+    private static final int MAX_DESCRIPTION_LENGTH = 30;
 
     public EnterSaveGameDescription(String description) {
     }
 
-    public void show(LogicContext logicContext, ViewScreen viewScreen) {
+    public String show(LogicContext logicContext, ViewScreen viewScreen) {
         if (logicContext != null) {
             logicContext.stopClock();
         }
@@ -42,13 +43,13 @@ public class EnterSaveGameDescription {
             int key = ev.getKeyCode();
             if ((key >= 65 && key <= 90) || key == 32) {
                 // If we haven't reached the max length, add the char to the line of text.
-                if (line.length() < 30) {
+                if (line.length() < MAX_DESCRIPTION_LENGTH) {
                     line.append((char) key);
                 }
             } else if (key == KeyEvent.VK_ESCAPE) {
-                return;
+                return null;
             } else if (key == KeyEvent.VK_ENTER) {
-                break;
+                return line.toString();
             } else if (key == KeyEvent.VK_BACK_SPACE) {
                 // Removes one from the end of the currently entered input.
                 if (line.length() > 0) {
@@ -59,6 +60,7 @@ public class EnterSaveGameDescription {
                 displayLine(viewScreen, inputPoint.x, inputPoint.y, (line + "_ "));
             }
         }
+        return null;
     }
 
     public Point draw(ViewScreen viewScreen) {
@@ -91,7 +93,7 @@ public class EnterSaveGameDescription {
                 "How would you like to describe",
                 "this saved game?",
                 "",
-                "                              ",
+                " ".repeat(MAX_DESCRIPTION_LENGTH + 1),
         };
 
         int inputX = 0;
