@@ -822,7 +822,9 @@ public class ViewTable {
     }
 
     protected void restoreBackgrounds(List<ViewSprite> list) {
-        for (ViewSprite viewSprite : list) {
+        final List<ViewSprite> result = new ArrayList<>(list);
+        Collections.reverse(result);
+        for (ViewSprite viewSprite : result) {
             viewSprite.restore(screenUpdate, picturePixels, priorityPixels);
         }
     }
