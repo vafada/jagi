@@ -13,7 +13,12 @@ public class EnterSaveGameDescription {
     private static final int MAX_COLUMN = 31;
     private static final int MAX_DESCRIPTION_LENGTH = 30;
 
+    private String description = null;
+
     public EnterSaveGameDescription(String description) {
+        if (description != null && !description.isBlank() && !description.isEmpty()) {
+            this.description = description;
+        }
     }
 
     public String show(LogicContext logicContext, ViewScreen viewScreen) {
@@ -42,7 +47,7 @@ public class EnterSaveGameDescription {
             }
 
             int key = ev.getKeyCode();
-            if ((key >= 65 && key <= 90) || key == 32) {
+            if (key >= 32 && key <= 126) {
                 // If we haven't reached the max length, add the char to the line of text.
                 if (line.length() < MAX_DESCRIPTION_LENGTH) {
                     line.append((char) key);
