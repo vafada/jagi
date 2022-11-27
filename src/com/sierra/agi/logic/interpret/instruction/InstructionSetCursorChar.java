@@ -43,7 +43,8 @@ public class InstructionSetCursorChar extends InstructionUni {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
-        logicContext.getViewScreen().setCursorChar(logicContext.processMessage(logic.getMessageProcessed(p1)).charAt(0));
+        String cursorStr = logic.getMessageProcessed(p1);
+        logicContext.getViewScreen().setCursorChar(cursorStr.length() > 0 ? cursorStr.charAt(0) : 0);
         return 2;
     }
 
