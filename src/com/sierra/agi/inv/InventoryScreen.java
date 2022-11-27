@@ -39,7 +39,7 @@ public class InventoryScreen {
             if (agiObjectLocation == EGO_OWNED) {
                 InvItem invItem = new InvItem();
                 invItem.num = i;
-                invItem.name = objects.getObject((short) i).getName();
+                invItem.name = objects.getObject(i).getName();
                 invItem.row = row;
 
                 if ((howMany & 1) == 0) {
@@ -81,8 +81,6 @@ public class InventoryScreen {
                 // noop
             }
         } else {
-
-
             while (true) {
                 if ((ev = ega.popCharEvent(-1)) == null) {
                     break;
