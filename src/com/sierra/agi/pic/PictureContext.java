@@ -9,6 +9,7 @@
 package com.sierra.agi.pic;
 
 import com.sierra.agi.awt.EgaUtils;
+import com.sierra.agi.logic.LogicVariables;
 import com.sierra.agi.view.Cel;
 
 import java.awt.Image;
@@ -297,6 +298,10 @@ public class PictureContext {
         int celWidth = cel.getWidth();
         int offset = (y * width) + x;
         int transparentPixel = cel.getTransparentPixel();
+
+        if (pri == 0) {
+            pri = (byte) (y < LogicVariables.PRIORITY_BASE ? LogicVariables.BACK_MOST_PRIORITY : (byte) (((y - LogicVariables.PRIORITY_BASE) / ((168.0 - LogicVariables.PRIORITY_BASE) / 10.0f)) + 5));
+        }
 
         for (int i = 0; i < pixelLength; i += celWidth) {
             int we = i + celWidth;

@@ -8,6 +8,8 @@
 
 package com.sierra.agi.view;
 
+import com.sierra.agi.logic.LogicVariables;
+
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 
@@ -120,7 +122,7 @@ public class ViewSprite implements Comparable<ViewSprite> {
 
     private short effectiveY() {
         if (this.entry.isSomeFlagsSet(AnimatedObject.FLAG_FIX_PRIORITY)) {
-            return (short)(48 + Math.ceil(((168.0 - 48) / 10.0f) * (this.entry.priority - 4 - 1)));
+            return (short)(LogicVariables.PRIORITY_BASE + Math.ceil(((168.0 - LogicVariables.PRIORITY_BASE) / 10.0f) * (this.entry.priority - 4 - 1)));
         }
 
         return (short) y;

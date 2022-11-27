@@ -85,6 +85,10 @@ public class LogicVariables {
 
     protected static final short HORIZON = 36;
 
+    public static final int BACK_MOST_PRIORITY = 4;    /* priority value of back most priority */
+
+    public static int PRIORITY_BASE = 48;
+
     protected boolean[] controllers = new boolean[MAX_CONTROLLERS];
     protected boolean[] flags = new boolean[MAX_FLAGS];
     protected short[] vars = new short[MAX_VARS];
