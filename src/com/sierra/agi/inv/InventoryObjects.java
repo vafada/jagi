@@ -8,9 +8,14 @@ import com.sierra.agi.io.ByteCasterStream;
 import com.sierra.agi.res.ResourceConfiguration;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Stores Objects of the game.
@@ -68,7 +73,6 @@ public class InventoryObjects implements InventoryProvider {
      */
     protected InventoryObject[] objects = null;
     protected int numOfAnimatedObjects;
-    protected byte[] rawData;
 
     public InventoryObjects(ResourceConfiguration config) {
 
@@ -118,11 +122,8 @@ public class InventoryObjects implements InventoryProvider {
      */
     public InventoryObjects loadInventory(InputStream stream) throws IOException {
         ByteCasterStream rawStream = new ByteCasterStream(stream);
-        this.rawData = rawStream.readAllBytes();
-
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(rawData);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(rawStream.readAllBytes());
         ByteCasterStream bstream = new ByteCasterStream(byteArrayInputStream);
-
 
         /* Calculate Inventory Object Count */
         int padSize = 3;
@@ -190,7 +191,52 @@ public class InventoryObjects implements InventoryProvider {
         return numOfAnimatedObjects;
     }
 
-    public byte[] getRawData() {
-        return rawData;
+    public byte[] encode(short[] locations) throws Exception{
+        // Recreate the Item Entries
+        // key = object name
+        // value = offset
+        Map<String, Integer> itemEntries = new HashMap<>();
+        // We need to preserve the order of the objects in the list
+        List<InventoryObject> itemList = new ArrayList<>();
+
+        int count = objects.length;
+        int num = count * 3;
+
+        int offset = num;
+        for (int i = 0; i < count; i++) {
+            InventoryObject inventoryObject = objects[i];
+            if (!itemEntries.containsKey(inventoryObject.name)) {
+                itemEntries.put(inventoryObject.name, offset);
+                itemList.add(inventoryObject);
+                // 1 = NUL char
+                offset = offset + (inventoryObject.name.length() + 1);
+            }
+        }
+
+        // Dump of the in memory OBJECT file including updates made by get, put and drop commands
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        outputStream.write((num & 0xFF));
+        outputStream.write((num >> 8) & 0xFF);
+        outputStream.write(numOfAnimatedObjects);
+
+        for (int i = 0; i < count; i++) {
+            InventoryObject invObject = objects[i];
+            short location = locations[i];
+
+            int itemOffset = itemEntries.get(invObject.name);
+            outputStream.write(itemOffset & 0xFF);
+            outputStream.write((itemOffset >> 8) & 0xFF);
+            outputStream.write(location);
+        }
+
+        for (InventoryObject inventoryObject : itemList) {
+            byte[] nameBytes = inventoryObject.getName().getBytes();
+            outputStream.write(nameBytes);
+            outputStream.write(0);
+        }
+
+        byte[] buffer = outputStream.toByteArray();
+
+        return buffer;
     }
 }

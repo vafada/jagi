@@ -330,7 +330,7 @@ public class SaveGame {
         // THIRD PIECE: OBJECTS
         // Almost an exact copy of the OBJECT file, but with the 3 byte header removed, and room
         // numbers reflecting the current location of each object.
-        byte[] objectData = objects.getRawData();
+        byte[] objectData = objects.encode(logicContext.getObjects());
         int objectsOffset = aniObjsOffset + 2 + aniObjectsLength;
         int objectsLength = objectData.length - 3;
         savedGameData[objectsOffset + 0] = (byte) (objectsLength & 0xFF);
