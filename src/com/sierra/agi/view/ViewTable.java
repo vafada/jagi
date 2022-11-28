@@ -258,7 +258,7 @@ public class ViewTable {
     }
 
     public void releasePriority(short entry) {
-        animatedObjects[entry].removeFlags(entry);
+        animatedObjects[entry].removeFlags(AnimatedObject.FLAG_FIX_PRIORITY);
     }
 
     public void moveObject(short entry, short x, short y, short stepSize, short flag) {
