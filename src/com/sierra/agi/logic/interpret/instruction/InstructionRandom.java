@@ -49,7 +49,11 @@ public class InstructionRandom extends InstructionTri {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
-        logicContext.setVar(p3, (short) (random.nextInt(1 + (p2 - p1)) + p1));
+        int minVal = p1;
+        int maxVal = p2;
+
+        int randNum = (random.nextInt(0, 255) % (maxVal - minVal + 1)) + minVal;
+        logicContext.setVar(p3, (short) randNum);
         return 4;
     }
 
