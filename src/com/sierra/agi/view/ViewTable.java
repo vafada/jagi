@@ -11,6 +11,7 @@ package com.sierra.agi.view;
 import com.sierra.agi.awt.EgaComponent;
 import com.sierra.agi.awt.EgaUtils;
 import com.sierra.agi.logic.LogicContext;
+import com.sierra.agi.logic.LogicVariables;
 import com.sierra.agi.pic.Picture;
 import com.sierra.agi.pic.PictureContext;
 import com.sierra.agi.pic.PictureException;
@@ -1159,21 +1160,21 @@ public class ViewTable {
 
                 if (x < 0) {
                     x = 0;
-                    border = 4;
+                    border = LogicVariables.LEFT;
                 } else if ((x + v.getWidth()) > WIDTH) {
                     x = 160 - v.getWidth();
-                    border = 2;
+                    border = LogicVariables.RIGHT;
                 }
 
                 if ((y - v.getHeight() + 1) < 0) {
                     y = v.getHeight() - 1;
-                    border = 1;
+                    border = LogicVariables.TOP;
                 } else if (y > (HEIGHT - 1)) {
                     y = HEIGHT - 1;
-                    border = 3;
+                    border = LogicVariables.BOTTOM;
                 } else if (!v.isSomeFlagsSet(AnimatedObject.FLAG_IGNORE_HORIZON) && y <= logicContext.getHorizon()) {
-                    y++;
-                    border = 1;
+                    y = logicContext.getHorizon();
+                    border = LogicVariables.TOP;
                 }
 
                 v.setX((short) x);
