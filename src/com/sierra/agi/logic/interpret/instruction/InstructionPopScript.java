@@ -1,7 +1,3 @@
-/*
- * InstructionEchoLine.java
- */
-
 package com.sierra.agi.logic.interpret.instruction;
 
 import com.sierra.agi.logic.Logic;
@@ -11,27 +7,16 @@ import com.sierra.agi.logic.interpret.LogicReader;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Echo Line Instruction.
- *
- * <P><CODE><B>echo.line</B> Instruction 0x89</CODE><BR>
- * The last line entered by the user is displayed in the input line.
- * </P>
- *
- * @author Dr. Z
- * @version 0.00.00.01
- */
-public class InstructionEchoLine extends Instruction {
+public class InstructionPopScript extends Instruction {
     /**
-     * Creates new Echo Line Instruction.
+     * Creates new Pop Script Instruction.
      *
-     * @param context  Game context where this instance of the instruction will be used. (ignored)
      * @param stream   Logic Stream. Instruction must be written in uninterpreted format.
      * @param reader   LogicReader used in the reading of this instruction. (ignored)
      * @param bytecode Bytecode of the current instruction.
      * @throws IOException I/O Exception are throw when <CODE>stream.read()</CODE> fails.
      */
-    public InstructionEchoLine(InputStream stream, LogicReader reader, short bytecode, short engineEmulation) throws IOException {
+    public InstructionPopScript(InputStream stream, LogicReader reader, short bytecode, short engineEmulation) throws IOException {
     }
 
     /**
@@ -42,7 +27,7 @@ public class InstructionEchoLine extends Instruction {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
-        logicContext.echoLine();
+        logicContext.getScriptBuffer().popScript();
         return 1;
     }
 
@@ -53,6 +38,7 @@ public class InstructionEchoLine extends Instruction {
      * @return Returns the textual names of the instruction.
      */
     public String[] getNames() {
-        return new String[]{"echo.line"};
+        return new String[]{"pop.script"};
     }
 }
+

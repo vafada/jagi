@@ -44,8 +44,6 @@ public class LogicInterpreter extends Logic {
 
     public void execute(LogicContext logicContext) throws LogicException {
         int in = logicContext.getScanStart(logicNumber);
-        int result = 0;
-        Instruction instruction = null;
         Instruction[] instructions = this.instructions;
         int[] sizes = this.sizes;
 
@@ -53,14 +51,14 @@ public class LogicInterpreter extends Logic {
             logicContext.pushLogic(logicNumber);
 
             while (true) {
-                instruction = instructions[in];
+                Instruction instruction = instructions[in];
 
                 if (logicNumber != 0) {
                     // System.out.println(logicNumber + ": instruction = " + in + " = " + instruction);
                 }
 
                 try {
-                    result = instruction.execute(this, logicContext);
+                    int result = instruction.execute(this, logicContext);
 
                     if ((instruction instanceof InstructionMoving) && (result != sizes[in])) {
                         in = ((InstructionMoving) instruction).getDestination(in, sizes);
