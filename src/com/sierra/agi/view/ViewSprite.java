@@ -8,8 +8,6 @@
 
 package com.sierra.agi.view;
 
-import com.sierra.agi.logic.LogicVariables;
-
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 
@@ -41,7 +39,8 @@ public class ViewSprite implements Comparable<ViewSprite> {
 
         for (int line = 0; line < height; line++) {
             for (int col = 0; col < width; col++, screenOffset++, cellOffset++) {
-                if (cellPriority >= priority[screenOffset]) {
+                int actualPriorityPixel = getActualPriority(priority, screenOffset);
+                if (cellPriority >= actualPriorityPixel) {
                     int pixel = cellData[cellOffset];
 
                     if (pixel != cellTransparent) {
@@ -120,8 +119,6 @@ public class ViewSprite implements Comparable<ViewSprite> {
         return y;
     }
 
-
-
     @Override
     public int compareTo(ViewSprite other) {
         if (this.entry.priority < other.entry.priority) {
@@ -137,5 +134,27 @@ public class ViewSprite implements Comparable<ViewSprite> {
                 return 0;
             }
         }
+    }
+
+    private int getActualPriority(int[] priority, int screenOffset) {
+        int currentPriorityPixel = priority[screenOffset];
+
+        if (currentPriorityPixel >= 3) {
+            return currentPriorityPixel;
+        }
+
+        int dy = screenOffset + ViewTable.WIDTH;
+
+        while (dy < priority.length) {
+            currentPriorityPixel = priority[dy];
+
+            if (currentPriorityPixel >= 3) {
+                return currentPriorityPixel;
+            } else {
+                dy = dy + ViewTable.WIDTH;
+            }
+        }
+
+        return currentPriorityPixel;
     }
 }
