@@ -41,7 +41,7 @@ public class ViewSprite implements Comparable<ViewSprite> {
 
         for (int line = 0; line < height; line++) {
             for (int col = 0; col < width; col++, screenOffset++, cellOffset++) {
-                if (priority[screenOffset] <= cellPriority) {
+                if (cellPriority >= priority[screenOffset]) {
                     int pixel = cellData[cellOffset];
 
                     if (pixel != cellTransparent) {
