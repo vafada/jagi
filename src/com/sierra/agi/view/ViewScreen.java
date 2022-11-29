@@ -597,8 +597,10 @@ public class ViewScreen {
         return lineMinPrint;
     }
 
-    public void textMode() {
-        save();
+    public void textMode(boolean save) {
+        if (save) {
+            save();
+        }
         // Clear the whole screen to the background colour.
         clearLines(0, 24, this.backgroundColorByte);
     }

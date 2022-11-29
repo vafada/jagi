@@ -1073,8 +1073,9 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     }
 
     public void textMode() {
+        boolean save = this.graphicMode;
         this.graphicMode = false;
-        getViewScreen().textMode();
+        getViewScreen().textMode(save);
     }
 
     public void graphicMode() {
