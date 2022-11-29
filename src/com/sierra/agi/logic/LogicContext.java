@@ -748,8 +748,31 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                 }
             }
 
+            if (playerControl) {
+                short direction = switch (keyCode) {
+                    case KeyEvent.VK_UP, KeyEvent.VK_NUMPAD8 -> (short) 1;
+                    case KeyEvent.VK_PAGE_UP, KeyEvent.VK_NUMPAD9 -> (short) 2;
+                    case KeyEvent.VK_RIGHT, KeyEvent.VK_NUMPAD6 -> (short) 3;
+                    case KeyEvent.VK_PAGE_DOWN, KeyEvent.VK_NUMPAD3 -> (short) 4;
+                    case KeyEvent.VK_DOWN, KeyEvent.VK_NUMPAD2 -> (short) 5;
+                    case KeyEvent.VK_END, KeyEvent.VK_NUMPAD1 -> (short) 6;
+                    case KeyEvent.VK_LEFT, KeyEvent.VK_NUMPAD4 -> (short) 7;
+                    case KeyEvent.VK_HOME, KeyEvent.VK_NUMPAD7 -> (short) 8;
+                    case KeyEvent.VK_NUMPAD5 -> (short) -1;
+                    default -> 0;
+                };
+
+                if (direction != 0) {
+                    if (direction < 0) {
+                        direction = 0;
+                    }
+
+                    AnimatedObject entry = getViewTable().getEntry(ViewTable.EGO_ENTRY);
+                    entry.setDirection(entry.getDirection() == direction ? (short) 0 : direction);
+                }
+            }
+
             if (acceptInput) {
-                short dir = 0;
                 switch (keyCode) {
                     case 8:
                     case KeyEvent.VK_BACK_SLASH:
@@ -758,50 +781,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                             commandLine.deleteCharAt(commandLine.length() - 1);
                             changed = true;
                         }
-                        break;
-
-                    case KeyEvent.VK_UP:
-                    case KeyEvent.VK_NUMPAD8:
-                        dir = (short) 1;
-                        break;
-
-                    case KeyEvent.VK_PAGE_UP:
-                    case KeyEvent.VK_NUMPAD9:
-                        dir = (short) 2;
-                        break;
-
-                    case KeyEvent.VK_RIGHT:
-                    case KeyEvent.VK_NUMPAD6:
-                        dir = (short) 3;
-                        break;
-
-                    case KeyEvent.VK_PAGE_DOWN:
-                    case KeyEvent.VK_NUMPAD3:
-                        dir = (short) 4;
-                        break;
-
-                    case KeyEvent.VK_DOWN:
-                    case KeyEvent.VK_NUMPAD2:
-                        dir = (short) 5;
-                        break;
-
-                    case KeyEvent.VK_END:
-                    case KeyEvent.VK_NUMPAD1:
-                        dir = (short) 6;
-                        break;
-
-                    case KeyEvent.VK_LEFT:
-                    case KeyEvent.VK_NUMPAD4:
-                        dir = (short) 7;
-                        break;
-
-                    case KeyEvent.VK_HOME:
-                    case KeyEvent.VK_NUMPAD7:
-                        dir = (short) 8;
-                        break;
-
-                    case KeyEvent.VK_NUMPAD5:
-                        dir = (short) -1;
                         break;
                 }
 
@@ -816,15 +795,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
                     commandLine = new StringBuffer();
                     changed = true;
                     break;
-                }
-
-                if ((dir != 0) && playerControl) {
-                    if (dir < 0) {
-                        dir = 0;
-                    }
-
-                    AnimatedObject entry = getViewTable().getEntry(ViewTable.EGO_ENTRY);
-                    entry.setDirection(entry.getDirection() == dir ? (short) 0 : dir);
                 }
             }
         }
