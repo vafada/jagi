@@ -142,6 +142,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
     protected StringBuffer commandLine = new StringBuffer();
     protected String commandLineC;
+    private String lastInput;
     protected boolean acceptInput;
     protected Word[] words;
 
@@ -316,6 +317,8 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         pictureNumber = 0;
         horizon = DEFAULT_HORIZON;
         graphicMode = true;
+
+        lastInput = "";
 
         viewTable.reset();
     }
@@ -733,7 +736,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
             short convertedKeyCode = EgaUtils.convertKey(keyCode);
 
             if (keyCode == KeyEvent.VK_F12) {
-                // TODO show priority pixel
                 getViewTable().showPriorityScreen();
             }
 
@@ -799,6 +801,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
             }
         }
         if (commandLineC != null) {
+            lastInput = commandLineC;
             // User said something!
             enterCommand(commandLineC);
         }
@@ -1104,5 +1107,12 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
     public void setPictureNumber(int pictureNumber) {
         this.pictureNumber = pictureNumber;
+    }
+
+    public void echoLine() {
+        if (this.commandLine.length() < this.lastInput.length()) {
+            this.commandLine.append(this.lastInput.substring(this.commandLine.length()));
+            getViewScreen().setInputLine(this.commandLine.toString());
+        }
     }
 }
