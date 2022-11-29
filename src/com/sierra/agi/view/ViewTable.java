@@ -119,6 +119,8 @@ public class ViewTable {
 
     public void resetNewRoom() {
         viewScreen.reset();
+        updateList.clear();
+        updateNotList.clear();
         for (int i = 0; i < MAX_ANIMATED_OBJECTS; i++) {
             AnimatedObject v = animatedObjects[i];
 
