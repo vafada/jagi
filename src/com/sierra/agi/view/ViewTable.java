@@ -689,18 +689,20 @@ public class ViewTable {
             int startPixelPos = (v.getY() * WIDTH) + v.getX();
             int endPixelPos = startPixelPos + v.getWidth();
 
+            // Start by assuming we're on water. Will be set false if it turns out we're not.
+            water = true;
+
             for (int pixelPos = startPixelPos; pixelPos < endPixelPos; pixelPos++) {
                 int priority = priorityPixels[pixelPos];
 
-                // The black control line is a unconditional obstacle;
-                if (priority == 0) {
-                    canBeHere = false;
-                    break;
+                // at least one pixel isn't in the water... so set water to false
+                if (priority != 3) {
+                    water = false;
                 }
 
-                // The cyan is typically used for water
-                if (priority == 3) {
-                    water = true;
+                // The black control line is an unconditional obstacle;
+                if (priority == 0) {
+                    canBeHere = false;
                     break;
                 }
 
