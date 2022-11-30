@@ -519,7 +519,11 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
             j = i;
 
             while (Character.isDigit(s.charAt(j))) {
-                j++;
+                j = j + 1;
+                if (j == s.length()) {
+                    j = j - 1;
+                    break;
+                }
             }
 
             if (s.charAt(j) == '|') {
@@ -546,6 +550,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
             s = b + c + e;
         }
 
+        System.out.println("s = " + s);
         return s;
     }
 
