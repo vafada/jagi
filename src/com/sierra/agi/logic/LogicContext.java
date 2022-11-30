@@ -550,7 +550,6 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
             s = b + c + e;
         }
 
-        System.out.println("s = " + s);
         return s;
     }
 
