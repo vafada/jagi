@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 /**
  * Logic Context that Logic Instruction are run with. Contains all variables
@@ -801,9 +802,21 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
             }
         }
         if (commandLineC != null) {
-            lastInput = commandLineC;
-            // User said something!
-            enterCommand(commandLineC);
+            // cheats!
+            boolean townPortalCommand = Pattern.matches("tp \\d+", commandLineC);
+
+            if (townPortalCommand) {
+                String tpTo = commandLineC.split(" ")[1];
+                try {
+                    newRoom(Short.parseShort(tpTo));
+                } catch (Exception e) {
+                    // noop
+                }
+            } else {
+                lastInput = commandLineC;
+                // User said something!
+                enterCommand(commandLineC);
+            }
         }
 
         if (changed) {
