@@ -326,7 +326,11 @@ public class PictureContext {
     }
 
     public Image getPriorityImage(Toolkit toolkit) {
-        return loadImage(toolkit, priData);
+        byte[] asByte = new byte[priData.length];
+        for (int i = 0; i < priData.length; i++) {
+            asByte[i] = (byte) priData[i];
+        }
+        return loadImage(toolkit, asByte);
     }
 
     public int[] getPictureData() {
