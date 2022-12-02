@@ -585,9 +585,9 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     }
 
     protected void doDelay() {
-        //int delay = vars[VAR_TIME_DELAY];
+        int delay = vars[VAR_TIME_DELAY];
         // TODO: remove me. 0 to make it faster to debug
-        int delay = 0;
+        // int delay = 0;
 
         while (true) {
             if (tickCount > delay) {
