@@ -1297,4 +1297,25 @@ public class ViewTable {
 
         viewScreen.restore(true);
     }
+
+    public void showInventoryObject(short viewNumber) throws Exception {
+        AnimatedObject animatedObject = new AnimatedObject(-1);
+        animatedObject.setView(this.logicContext, viewNumber);
+        animatedObject.setX((short) ((ViewTable.WIDTH - animatedObject.getWidth()) / 2));
+        animatedObject.setxCopy((short) ((ViewTable.WIDTH  - animatedObject.getWidth()) / 2));
+        animatedObject.setY((short) (ViewTable.HEIGHT - 1));
+        animatedObject.setyCopy((short) (ViewTable.HEIGHT - 1));
+        animatedObject.setPriority((short) 15);
+        animatedObject.addFlags(AnimatedObject.FLAG_FIX_PRIORITY);
+        animatedObject.setPreviousCellData(animatedObject.getCellData());
+
+        ViewSprite viewSprite = new ViewSprite(animatedObject);
+        viewSprite.save(picturePixels, priorityPixels);
+        // viewSprite.blit(screenUpdate, picturePixels, priorityPixels);
+
+        View viewData = logicContext.getCache().getView(viewNumber);
+        (new MessageBox(logicContext.processMessage(viewData.getDescription()))).show(logicContext, logicContext.getViewScreen());
+
+        viewSprite.restore(screenUpdate, picturePixels, priorityPixels);
+    }
 }

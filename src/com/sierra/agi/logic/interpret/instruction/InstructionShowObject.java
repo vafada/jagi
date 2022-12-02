@@ -45,6 +45,11 @@ public class InstructionShowObject extends InstructionUni {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
+        try {
+            logicContext.getViewTable().showInventoryObject(p1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return 2;
     }
 
