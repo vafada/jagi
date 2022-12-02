@@ -118,6 +118,7 @@ public final class LogicContextDebug extends LogicContext {
     public void setFlag(short flagNumber, boolean value) {
         super.setFlag(flagNumber, value);
         LogicContextEvent event = new LogicContextEvent(this);
+        event.setFlagNumber(flagNumber);
 
         for (LogicContextListener listener : listeners) {
             listener.flagChanged(event);
@@ -128,6 +129,7 @@ public final class LogicContextDebug extends LogicContext {
     public boolean toggleFlag(short flagNumber) {
         boolean retVal = super.toggleFlag(flagNumber);
         LogicContextEvent event = new LogicContextEvent(this);
+        event.setFlagNumber(flagNumber);
 
         for (LogicContextListener listener : listeners) {
             listener.flagChanged(event);

@@ -48,14 +48,14 @@ public class ContextDebugger extends JFrame implements LogicContextListener, Act
     protected LogicComponent logicComponent;
 
     protected VariableTableModel variableModel;
-    protected DefaultTableModel flagModel;
+    protected FlagTableModel flagModel;
 
     public ContextDebugger(LogicContextDebug logicContext) {
         super("Adventure Game Debugger");
 
         logicComponent = new LogicComponent(logicContext.getCache());
         variableModel = new VariableTableModel(logicContext, logicComponent);
-        flagModel = new DefaultTableModel(new Object[256][2], new String[]{"Flag", "Value"});
+        flagModel = new FlagTableModel(logicContext, logicComponent);
 
         JSplitPane bottomPane = new JSplitPane();
         JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -254,12 +254,8 @@ public class ContextDebugger extends JFrame implements LogicContextListener, Act
 
     @Override
     public void flagChanged(LogicContextEvent ev) {
-        boolean[] flags = logicContext.getFlags();
-        for (int i = 0; i < flags.length; i++) {
-            String flagName = logicComponent.getLogicEvaluator().getFlagTokenMappings(i);
-            boolean val = flags[i];
-            flagModel.setValueAt(flagName, i, 0);
-            flagModel.setValueAt(String.valueOf(val), i, 1);
+        if (ev.getFlagNumber() != -1) {
+            flagModel.fireTableCellUpdated(ev.getFlagNumber(), 1);
         }
     }
 }
