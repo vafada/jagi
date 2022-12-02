@@ -550,6 +550,29 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
             s = b + c + e;
         }
 
+        // Scan %w
+        while (true) {
+            i = s.indexOf("%w");
+
+            if (i == -1) {
+                break;
+            }
+
+            b = s.substring(0, i);
+            i += 2;
+            j = i;
+
+            while (Character.isDigit(s.charAt(j))) {
+                j++;
+            }
+
+            n = Integer.valueOf(s.substring(i, j)).intValue();
+
+            e = s.substring(j);
+            c = this.words[n - 1].text;
+            s = b + c + e;
+        }
+
         return s;
     }
 
