@@ -75,10 +75,8 @@ public class LogicInterpreter extends Logic {
             }
         } catch (LogicReturn lrex) {
             //System.out.println("catch LogicReturn");
-        } catch (LogicExitAll lea) {
+        } catch (LogicExitAll | LogicException lea) {
             throw lea;
-        } catch (LogicException lex) {
-            throw lex;
         } catch (Throwable thr) {
             throw new InternalLogicException(logicContext, thr);
         } finally {

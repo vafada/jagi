@@ -1,4 +1,7 @@
 # jagi
+
+## History
+
 JAGI is a virtual "fork" of Dr Zoltan's Java AGI engine that can be found on sourceforge here:
 
 https://sourceforge.net/projects/agi/
@@ -7,4 +10,13 @@ The initial commit of the code to this github repo was taken from the above sour
 
 With this repo now set-up, I am intending from this point onward to use this existing code base as a way to explore some of the earlier AGI v1 booter style games, on both the PC and Apple II platforms. I'm hoping that I can make use of the various interfaces that the Java AGI interpreter provides, and it's existing capability to plug in different implementations of those interfaces, to enable the debugging tools it has, such as the various resource viewers and the LOGIC decompiler, to work with AGI v1 data. It will start out mainly as an investigative phase at first but might eventually be useful.
 
-If you are Dr Zoltan and are currently reading this, then I'd love to talk to you about how we might collaborate on the original project to drive it forward. Please get in touch.
+## Screenshots
+
+![](img/ss1.png)           |  ![](img/ss2.png)
+:-------------------------:|:-------------------------:
+![](img/ss3.png)  |  ![](img/ss4.png)
+![](img/ss5.png)     |  ![](img/ss6.png)
+![](img/ss7.png)     |  ![](img/ss8.png)
+![](img/ss9.png)     |  ![](img/ss10.png)
+
+
