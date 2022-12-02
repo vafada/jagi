@@ -180,4 +180,12 @@ public class LogicVariables {
     public String getVersion() {
         return version;
     }
+
+    public short[] getVars() {
+        return vars;
+    }
+
+    public boolean[] getFlags() {
+        return flags;
+    }
 }

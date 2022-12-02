@@ -31,12 +31,14 @@ public class ContextDebugger extends JFrame implements LogicContextListener, Act
     protected LogicComponent logicComponent;
 
     protected DefaultTableModel variableModel;
+    protected DefaultTableModel flagModel;
 
     public ContextDebugger(LogicContextDebug logicContext) {
         super("Adventure Game Debugger");
 
         logicComponent = new LogicComponent(logicContext.getCache());
         variableModel = new DefaultTableModel(new Object[256][2], new String[]{"Variable", "Value"});
+        flagModel = new DefaultTableModel(new Object[256][2], new String[]{"Flag", "Value"});
 
         JSplitPane bottomPane = new JSplitPane();
         JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -220,7 +222,23 @@ public class ContextDebugger extends JFrame implements LogicContextListener, Act
         String name = node.toString();
 
         if (name.equals("Variables")) {
-            watchTable.setModel(variableModel);
+            short[] vars = logicContext.getVars();
+            for (int i = 0; i < vars.length; i++) {
+                short val = vars[i];
+                variableModel.setValueAt(i, i, 0);
+                variableModel.setValueAt(val, i, 1);
+                watchTable.setModel(variableModel);
+            }
+
+        }else if (name.equals("Flags")) {
+            boolean[] flags = logicContext.getFlags();
+            for (int i = 0; i < flags.length; i++) {
+                boolean val = flags[i];
+                flagModel.setValueAt(i, i, 0);
+                flagModel.setValueAt(String.valueOf(val), i, 1);
+                watchTable.setModel(flagModel);
+            }
+
         }
     }
 }
