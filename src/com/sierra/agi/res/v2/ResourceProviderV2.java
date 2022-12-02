@@ -547,7 +547,7 @@ public class ResourceProviderV2 implements ResourceProvider {
         File file = getGameFile(path, "agidata.ovl");
 
         if (!file.exists()) {
-            throw new FileNotFoundException("File agidata.ovl can't be found.");
+            return;
         }
 
         byte[] fileContent = Files.readAllBytes(file.toPath());
