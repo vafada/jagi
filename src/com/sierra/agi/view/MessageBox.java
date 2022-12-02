@@ -90,6 +90,10 @@ public class MessageBox extends Box {
     }
 
     public KeyEvent show(LogicContext logicContext, ViewScreen viewScreen) {
+        return show(logicContext, viewScreen, null);
+    }
+
+    public KeyEvent show(LogicContext logicContext, ViewScreen viewScreen, ViewSprite viewSprite) {
         KeyEvent ev = null;
         int timeout = this.timeout;
 
@@ -109,6 +113,11 @@ public class MessageBox extends Box {
 
         if (modal) {
             viewScreen.save();
+        }
+
+        if (viewSprite != null) {
+            viewSprite.blit(logicContext.getViewTable().getScreenUpdate(), logicContext.getViewTable().getPicturePixels(), logicContext.getViewTable().getPriorityPixels());
+            logicContext.getViewTable().doUpdate();
         }
 
         draw(viewScreen);

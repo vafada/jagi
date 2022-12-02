@@ -1310,12 +1310,20 @@ public class ViewTable {
         animatedObject.setPreviousCellData(animatedObject.getCellData());
 
         ViewSprite viewSprite = new ViewSprite(animatedObject);
-        viewSprite.save(picturePixels, priorityPixels);
-        // viewSprite.blit(screenUpdate, picturePixels, priorityPixels);
 
         View viewData = logicContext.getCache().getView(viewNumber);
-        (new MessageBox(logicContext.processMessage(viewData.getDescription()))).show(logicContext, logicContext.getViewScreen());
+        (new MessageBox(logicContext.processMessage(viewData.getDescription()))).show(logicContext, logicContext.getViewScreen(), viewSprite);
+    }
 
-        viewSprite.restore(screenUpdate, picturePixels, priorityPixels);
+    public int[] getPicturePixels() {
+        return picturePixels;
+    }
+
+    public Area getScreenUpdate() {
+        return screenUpdate;
+    }
+
+    public int[] getPriorityPixels() {
+        return priorityPixels;
     }
 }
