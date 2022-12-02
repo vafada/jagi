@@ -46,6 +46,7 @@ public class InstructionCloseDialogue extends Instruction {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
+        // Appears to be something specific to monochrome. No need to implement.
         return 1;
     }
 

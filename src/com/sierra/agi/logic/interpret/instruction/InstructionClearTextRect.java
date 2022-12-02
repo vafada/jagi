@@ -7,6 +7,7 @@ package com.sierra.agi.logic.interpret.instruction;
 import com.sierra.agi.logic.Logic;
 import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.logic.interpret.LogicReader;
+import com.sierra.agi.view.ViewScreen;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,6 +46,19 @@ public class InstructionClearTextRect extends InstructionPent {
      * @return Returns the number of byte of the uninterpreted instruction.
      */
     public int execute(Logic logic, LogicContext logicContext) {
+        int top = p1;
+        int left = p2;
+        int bottom = p3;
+        int right = p3;
+        int colour = p5;
+        ViewScreen viewScreen = logicContext.getViewScreen();
+
+        for (int y = top; y < bottom; y++) {
+            for (int x = left; x < right; x++) {
+                viewScreen.clearLines(x, y, (short) colour);
+            }
+        }
+
         return 6;
     }
 
