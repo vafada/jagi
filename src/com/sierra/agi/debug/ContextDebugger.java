@@ -249,8 +249,10 @@ public class ContextDebugger extends JFrame implements LogicContextListener, Act
     public void variableChanged(LogicContextEvent ev) {
         short[] vars = logicContext.getVars();
         for (int i = 0; i < vars.length; i++) {
+            String varName = logicComponent.getLogicEvaluator().getVariableTokenMappings(i);
+
             short val = vars[i];
-            variableModel.setValueAt(i, i, 0);
+            variableModel.setValueAt(varName, i, 0);
             variableModel.setValueAt(val, i, 1);
         }
     }
@@ -259,8 +261,9 @@ public class ContextDebugger extends JFrame implements LogicContextListener, Act
     public void flagChanged(LogicContextEvent ev) {
         boolean[] flags = logicContext.getFlags();
         for (int i = 0; i < flags.length; i++) {
+            String flagName = logicComponent.getLogicEvaluator().getFlagTokenMappings(i);
             boolean val = flags[i];
-            flagModel.setValueAt(i, i, 0);
+            flagModel.setValueAt(flagName, i, 0);
             flagModel.setValueAt(String.valueOf(val), i, 1);
         }
     }

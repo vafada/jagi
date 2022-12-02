@@ -615,4 +615,24 @@ public class LogicEvaluator {
 
         return false;
     }
+
+    public String getVariableTokenMappings(int index) {
+        String retVal = tokenMappings.getProperty("v" + index, String.valueOf(index));
+
+        if (retVal.charAt(0) == 'v') {
+            retVal = retVal.substring(1);
+        }
+
+        return retVal;
+    }
+
+    public String getFlagTokenMappings(int index) {
+        String retVal = tokenMappings.getProperty("f" + index, String.valueOf(index));
+
+        if (retVal.charAt(0) == 'f') {
+            retVal = retVal.substring(1);
+        }
+
+        return retVal;
+    }
 }
