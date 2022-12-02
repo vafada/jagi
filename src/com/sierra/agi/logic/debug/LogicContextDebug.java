@@ -11,26 +11,25 @@ package com.sierra.agi.logic.debug;
 import com.sierra.agi.logic.LogicContext;
 import com.sierra.agi.res.ResourceCache;
 
+import java.util.ArrayList;
 import java.util.EmptyStackException;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 
 public final class LogicContextDebug extends LogicContext {
     private boolean breaked = false;
-    private Vector listeners = new Vector();
+    private List<LogicContextListener> listeners = new ArrayList<>();
 
     public LogicContextDebug(ResourceCache cache) {
         super(cache);
     }
 
     public void breakpointReached() {
-        Enumeration en = listeners.elements();
         LogicContextEvent event = new LogicContextEvent(this);
 
         breaked = true;
 
-        while (en.hasMoreElements()) {
-            ((LogicContextListener) en.nextElement()).logicBreakpointReached(event);
+        for (LogicContextListener listener : listeners) {
+            listener.logicBreakpointReached(event);
         }
     }
 
@@ -41,11 +40,11 @@ public final class LogicContextDebug extends LogicContext {
             thread = new Thread(this);
             thread.start();
 
-            Enumeration en = listeners.elements();
+
             LogicContextEvent event = new LogicContextEvent(this);
 
-            while (en.hasMoreElements()) {
-                ((LogicContextListener) en.nextElement()).logicResumed(event);
+            for (LogicContextListener listener : listeners) {
+                listener.logicResumed(event);
             }
 
             return true;
@@ -67,13 +66,12 @@ public final class LogicContextDebug extends LogicContext {
         breaked = false;
 
         if (!ensureExecution()) {
-            Enumeration en = listeners.elements();
             LogicContextEvent event = new LogicContextEvent(this);
 
             ((LogicStackEntry) peekLogic()).command = LogicStackEntry.RUNNING;
 
-            while (en.hasMoreElements()) {
-                ((LogicContextListener) en.nextElement()).logicResumed(event);
+            for (LogicContextListener listener : listeners) {
+                listener.logicResumed(event);
             }
         }
     }
@@ -114,5 +112,38 @@ public final class LogicContextDebug extends LogicContext {
 
     public void removeLogicContextListener(LogicContextListener listener) {
         listeners.remove(listener);
+    }
+
+    @Override
+    public void setFlag(short flagNumber, boolean value) {
+        super.setFlag(flagNumber, value);
+        LogicContextEvent event = new LogicContextEvent(this);
+
+        for (LogicContextListener listener : listeners) {
+            listener.flagChanged(event);
+        }
+    }
+
+    @Override
+    public boolean toggleFlag(short flagNumber) {
+        boolean retVal = super.toggleFlag(flagNumber);
+        LogicContextEvent event = new LogicContextEvent(this);
+
+        for (LogicContextListener listener : listeners) {
+            listener.flagChanged(event);
+        }
+
+        return retVal;
+    }
+
+    @Override
+    public void setVar(short varNumber, short value) {
+        super.setVar(varNumber, value);
+
+        LogicContextEvent event = new LogicContextEvent(this);
+
+        for (LogicContextListener listener : listeners) {
+            listener.variableChanged(event);
+        }
     }
 }

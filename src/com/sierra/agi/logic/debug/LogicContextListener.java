@@ -12,4 +12,8 @@ public interface LogicContextListener {
     void logicBreakpointReached(LogicContextEvent ev);
 
     void logicResumed(LogicContextEvent ev);
+
+    void variableChanged(LogicContextEvent ev);
+
+    void flagChanged(LogicContextEvent ev);
 }

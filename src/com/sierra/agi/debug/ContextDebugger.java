@@ -14,13 +14,30 @@ import com.sierra.agi.logic.debug.LogicContextEvent;
 import com.sierra.agi.logic.debug.LogicContextListener;
 import com.sierra.agi.logic.debug.LogicStackEntry;
 
-import javax.swing.*;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.MenuShortcut;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 
 public class ContextDebugger extends JFrame implements LogicContextListener, ActionListener, ItemListener, TreeSelectionListener {
     protected JComboBox stackCombo;
@@ -222,23 +239,29 @@ public class ContextDebugger extends JFrame implements LogicContextListener, Act
         String name = node.toString();
 
         if (name.equals("Variables")) {
-            short[] vars = logicContext.getVars();
-            for (int i = 0; i < vars.length; i++) {
-                short val = vars[i];
-                variableModel.setValueAt(i, i, 0);
-                variableModel.setValueAt(val, i, 1);
-                watchTable.setModel(variableModel);
-            }
+            watchTable.setModel(variableModel);
+        } else if (name.equals("Flags")) {
+            watchTable.setModel(flagModel);
+        }
+    }
 
-        }else if (name.equals("Flags")) {
-            boolean[] flags = logicContext.getFlags();
-            for (int i = 0; i < flags.length; i++) {
-                boolean val = flags[i];
-                flagModel.setValueAt(i, i, 0);
-                flagModel.setValueAt(String.valueOf(val), i, 1);
-                watchTable.setModel(flagModel);
-            }
+    @Override
+    public void variableChanged(LogicContextEvent ev) {
+        short[] vars = logicContext.getVars();
+        for (int i = 0; i < vars.length; i++) {
+            short val = vars[i];
+            variableModel.setValueAt(i, i, 0);
+            variableModel.setValueAt(val, i, 1);
+        }
+    }
 
+    @Override
+    public void flagChanged(LogicContextEvent ev) {
+        boolean[] flags = logicContext.getFlags();
+        for (int i = 0; i < flags.length; i++) {
+            boolean val = flags[i];
+            flagModel.setValueAt(i, i, 0);
+            flagModel.setValueAt(String.valueOf(val), i, 1);
         }
     }
 }
