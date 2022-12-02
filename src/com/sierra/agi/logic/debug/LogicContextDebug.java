@@ -141,6 +141,7 @@ public final class LogicContextDebug extends LogicContext {
         super.setVar(varNumber, value);
 
         LogicContextEvent event = new LogicContextEvent(this);
+        event.setVariableNumber(varNumber);
 
         for (LogicContextListener listener : listeners) {
             listener.variableChanged(event);
