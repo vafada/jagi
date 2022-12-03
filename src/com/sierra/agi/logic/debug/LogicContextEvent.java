@@ -11,6 +11,7 @@ package com.sierra.agi.logic.debug;
 public class LogicContextEvent extends java.util.EventObject {
     private short variableNumber = -1;
     private short flagNumber = -1;
+    private short inventoryNumber = -1;
     public LogicContextEvent(LogicContextDebug source) {
         super(source);
     }
@@ -29,5 +30,13 @@ public class LogicContextEvent extends java.util.EventObject {
 
     public void setFlagNumber(short flagNumber) {
         this.flagNumber = flagNumber;
+    }
+
+    public short getInventoryNumber() {
+        return inventoryNumber;
+    }
+
+    public void setInventoryNumber(short inventoryNumber) {
+        this.inventoryNumber = inventoryNumber;
     }
 }

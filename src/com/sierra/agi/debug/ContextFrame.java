@@ -31,6 +31,8 @@ public class ContextFrame extends Frame implements ActionListener {
         this.logicContext = logicContext;
 
         setMenuBar(addMenu());
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
         setResizable(false);
         pack();
 

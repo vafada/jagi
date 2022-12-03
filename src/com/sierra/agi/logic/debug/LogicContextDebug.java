@@ -149,4 +149,16 @@ public final class LogicContextDebug extends LogicContext {
             listener.variableChanged(event);
         }
     }
+
+    @Override
+    public void setObject(short objectNumber, short location) {
+        super.setObject(objectNumber, location);
+
+        LogicContextEvent event = new LogicContextEvent(this);
+        event.setInventoryNumber(objectNumber);
+
+        for (LogicContextListener listener : listeners) {
+            listener.inventoryChanged(event);
+        }
+    }
 }

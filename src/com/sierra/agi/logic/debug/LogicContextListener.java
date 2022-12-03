@@ -16,4 +16,6 @@ public interface LogicContextListener {
     void variableChanged(LogicContextEvent ev);
 
     void flagChanged(LogicContextEvent ev);
+
+    void inventoryChanged(LogicContextEvent ev);
 }

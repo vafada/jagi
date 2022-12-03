@@ -23,7 +23,6 @@ import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -49,6 +48,7 @@ public class ContextDebugger extends JFrame implements LogicContextListener, Act
 
     protected VariableTableModel variableModel;
     protected FlagTableModel flagModel;
+    protected InventoryTableModel inventoryTableModel;
 
     public ContextDebugger(LogicContextDebug logicContext) {
         super("Adventure Game Debugger");
@@ -56,6 +56,7 @@ public class ContextDebugger extends JFrame implements LogicContextListener, Act
         logicComponent = new LogicComponent(logicContext.getCache());
         variableModel = new VariableTableModel(logicContext, logicComponent);
         flagModel = new FlagTableModel(logicContext, logicComponent);
+        inventoryTableModel = new InventoryTableModel(logicContext, logicComponent);
 
         JSplitPane bottomPane = new JSplitPane();
         JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -242,6 +243,8 @@ public class ContextDebugger extends JFrame implements LogicContextListener, Act
             watchTable.setModel(variableModel);
         } else if (name.equals("Flags")) {
             watchTable.setModel(flagModel);
+        } else if (name.equals("Inventory Objects")) {
+            watchTable.setModel(inventoryTableModel);
         }
     }
 
@@ -256,6 +259,13 @@ public class ContextDebugger extends JFrame implements LogicContextListener, Act
     public void flagChanged(LogicContextEvent ev) {
         if (ev.getFlagNumber() != -1) {
             flagModel.fireTableCellUpdated(ev.getFlagNumber(), 1);
+        }
+    }
+
+    @Override
+    public void inventoryChanged(LogicContextEvent ev) {
+        if (ev.getInventoryNumber() != -1) {
+            inventoryTableModel.fireTableCellUpdated(ev.getInventoryNumber(), 1);
         }
     }
 }
