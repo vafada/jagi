@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Properties;
 
@@ -558,7 +559,7 @@ public class ResourceProviderV2 implements ResourceProvider {
                 for (j = i + 8; fileContent[j] != 0; j++) {
                 }
 
-                this.version = new String(fileContent, i + 8, j - (i + 8), "US-ASCII");
+                this.version = new String(fileContent, i + 8, j - (i + 8), StandardCharsets.US_ASCII);
                 break;
             }
         }

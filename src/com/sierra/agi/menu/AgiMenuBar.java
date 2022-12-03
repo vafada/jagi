@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class AgiMenuBar {
-    private List<AgiMenu> menus = new ArrayList<>();
+    private final List<AgiMenu> menus = new ArrayList<>();
 
     public void addMenu(String name) {
         menus.add(new AgiMenu(name));

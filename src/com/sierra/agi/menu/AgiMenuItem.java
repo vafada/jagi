@@ -9,8 +9,8 @@
 package com.sierra.agi.menu;
 
 public class AgiMenuItem {
-    private String name;
-    private short controller;
+    private final String name;
+    private final short controller;
     private boolean enabled = true;
 
     public AgiMenuItem(String name, short controller) {

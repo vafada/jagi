@@ -7,8 +7,8 @@ import com.sierra.agi.logic.debug.LogicContextDebug;
 import javax.swing.table.AbstractTableModel;
 
 public class InventoryTableModel extends AbstractTableModel {
-    private LogicContextDebug logicContext;
-    private LogicComponent logicComponent;
+    private final LogicContextDebug logicContext;
+    private final LogicComponent logicComponent;
 
     public InventoryTableModel(LogicContextDebug logicContext, LogicComponent logicComponent) {
         this.logicComponent = logicComponent;
@@ -51,10 +51,7 @@ public class InventoryTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        if (column == 0) {
-            return false;
-        }
-        return true;
+        return column != 0;
     }
 
     @Override

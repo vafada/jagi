@@ -27,7 +27,7 @@ import java.util.Enumeration;
  */
 public final class ExpressionNot extends Expression implements CompilableExpression {
     /** Contained Expression */
-    private Expression contained;
+    private final Expression contained;
 
     /**
      * Creates a new Not Expression.

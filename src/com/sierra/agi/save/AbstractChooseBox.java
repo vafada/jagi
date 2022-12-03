@@ -8,6 +8,7 @@ import com.sierra.agi.view.ViewScreen;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,8 +22,8 @@ import static com.sierra.agi.save.SaveUtils.POINTER_CHAR;
 public abstract class AbstractChooseBox {
     protected static int NUM_GAMES = 12;
     protected static final int MAX_COLUMN = 35;
-    private String gameId;
-    private String path;
+    private final String gameId;
+    private final String path;
     protected String[] lines;
     protected int pointerIndex;
 
@@ -104,14 +105,14 @@ public abstract class AbstractChooseBox {
             while (theGame.savedGameData[textEnd] != 0) {
                 textEnd++;
             }
-            theGame.description = new String(rawData, 0, textEnd, "US-ASCII");
+            theGame.description = new String(rawData, 0, textEnd, StandardCharsets.US_ASCII);
 
             // 33 - 39(7 bytes) Game ID("SQ2", "KQ3", "LLLLL", etc.), NUL padded.
             textEnd = 33;
             while ((theGame.savedGameData[textEnd] != 0) && ((textEnd - 33) < 7)) {
                 textEnd++;
             }
-            String gameId = new String(theGame.savedGameData, 33, textEnd - 33, "US-ASCII");
+            String gameId = new String(theGame.savedGameData, 33, textEnd - 33, StandardCharsets.US_ASCII);
 
             // If the saved Game ID  doesn't match the current, don't use  this game.
             if (!gameId.equals(this.gameId)) {

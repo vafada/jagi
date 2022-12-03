@@ -193,7 +193,7 @@ public class Words implements WordsProvider {
     }
 
     private boolean addWord(int wordNum, String word) {
-        Word w = (Word) wordHash.get(word);
+        Word w = wordHash.get(word);
 
         if (w != null) {
             return false;
@@ -217,7 +217,7 @@ public class Words implements WordsProvider {
     }
 
     public Word findWord(String word) {
-        return (Word) wordHash.get(word);
+        return wordHash.get(word);
     }
 
     public int getWordCount() {

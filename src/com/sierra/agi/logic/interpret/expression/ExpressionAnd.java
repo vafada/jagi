@@ -24,7 +24,7 @@ import java.util.Vector;
  */
 public final class ExpressionAnd extends Expression implements CompilableExpression {
     /** Contained expressions. */
-    private Vector contained = new Vector(5, 2);
+    private final Vector contained = new Vector(5, 2);
 
     /** Expression size. */
     private int instructionSize = 0;

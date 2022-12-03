@@ -1,14 +1,17 @@
 package com.sierra.agi.save;
 
 import com.sierra.agi.logic.LogicContext;
+import com.sierra.agi.logic.LogicVariables;
 import com.sierra.agi.view.AnimatedObject;
 import com.sierra.agi.view.SavedGame;
 import com.sierra.agi.view.ScriptBuffer;
 import com.sierra.agi.view.ViewScreen;
 import com.sierra.agi.view.ViewTable;
 
+import java.nio.charset.StandardCharsets;
+
 public class RestoreGame {
-    private LogicContext logicContext;
+    private final LogicContext logicContext;
 
     public RestoreGame(LogicContext logicContext) {
         this.logicContext = logicContext;
@@ -122,18 +125,18 @@ public class RestoreGame {
         // [525] 556 - 1515(480 or 960 bytes) 12 or 24 strings, each 40 bytes long
         int numOfStrings = SaveUtils.getNumberOfStrings(logicContext.getVersion());
         for (int i = 0; i < numOfStrings; i++) {
-            int stringOffset = postKeyMapOffset + (i * this.logicContext.STRING_LENGTH);
+            int stringOffset = postKeyMapOffset + (i * LogicVariables.STRING_LENGTH);
             textEnd = stringOffset;
-            while ((savedGameData[textEnd] != 0) && ((textEnd - stringOffset) < this.logicContext.STRING_LENGTH)) {
+            while ((savedGameData[textEnd] != 0) && ((textEnd - stringOffset) < LogicVariables.STRING_LENGTH)) {
                 textEnd++;
             }
-            this.logicContext.setString((short) i, new String(rawData, stringOffset, textEnd - stringOffset, "US-ASCII"));
+            this.logicContext.setString((short) i, new String(rawData, stringOffset, textEnd - stringOffset, StandardCharsets.US_ASCII));
         }
 
-        int postStringsOffset = postKeyMapOffset + (numOfStrings * this.logicContext.STRING_LENGTH);
+        int postStringsOffset = postKeyMapOffset + (numOfStrings * LogicVariables.STRING_LENGTH);
 
         // [1485] 1516(2 bytes) Foreground colour
-        viewScreen.setForegroundColor((byte) (savedGameData[postStringsOffset + 0] + (savedGameData[postStringsOffset + 1] << 8)));
+        viewScreen.setForegroundColor((byte) (savedGameData[postStringsOffset] + (savedGameData[postStringsOffset + 1] << 8)));
         // [1487] 1518(2 bytes) Background colour
         viewScreen.setBackgroundColor((byte)(savedGameData[postStringsOffset + 2] + (savedGameData[postStringsOffset + 3] << 8)));
 
@@ -179,7 +182,7 @@ public class RestoreGame {
         // SECOND PIECE: ANIMATED OBJECT STATE
         // 17 aniobjs = 0x02DB length, 18 aniobjs = 0x0306, 20 aniobjs = 0x035C, 21 aniobjs = 0x0387, 91 = 0x0F49] 2B, 2B, 2B, 2B, 2B
         // 1538 - 1539(2 bytes) Length of piece (ANIOBJ should divide evenly in to this length)
-        int aniObjectsLength = (savedGameData[aniObjsOffset + 0] + (savedGameData[aniObjsOffset + 1] << 8));
+        int aniObjectsLength = (savedGameData[aniObjsOffset] + (savedGameData[aniObjsOffset + 1] << 8));
 
         // Each ANIOBJ entry is 0x2B in length, i.e. 43 bytes.
         // 17 aniobjs = 0x02DB length, 18 aniobjs = 0x0306, 20 aniobjs = 0x035C, 21 aniobjs = 0x0387, 91 = 0x0F49] 2B, 2B, 2B, 2B, 2B
@@ -196,7 +199,7 @@ public class RestoreGame {
             // 01 00 00 00 09 53 40 00 00 00 00
 
             //UBYTE movefreq;     /* number of animation cycles between motion  */    e.g.   01
-            animatedObject.setStepTime((short) savedGameData[aniObjOffset + 0]);
+            animatedObject.setStepTime((short) savedGameData[aniObjOffset]);
             //UBYTE moveclk;      /* number of cycles between moves of object   */    e.g.   01
             animatedObject.setStepTimeCount((short) savedGameData[aniObjOffset + 1]);
             //UBYTE num;          /* object number                              */    e.g.   00
@@ -361,7 +364,7 @@ public class RestoreGame {
         // Almost an exact copy of the OBJECT file, but with the 3 byte header removed, and room
         // numbers reflecting the current location of each object.
         int objectsOffset = aniObjsOffset + 2 + aniObjectsLength;
-        int objectsLength = (savedGameData[objectsOffset + 0] + (savedGameData[objectsOffset + 1] << 8));
+        int objectsLength = (savedGameData[objectsOffset] + (savedGameData[objectsOffset + 1] << 8));
         // TODO: state.Objects.NumOfAnimatedObjects = (byte)numOfAniObjs;
         int numOfObjects = (savedGameData[objectsOffset + 2] + (savedGameData[objectsOffset + 3] << 8)) / 3;
         // Set the saved room number of each Object.
@@ -372,7 +375,7 @@ public class RestoreGame {
         // FOURTH PIECE: SCRIPT BUFFER EVENTS
         // A transcript of events leading to the current state in the current room.
         int scriptsOffset = objectsOffset + 2 + objectsLength;
-        int scriptsLength = (savedGameData[scriptsOffset + 0] + (savedGameData[scriptsOffset + 1] << 8));
+        int scriptsLength = (savedGameData[scriptsOffset] + (savedGameData[scriptsOffset + 1] << 8));
         // Each script entry is two unsigned bytes long:
         // UBYTE action;
         // UBYTE who;
@@ -410,7 +413,7 @@ public class RestoreGame {
         logicContext.getScriptBuffer().initScript();
         for (int i = 0; i < scriptEntryCount; i++) {
             int scriptOffset = scriptsOffset + 2 + (i * 2);
-            int action = savedGameData[scriptOffset + 0];
+            int action = savedGameData[scriptOffset];
             int resourceNum = savedGameData[scriptOffset + 1];
             byte[] data = null;
             if (action == ScriptBuffer.ScriptBufferEventType.AddToPic.getValue()) {
@@ -436,7 +439,7 @@ public class RestoreGame {
         // loaded logics can have this set and I'd imagine you'd run out of memory before
         // loading that many logics at once.
         int scanOffsetsOffset = scriptsOffset + 2 + scriptsLength;
-        int scanOffsetsLength = (savedGameData[scanOffsetsOffset + 0] + (savedGameData[scanOffsetsOffset + 1] << 8));
+        int scanOffsetsLength = (savedGameData[scanOffsetsOffset] + (savedGameData[scanOffsetsOffset + 1] << 8));
         int numOfScanOffsets = (scanOffsetsLength / 4);
         // Each entry is 4 bytes long, made up of 2 16-bit words:
         // COUNT num;                                    /* logic number         */
@@ -462,13 +465,13 @@ public class RestoreGame {
 
         for (int i = 1; i < numOfScanOffsets; i++) {
             int scanOffsetOffset = scanOffsetsOffset + 2 + (i * 4);
-            int logicNumber = (savedGameData[scanOffsetOffset + 0] + (savedGameData[scanOffsetOffset + 1] << 8));
+            int logicNumber = (savedGameData[scanOffsetOffset] + (savedGameData[scanOffsetOffset + 1] << 8));
             if (logicNumber < 256) {
                 this.logicContext.setScanStart((short) logicNumber, (savedGameData[scanOffsetOffset + 2] + (savedGameData[scanOffsetOffset + 3] << 8)));
             }
         }
 
-        this.logicContext.setFlag(this.logicContext.FLAG_RESTORE_JUST_RAN, true);
+        this.logicContext.setFlag(LogicVariables.FLAG_RESTORE_JUST_RAN, true);
 
         return true;
     }

@@ -931,12 +931,12 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
             scoreStatus.append(vars[VAR_SCORE]);
             scoreStatus.append(" of ");
             scoreStatus.append(vars[VAR_MAX_SCORE]);
-            String scoreString = String.format("%-30s", scoreStatus.toString());
+            String scoreString = String.format("%-30s", scoreStatus);
 
             StringBuilder soundStatus = new StringBuilder();
             soundStatus.append("Sound:");
             soundStatus.append(flags[FLAG_SOUND_ON] ? "on" : "off");
-            String soundString = String.format("%-10s", soundStatus.toString());
+            String soundString = String.format("%-10s", soundStatus);
 
             viewScreen.displayStatusLine(scoreString + soundString);
         }

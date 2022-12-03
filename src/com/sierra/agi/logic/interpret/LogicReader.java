@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -288,10 +289,7 @@ public class LogicReader {
                 l++;
             }
 
-            try {
-                m[i] = (new String(b, j, l - j, "US-ASCII")).replace('�', ' ');
-            } catch (UnsupportedEncodingException ex) {
-            }
+            m[i] = (new String(b, j, l - j, StandardCharsets.US_ASCII)).replace('�', ' ');
 
         }
 

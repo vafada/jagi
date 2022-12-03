@@ -6,8 +6,8 @@ import com.sierra.agi.logic.debug.LogicContextDebug;
 import javax.swing.table.AbstractTableModel;
 
 public class FlagTableModel extends AbstractTableModel {
-    private LogicContextDebug logicContext;
-    private LogicComponent logicComponent;
+    private final LogicContextDebug logicContext;
+    private final LogicComponent logicComponent;
 
     public FlagTableModel(LogicContextDebug logicContext, LogicComponent logicComponent) {
         this.logicComponent = logicComponent;
@@ -34,10 +34,7 @@ public class FlagTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        if (column == 0) {
-            return false;
-        }
-        return true;
+        return column != 0;
     }
 
     @Override
@@ -52,7 +49,7 @@ public class FlagTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if (columnIndex == 1) {
-            boolean flagVal = ((Boolean) aValue).booleanValue();
+            boolean flagVal = (Boolean) aValue;
             this.logicContext.setFlag((short) rowIndex, flagVal);
         }
     }

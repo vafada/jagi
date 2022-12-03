@@ -18,7 +18,7 @@ import static com.sierra.agi.logic.LogicVariables.MAX_STRINGS;
 import static com.sierra.agi.logic.LogicVariables.STRING_LENGTH;
 
 public class SaveGame {
-    private LogicContext logicContext;
+    private final LogicContext logicContext;
 
     public SaveGame(LogicContext logicContext) {
         this.logicContext = logicContext;
@@ -94,7 +94,7 @@ public class SaveGame {
         pos = 296;
         for (short i = 0; i < 256; i += 8) {
             savedGameData[pos++] = (byte) (
-                    (logicContext.getFlag((short) (i + 0)) ? 0x80 : 0x00) | (logicContext.getFlag((short) (i + 1)) ? 0x40 : 0x00) |
+                    (logicContext.getFlag((short) (i)) ? 0x80 : 0x00) | (logicContext.getFlag((short) (i + 1)) ? 0x40 : 0x00) |
                             (logicContext.getFlag((short) (i + 2)) ? 0x20 : 0x00) | (logicContext.getFlag((short) (i + 3)) ? 0x10 : 0x00) |
                             (logicContext.getFlag((short) (i + 4)) ? 0x08 : 0x00) | (logicContext.getFlag((short) (i + 5)) ? 0x04 : 0x00) |
                             (logicContext.getFlag((short) (i + 6)) ? 0x02 : 0x00) | (logicContext.getFlag((short) (i + 7)) ? 0x01 : 0x00));
@@ -180,7 +180,7 @@ public class SaveGame {
         ViewScreen viewScreen = viewTable.getViewScreen();
 
         // [1485] 1516(2 bytes) Foreground colour
-        savedGameData[postStringsOffset + 0] = viewScreen.getForegroundColorByte();
+        savedGameData[postStringsOffset] = viewScreen.getForegroundColorByte();
         // [1487] 1518(2 bytes) Background colour
         savedGameData[postStringsOffset + 2] = viewScreen.getBackgroundColorByte();
         // [1489] 1520(2 bytes) Text Attribute value (combined foreground/background value)
@@ -220,7 +220,7 @@ public class SaveGame {
         InventoryObjects objects = logicContext.getCache().getObjects();
         AnimatedObject[] allAnimatedObjects = viewTable.getAnimatedObjects();
         int aniObjectsLength = ((objects.getNumOfAnimatedObjects() + 1) * 0x2B);
-        savedGameData[aniObjsOffset + 0] = (byte) (aniObjectsLength & 0xFF);
+        savedGameData[aniObjsOffset] = (byte) (aniObjectsLength & 0xFF);
         savedGameData[aniObjsOffset + 1] = (byte) ((aniObjectsLength >> 8) & 0xFF);
 
         for (int i = 0; i < (objects.getNumOfAnimatedObjects() + 1); i++) {
@@ -228,7 +228,7 @@ public class SaveGame {
             AnimatedObject aniObj = allAnimatedObjects[i];
 
             //UBYTE movefreq;     /* number of animation cycles between motion  */    e.g.   01
-            savedGameData[aniObjOffset + 0] = (byte) aniObj.getStepTime();
+            savedGameData[aniObjOffset] = (byte) aniObj.getStepTime();
             //UBYTE moveclk;      /* number of cycles between moves of object   */    e.g.   01
             savedGameData[aniObjOffset + 1] = (byte) aniObj.getStepTimeCount();
             //UBYTE num;          /* object number                              */    e.g.   00
@@ -333,7 +333,7 @@ public class SaveGame {
         byte[] objectData = objects.encode(logicContext.getObjects());
         int objectsOffset = aniObjsOffset + 2 + aniObjectsLength;
         int objectsLength = objectData.length - 3;
-        savedGameData[objectsOffset + 0] = (byte) (objectsLength & 0xFF);
+        savedGameData[objectsOffset] = (byte) (objectsLength & 0xFF);
         savedGameData[objectsOffset + 1] = (byte) ((objectsLength >> 8) & 0xFF);
         pos = objectsOffset + 2;
         for (int x = 3; x < objectData.length; x++) {
@@ -345,7 +345,7 @@ public class SaveGame {
         int scriptsOffset = objectsOffset + 2 + objectsLength;
         byte[] scriptEventData = logicContext.getScriptBuffer().encode();
         int scriptsLength = scriptEventData.length;
-        savedGameData[scriptsOffset + 0] = (byte) (scriptsLength & 0xFF);
+        savedGameData[scriptsOffset] = (byte) (scriptsLength & 0xFF);
         savedGameData[scriptsOffset + 1] = (byte) ((scriptsLength >> 8) & 0xFF);
         pos = scriptsOffset + 2;
         for (int i = 0; i < scriptEventData.length; i++) {
@@ -359,7 +359,7 @@ public class SaveGame {
         // foreach (ScriptBufferEvent e in state.ScriptBuffer.Events) if (e.type == ScriptBufferEventType.LoadLogic) loadedLogicCount++;
         // The scan offset data contains the offsets for loaded logics plus a 4 byte header, 4 bytes for logic 0, and 4 byte trailer.
         int scanOffsetsLength = (loadedLogicCount * 4) + 12;
-        savedGameData[scanOffsetsOffset + 0] = (byte) (scanOffsetsLength & 0xFF);
+        savedGameData[scanOffsetsOffset] = (byte) (scanOffsetsLength & 0xFF);
         savedGameData[scanOffsetsOffset + 1] = (byte) ((scanOffsetsLength >> 8) & 0xFF);
         pos = scanOffsetsOffset + 2;
         // The scan offsets start with 00 00 00 00.

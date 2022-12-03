@@ -47,7 +47,7 @@ public class ViewTable {
     protected static final int[] directionTableX = new int[]{0, 0, 1, 1, 1, 0, -1, -1, -1};
     protected static final int[] directionTableY = new int[]{0, -1, -1, 0, 1, 1, 1, 0, -1};
     protected LogicContext logicContext;
-    private AnimatedObject[] animatedObjects;
+    private final AnimatedObject[] animatedObjects;
     protected boolean picShown;
     protected boolean blockSet;
     protected short blockUpperLeftX;
@@ -57,15 +57,15 @@ public class ViewTable {
     protected Random randomSeed;
     protected byte[] priorityTable = new byte[HEIGHT];
     protected ViewScreen viewScreen;
-    private int[] picturePixels;
-    private List<ViewSprite> updateList = new ArrayList<>();
-    private List<ViewSprite> updateNotList = new ArrayList<>();
+    private final int[] picturePixels;
+    private final List<ViewSprite> updateList = new ArrayList<>();
+    private final List<ViewSprite> updateNotList = new ArrayList<>();
     protected PictureContext pictureContext;
     protected int[] pixel = new int[1];
 
-    private Area screenUpdate;
+    private final Area screenUpdate;
 
-    private int[] priorityPixels = new int[WIDTH * HEIGHT];
+    private final int[] priorityPixels = new int[WIDTH * HEIGHT];
 
     public ViewTable(LogicContext context) {
         logicContext = context;

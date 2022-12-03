@@ -13,7 +13,7 @@ import static com.sierra.agi.logic.LogicVariables.FLAG_STATUS_SELECTS_ITEMS;
 import static com.sierra.agi.logic.LogicVariables.VAR_SEL_ITEM;
 
 public class InventoryScreen {
-    private LogicContext logicContext;
+    private final LogicContext logicContext;
 
     public InventoryScreen(LogicContext logicContext) {
         this.logicContext = logicContext;

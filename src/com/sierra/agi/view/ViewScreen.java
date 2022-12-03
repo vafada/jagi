@@ -27,7 +27,7 @@ public class ViewScreen {
     public static final int CHAR_HEIGHT = 8;
 
     // bitmap that's actually rendered!
-    private int[] screen;
+    private final int[] screen;
 
     // backup bitmap of screen when switching between pri pixel/text mode to graphics
     private int[] screenBackup;

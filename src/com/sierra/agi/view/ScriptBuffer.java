@@ -21,7 +21,7 @@ public class ScriptBuffer {
 
         private final int value;
 
-        private ScriptBufferEventType(int value) {
+        ScriptBufferEventType(int value) {
             this.value = value;
         }
 
@@ -39,7 +39,7 @@ public class ScriptBuffer {
         }
     }
 
-    public class ScriptBufferEvent {
+    public static class ScriptBufferEvent {
         public ScriptBufferEventType type;
         public int resourceNumber;
         public byte[] data;
@@ -51,8 +51,8 @@ public class ScriptBuffer {
         }
     }
 
-    private LogicContext logicContext;
-    private ArrayList<ScriptBufferEvent> events;
+    private final LogicContext logicContext;
+    private final ArrayList<ScriptBufferEvent> events;
     private boolean doScript;
     private int maxScript;
     private int scriptSize;
@@ -61,7 +61,7 @@ public class ScriptBuffer {
     public ScriptBuffer(LogicContext logicContext) {
         // Default script size is 50 according to original AGI specs.
         this.scriptSize = 50;
-        this.events = new ArrayList();
+        this.events = new ArrayList<>();
         this.logicContext = logicContext;
         this.initScript();
     }
@@ -144,9 +144,8 @@ public class ScriptBuffer {
                 outputStream.write(e.data, 0, e.data.length);
             }
         }
-        byte[] buffer = outputStream.toByteArray();
-        //outputStream.close();
-        return buffer;
+
+        return outputStream.toByteArray();
     }
 
     /// <summary>

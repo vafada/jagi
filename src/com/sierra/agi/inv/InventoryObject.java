@@ -16,7 +16,7 @@ public final class InventoryObject {
     /**
      * Location
      */
-    private short location;
+    private final short location;
 
     public InventoryObject(short location) {
         this.location = location;

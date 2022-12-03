@@ -17,7 +17,7 @@ import java.util.List;
 
 public final class LogicContextDebug extends LogicContext {
     private boolean breaked = false;
-    private List<LogicContextListener> listeners = new ArrayList<>();
+    private final List<LogicContextListener> listeners = new ArrayList<>();
 
     public LogicContextDebug(ResourceCache cache) {
         super(cache);
