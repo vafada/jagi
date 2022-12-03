@@ -132,7 +132,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
     protected boolean shouldShowStatusLine;
 
     protected volatile boolean clockActive;
-    protected volatile int tickCount;
+    private volatile int tickCount;
     protected volatile boolean running;
 
     protected Stack logicStack = new Stack();
@@ -590,17 +590,8 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
         // int delay = 0;
 
         while (true) {
-            if (tickCount > delay) {
+            if (tickCount + 1 > delay) {
                 break;
-            }
-
-            try {
-                if ((tickCount + 1) > delay) {
-                    Thread.sleep(10);
-                } else {
-                    Thread.sleep(55L * (delay - tickCount));
-                }
-            } catch (Throwable thr) {
             }
         }
 
@@ -958,10 +949,7 @@ public class LogicContext extends LogicVariables implements Cloneable, Runnable 
 
             while (running) {
                 try {
-                    /* Interrupt 1C in 8086 is called exactly 18.2 times per second (54.94505 ms)
-                       which is used has a base timer resolution for AGI games. */
-
-                    Thread.sleep(55);
+                    Thread.sleep(40);
                 } catch (Throwable thr) {
                 }
 
