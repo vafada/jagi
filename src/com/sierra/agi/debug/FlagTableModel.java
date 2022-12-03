@@ -52,17 +52,17 @@ public class FlagTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if (columnIndex == 1) {
-            try {
-                String stringVal = aValue.toString();
-                boolean flagVal = false;
-                if ("true".equalsIgnoreCase(stringVal) || "t".equalsIgnoreCase(stringVal)) {
-                    flagVal = true;
-                }
-                this.logicContext.setFlag((short) rowIndex, flagVal);
-            } catch (Exception e) {
-
-            }
+            boolean flagVal = ((Boolean) aValue).booleanValue();
+            this.logicContext.setFlag((short) rowIndex, flagVal);
         }
+    }
+
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        if (columnIndex == 0) {
+            return String.class;
+        }
+        return Boolean.class;
     }
 }
 
