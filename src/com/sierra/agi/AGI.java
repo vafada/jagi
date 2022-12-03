@@ -15,6 +15,7 @@ import com.sierra.agi.logic.LogicException;
 import com.sierra.agi.res.ResourceCache;
 import com.sierra.agi.res.ResourceCacheFile;
 
+import javax.swing.JFrame;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -23,7 +24,7 @@ import java.io.File;
 
 public class AGI {
     protected LogicContext logicContext;
-    protected Frame frame;
+    protected JFrame frame;
 
     public AGI(String[] args) throws Exception {
         File resFile;
@@ -37,7 +38,7 @@ public class AGI {
         ResourceCache resCache = new ResourceCacheFile(resFile);
         LogicContext context = new LogicContext(resCache);
 
-        frame = new Frame(context.getGameName());
+        frame = new JFrame(context.getGameName());
         frame.add(context.getComponent());
         frame.addKeyListener(context.getComponent());
         frame.addWindowListener(
