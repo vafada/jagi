@@ -70,6 +70,15 @@ public class ViewViewer extends JFrame implements ActionListener {
 
         generate();
 
+        KeyAdapter escAdapter = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    dispose();
+                }
+            }
+        };
+
         cellComp = new ViewComponent();
         c.gridx = 0;
         c.gridy = 0;
@@ -81,6 +90,7 @@ public class ViewViewer extends JFrame implements ActionListener {
         prevLoop = new JButton("< Loop");
         prevLoop.setActionCommand("loopp");
         prevLoop.addActionListener(this);
+        prevLoop.addKeyListener(escAdapter);
         c.gridx = 0;
         c.gridy = 1;
         c.gridwidth = 1;
@@ -91,6 +101,7 @@ public class ViewViewer extends JFrame implements ActionListener {
         prevCell = new JButton("< Cell");
         prevCell.setActionCommand("cellp");
         prevCell.addActionListener(this);
+        prevCell.addKeyListener(escAdapter);
         c.gridx = 1;
         gridBag.setConstraints(prevCell, c);
         cont.add(prevCell);
@@ -98,6 +109,7 @@ public class ViewViewer extends JFrame implements ActionListener {
         play = new JButton("Play");
         play.setActionCommand("play");
         play.addActionListener(this);
+        play.addKeyListener(escAdapter);
         c.gridx = 2;
         gridBag.setConstraints(play, c);
         cont.add(play);
@@ -105,6 +117,7 @@ public class ViewViewer extends JFrame implements ActionListener {
         nextCell = new JButton("Cell >");
         nextCell.setActionCommand("celln");
         nextCell.addActionListener(this);
+        nextCell.addKeyListener(escAdapter);
         c.gridx = 3;
         gridBag.setConstraints(nextCell, c);
         cont.add(nextCell);
@@ -112,6 +125,7 @@ public class ViewViewer extends JFrame implements ActionListener {
         nextLoop = new JButton("Loop >");
         nextLoop.setActionCommand("loopn");
         nextLoop.addActionListener(this);
+        nextLoop.addKeyListener(escAdapter);
         c.gridx = 4;
         c.insets = new Insets(5, 5, 5, 5);
         gridBag.setConstraints(nextLoop, c);

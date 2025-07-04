@@ -17,10 +17,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.IOException;
 
 public class SoundPlayer extends JFrame implements ActionListener, ChangeListener, SoundListener {
@@ -51,6 +48,14 @@ public class SoundPlayer extends JFrame implements ActionListener, ChangeListene
 
         slider = new JSlider(0, (int) this.sound.getMaxPosition(), (int) this.sound.getPosition());
         slider.addChangeListener(this);
+        slider.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    dispose();
+                }
+            }
+        });
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 2;

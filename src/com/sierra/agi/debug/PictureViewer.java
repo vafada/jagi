@@ -83,6 +83,14 @@ public class PictureViewer extends Frame implements ActionListener {
             }
         });
 
+        addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent ev) {
+                if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    dispose();
+                }
+            }
+        });
+
         setResizable(false);
         pack();
     }

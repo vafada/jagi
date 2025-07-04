@@ -312,6 +312,14 @@ public class ResourceFrame extends JFrame implements MouseListener, ActionListen
         if (o == null) {
             s = new LogicViewer(cache, title, logic);
             s.addWindowListener(new ResourceWindowListener(logics, logic));
+            s.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                        s.dispose();
+                    }
+                }
+            });
             positionWindow(s);
             logics.put(logic, s);
         } else {
