@@ -65,10 +65,6 @@ public abstract class DebugUtils {
         out.println();
     }
 
-    public static void printThreadGroupInfo(PrintStream out) {
-        printThreadGroupInfo(getRootThreadGroup(), out, 0);
-    }
-
     public static void printThreadGroupInfo(ThreadGroup group, PrintStream out, int level) {
         ThreadGroup[] groups = new ThreadGroup[64];
         Thread[] threads = new Thread[64];

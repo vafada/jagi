@@ -8,16 +8,15 @@
 
 package com.sierra.agi.debug;
 
-import com.keypoint.PngEncoder;
 import com.sierra.agi.pic.Picture;
 import com.sierra.agi.pic.PictureContext;
 import com.sierra.agi.res.ResourceCache;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 
 public class PictureViewer extends Frame implements ActionListener {
     protected ResourceCache cache;
@@ -141,19 +140,14 @@ public class PictureViewer extends Frame implements ActionListener {
                 dialog.dispose();
 
                 if ((dir != null) && (file != null)) {
-                    OutputStream out = new FileOutputStream(new File(dir, file));
-                    PngEncoder encoder;
-
                     if (action.endsWith("320")) {
-                        encoder = new PngEncoder(onScreen.getScaledInstance(onScreen.getWidth(this) * 2, onScreen.getHeight(this), Image.SCALE_FAST));
+                        Image image = onScreen.getScaledInstance(onScreen.getWidth(this) * 2, onScreen.getHeight(this), Image.SCALE_FAST);
+                        BufferedImage bufferedImage = ImageUtils.toBufferedImage(image);
+                        ImageIO.write(bufferedImage, "PNG", new File(dir, file));
                     } else {
-                        encoder = new PngEncoder(onScreenScaled);
+                        BufferedImage bufferedImage = ImageUtils.toBufferedImage(onScreenScaled);
+                        ImageIO.write(bufferedImage, "PNG", new File(dir, file));
                     }
-
-                    encoder.setCompressionLevel(9);
-
-                    out.write(encoder.pngEncode());
-                    out.close();
                 }
             } else if (action.equals("showpicture")) {
                 if (picturePriority) {

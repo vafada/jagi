@@ -8,18 +8,18 @@
 
 package com.sierra.agi.debug;
 
-import com.keypoint.PngEncoder;
 import com.sierra.agi.res.ResourceCache;
 import com.sierra.agi.view.Cel;
 import com.sierra.agi.view.Loop;
 import com.sierra.agi.view.View;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+
 
 public class ViewViewer extends JFrame implements ActionListener {
     protected ResourceCache cache;
@@ -277,26 +277,19 @@ public class ViewViewer extends JFrame implements ActionListener {
                 dialog.dispose();
 
                 if ((dir != null) && (file != null)) {
-                    OutputStream out = new FileOutputStream(new File(dir, file));
-                    PngEncoder encoder;
-
                     if (action.endsWith("1x")) {
-                        Image image;
-
-                        image = view.getLoop(loopn).getCell(celln).getImage();
+                        Image image = view.getLoop(loopn).getCell(celln).getImage();
                         image = image.getScaledInstance(image.getWidth(this) * 2, image.getHeight(this), Image.SCALE_REPLICATE);
 
-                        encoder = new PngEncoder(image, true);
-
                         image.flush();
+
+                        BufferedImage bufferedImage = ImageUtils.toBufferedImage(image);
+                        ImageIO.write(bufferedImage, "PNG", new File(dir, file));
                     } else {
-                        encoder = new PngEncoder(generateImage(loopn, celln), true);
+                        Image image = generateImage(loopn, celln);
+                        BufferedImage bufferedImage = ImageUtils.toBufferedImage(image);
+                        ImageIO.write(bufferedImage, "PNG", new File(dir, file));
                     }
-
-                    encoder.setCompressionLevel(9);
-
-                    out.write(encoder.pngEncode());
-                    out.close();
                 }
             }
         } catch (Exception ex) {
